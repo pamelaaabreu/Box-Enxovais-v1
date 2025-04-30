@@ -1,0 +1,45 @@
+.mini-navbar {
+  position: fixed;
+  left: 0; 
+  width: 100%; /* Ocupa toda a largura da tela */
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 50px;
+  background-color: #102542;
+  gap: 20px;
+  z-index: 1000;   
+  }
+  
+  .mini-navbar span {
+    font-size: 14px;
+    color: #FFFFFF;
+    letter-spacing: 0.9px;
+  }
+  
+  .mini-navbar .atendimento {
+    margin-left: 20px;
+  }
+  
+  .mini-navbar .social-media a {
+    margin-left: 10px;
+    text-decoration: none;
+    color: #FFFFFF;
+  }
+  
+  .mini-navbar .social-media a:hover {
+    color: #3A506B;
+  }
+
+  #carouselExampleIndicators img {
+    height: auto; /* ajuste o valor como quiser */
+    object-fit: cover; /* garante que a imagem preencha sem distorcer */
+  }
+
+  .carousel .carousel-indicators button{
+    width: 10px;
+    height: 10px;
+    border-radius: 100%;
+  }
+  
+

@@ -1,0 +1,140 @@
+.top-navbar {
+  position: fixed;
+  top: 40px; 
+  left: 0; 
+  width: 100%; 
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 50px;
+  background-color: #f7f9fc;
+  gap: 20px;
+  z-index: 999;
+}
+
+
+.logo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.logo img {
+  width: 120px;
+}
+
+.search-bar {
+  position: relative;
+  flex-grow: 1;
+  max-width: 500px;
+  margin: 0 50px;
+}
+
+.search-input {
+  width: 100%;
+  padding: 13px 20px;
+  padding-right: 45px; 
+  border: none;
+  border-radius: 15px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+input:focus {
+  outline: none;
+}
+
+.search-icon svg {
+  position: absolute;
+  right: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 20px;
+  color: #999;
+}
+
+.search-bar:focus-within .search-icon svg { /*navegador aplica o estilo quando o input está focado dentro da search-bar*/
+  color: #000;
+  stroke: #000; 
+}
+
+.account-cart {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.account-cart button {
+  background: none;
+  border: none;
+  font-size: 14px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  color: #666;
+  transition: color 0.3s;
+}
+
+.account-cart button:hover {
+  color: #000; 
+}
+
+.account-btn::before {
+  margin-right: 8px;
+}
+
+.cart-btn::before {
+  content: '';
+  margin-right: 8px;
+}
+
+.navbar-container {
+  position: fixed; 
+  top: 180px;
+  left: 0;
+  right: 0;
+  margin: 0 auto;
+  max-width: 1200px; 
+  padding: 10px 20px; 
+  z-index: 998;
+}
+
+.navbar {
+  background-color: #0D1B2A; 
+  display: flex;
+  height: 60px;
+  justify-content: center;
+  align-items: center;
+  border-radius: 20px; 
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  padding: 0 30px;
+}
+
+.navbar.hidden {
+  opacity: 0; /* Deixa a navbar invisível */
+  pointer-events: none; /* Impede que a navbar ainda interaja com o clique do mouse */
+  transition: opacity 0.3s ease-out; /* Adiciona transição suave para esconder */
+}
+
+.navbar-list {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  list-style: none;
+  gap: 10em; 
+  padding: 0; 
+  margin: 0;
+}
+
+
+.navbar-list li a {
+  color: #FFFFFF;
+  text-transform: uppercase;
+  font-size: 14px;
+  text-decoration: none;
+}
+
+.navbar-space {
+  height: 20em; 
+}
+
+
