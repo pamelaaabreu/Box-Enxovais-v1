@@ -106,35 +106,71 @@ input:focus {
   align-items: center;
   border-radius: 20px; 
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  padding: 0 30px;
+  padding: 0;
 }
 
 .navbar.hidden {
-  opacity: 0; /* Deixa a navbar invisível */
-  pointer-events: none; /* Impede que a navbar ainda interaja com o clique do mouse */
-  transition: opacity 0.3s ease-out; /* Adiciona transição suave para esconder */
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease-out;
 }
 
 .navbar-list {
   display: flex;
-  align-items: center;
-  justify-content: center;
+  align-items: stretch;
+  justify-content: space-between;
   list-style: none;
-  gap: 10em; 
-  padding: 0; 
+  gap: 0;
+  padding: 0;
   margin: 0;
+  height: 100%;
+  width: 100%;
 }
 
+.navbar-list li {
+  flex: 1; 
+  display: flex;
+  align-items: center;
+  justify-content: center; 
+  height: 100%;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  border-radius: 0;
+}
+
+.navbar-list li:first-child {
+  border-top-left-radius: 20px;
+  border-bottom-left-radius: 20px;
+}
+
+.navbar-list li:last-child {
+  border-top-right-radius: 20px;
+  border-bottom-right-radius: 20px;
+}
+
+.navbar-list li:hover {
+  background-color: #B0C4D6;
+}
 
 .navbar-list li a {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  width: 100%;
+  padding: 0 20px;
   color: #FFFFFF;
   text-transform: uppercase;
   font-size: 14px;
   text-decoration: none;
+  transition: color 0.3s ease;
 }
 
+.navbar-list li:hover a {
+  color: #0E213A;
+}
 .navbar-space {
-  height: 20em; 
+  height: 18em; 
 }
 
 
