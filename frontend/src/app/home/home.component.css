@@ -31,9 +31,37 @@
     color: #3A506B;
   }
 
+.carousel-inner {
+  .carousel-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 10px;
+  }
+}
+
+#carouselExampleIndicators {
+  width: 100%;
+  overflow: hidden;
+}
+
   #carouselExampleIndicators img {
-    height: auto; /* ajuste o valor como quiser */
-    object-fit: cover; /* garante que a imagem preencha sem distorcer */
+    width: 100%;
+    max-height: 770px; /* ajuste esse valor conforme a estética que deseja */
+    object-fit: cover;
+    object-position: center;
+  }
+
+  @media (max-width: 768px) {
+    #carouselExampleIndicators img {
+      max-height: 300px; /* menor altura para mobile */
+    }
+  
+    .btn-comprar-grande {
+      font-size: 16px;
+      padding: 10px 24px;
+      bottom: 15%;
+      left: 8%;
+    }
   }
 
   .carousel .carousel-indicators button{
@@ -42,4 +70,85 @@
     border-radius: 100%;
   }
   
+  .carousel-item {
+    position: relative; 
+  }
+
+  /* Espaçamento e sombra suave no card */
+.card {
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s ease-in-out;
+}
+
+/* Efeito ao passar o mouse */
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+}
+
+/* Imagem do produto ajustada */
+.card-img-top {
+  height: 200px;
+  object-fit: cover;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+}
+
+/* Título do produto */
+.card-title {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #343a40;
+}
+
+/* Descrição */
+.card-text {
+  font-size: 0.95rem;
+  color: #6c757d;
+}
+
+/* Rodapé com preço */
+.card-footer {
+  background-color: #fff;
+  border-top: 1px solid #dee2e6;
+}
+
+/* Preço do produto */
+.card-footer span {
+  font-size: 1rem;
+}
+
+/* Botão personalizado */
+.card-footer .btn {
+  font-size: 0.85rem;
+  padding: 6px 12px;
+  border-radius: 5px;
+}
+
+  
+ /* .btn-comprar-grande {
+    position: absolute;
+    bottom: 24%;
+    left: 10%;
+    background-color: rgba(70, 80, 95, 0.85); 
+    color: white;
+    font-size: 22px;
+    font-weight: bold;
+    text-decoration: none;
+    padding: 12px 36px;
+    border-radius: 50px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    transition: all 0.3s ease;
+    text-align: center;
+    display: inline-block;
+  }
+  
+  .btn-comprar-grande:hover {
+    background-color: rgba(60, 70, 85, 0.95);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
+    transform: translateY(-2px);
+  } */ 
 
