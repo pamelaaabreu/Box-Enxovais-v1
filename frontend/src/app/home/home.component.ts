@@ -3,31 +3,18 @@ import { NavbarComponent } from "../navbar/navbar.component";
 import { FooterComponent } from '../footer/footer.component';
 import { CarouselModule } from 'ngx-bootstrap/carousel';
 import { CommonModule } from '@angular/common';
+import { CardsComponent } from '../cards/cards.component';
+import { ProdutosDestaqueComponent } from "../produtos-destaque/produtos-destaque.component";
 
 @Component({
   selector: 'app-home',
-  imports: [NavbarComponent, FooterComponent, CarouselModule, CommonModule],
+  imports: [NavbarComponent, FooterComponent, CarouselModule, CommonModule, CardsComponent, ProdutosDestaqueComponent],
   templateUrl: './home.component.html',
   styleUrl: './home.component.css',
   encapsulation: ViewEncapsulation.Emulated
 })
 export class HomeComponent {
 
-  produtos = [
-    {
-      nome: 'Camisa X',
-      descricao: 'Camisa 100% algodão, confortável.',
-      preco: 79.99,
-      imagem: 'assets/camisa.jpg'
-    },
-    {
-      nome: 'Tênis Y',
-      descricao: 'Tênis leve e resistente.',
-      preco: 189.90,
-      imagem: 'assets/tenis.jpg'
-    },
-    // ...mais produtos
-  ];
-  
+
 
 }

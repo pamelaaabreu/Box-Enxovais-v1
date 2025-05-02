@@ -1,8 +1,8 @@
 .top-navbar {
   position: fixed;
-  top: 40px; 
-  left: 0; 
-  width: 100%; 
+  top: 40px;
+  left: 0;
+  width: 100%;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -11,7 +11,6 @@
   gap: 20px;
   z-index: 999;
 }
-
 
 .logo {
   display: flex;
@@ -33,10 +32,11 @@
 .search-input {
   width: 100%;
   padding: 13px 20px;
-  padding-right: 45px; 
+  padding-right: 45px;
   border: none;
   border-radius: 15px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  background-color: #fff; /* garante que o fundo fique branco */
+  box-shadow: none; /* remove o quadrado cinza */
 }
 
 input:focus {
@@ -52,9 +52,10 @@ input:focus {
   color: #999;
 }
 
-.search-bar:focus-within .search-icon svg { /*navegador aplica o estilo quando o input está focado dentro da search-bar*/
+.search-bar:focus-within .search-icon svg {
+  /*navegador aplica o estilo quando o input está focado dentro da search-bar*/
   color: #000;
-  stroke: #000; 
+  stroke: #000;
 }
 
 .account-cart {
@@ -75,7 +76,7 @@ input:focus {
 }
 
 .account-cart button:hover {
-  color: #000; 
+  color: #000;
 }
 
 .account-btn::before {
@@ -83,28 +84,28 @@ input:focus {
 }
 
 .cart-btn::before {
-  content: '';
+  content: "";
   margin-right: 8px;
 }
 
 .navbar-container {
-  position: fixed; 
+  position: fixed;
   top: 180px;
   left: 0;
   right: 0;
   margin: 0 auto;
-  max-width: 1200px; 
-  padding: 10px 20px; 
+  max-width: 1200px;
+  padding: 10px 20px;
   z-index: 998;
 }
 
 .navbar {
-  background-color: #0D1B2A; 
+  background-color: #0d1b2a;
   display: flex;
   height: 60px;
   justify-content: center;
   align-items: center;
-  border-radius: 20px; 
+  border-radius: 20px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   padding: 0;
 }
@@ -128,10 +129,10 @@ input:focus {
 }
 
 .navbar-list li {
-  flex: 1; 
+  flex: 1;
   display: flex;
   align-items: center;
-  justify-content: center; 
+  justify-content: center;
   height: 100%;
   cursor: pointer;
   transition: background-color 0.3s ease;
@@ -149,7 +150,7 @@ input:focus {
 }
 
 .navbar-list li:hover {
-  background-color: #B0C4D6;
+  background-color: #b0c4d6;
 }
 
 .navbar-list li a {
@@ -159,7 +160,7 @@ input:focus {
   height: 100%;
   width: 100%;
   padding: 0 20px;
-  color: #FFFFFF;
+  color: #ffffff;
   text-transform: uppercase;
   font-size: 14px;
   text-decoration: none;
@@ -167,10 +168,8 @@ input:focus {
 }
 
 .navbar-list li:hover a {
-  color: #0E213A;
+  color: #0e213a;
 }
 .navbar-space {
-  height: 18em; 
+  height: 18em;
 }
-
-
