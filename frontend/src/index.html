@@ -1,28 +1,30 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-  <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <title>Box Enxovais | Cama, mesa e banho</title>
 
-  </head>
-  <body>
-    <app-root></app-root>
-  </body>
-  
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" type="image/x-icon" href="LOGO.ico" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <title>Box Enxovais | Cama, mesa e banho</title>
+</head>
 
-  <script>
-      window.onscroll = function() {toggleNavbar()};
-    function toggleNavbar() {
-    var navbar = document.querySelector(".navbar"); 
-    if (window.scrollY > 100) { 
+<body>
+  <app-root></app-root>
+
+</body>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+  window.onscroll = function () { toggleNavbar() };
+  function toggleNavbar() {
+    var navbar = document.querySelector(".navbar");
+    if (window.scrollY > 100) {
       navbar.classList.add("hidden"); // Adiciona a classe "hidden" para esconder a navbar
     } else {
       navbar.classList.remove("hidden"); // Remove a classe "hidden" quando a página voltar ao topo
     }
   }
-  </script>
-</html>
+</script>
 
+</html>

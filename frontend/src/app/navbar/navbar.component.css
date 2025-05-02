@@ -7,7 +7,7 @@
   align-items: center;
   justify-content: space-between;
   padding: 0 50px;
-  background-color: #f7f9fc;
+  background-color: #F2F2F2;
   gap: 20px;
   z-index: 999;
 }
@@ -49,7 +49,7 @@ input:focus {
   top: 50%;
   transform: translateY(-50%);
   font-size: 20px;
-  color: #999;
+  color: #1A1A1A;
 }
 
 .search-bar:focus-within .search-icon svg {
@@ -71,7 +71,7 @@ input:focus {
   cursor: pointer;
   display: flex;
   align-items: center;
-  color: #666;
+  color: #1A1A1A;
   transition: color 0.3s;
 }
 

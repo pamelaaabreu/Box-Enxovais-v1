@@ -1,9 +1,10 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
+import { TituloDecoradoComponent } from '../titulo-decorado/titulo-decorado.component';
 
 @Component({
   selector: 'app-produtos-destaque',
-  imports: [CommonModule],
+  imports: [CommonModule, TituloDecoradoComponent],
   templateUrl: './produtos-destaque.component.html',
   styleUrl: './produtos-destaque.component.css'
 })
