@@ -1,0 +1,32 @@
+.container {
+    display: flex;
+    justify-content: space-around;
+    margin-top: 50px;
+  }
+  
+  .card {
+    padding: 20px;
+    width: 200px;
+    border: 1px solid #ccc;
+    border-radius: 20px;
+    text-align: center;
+    box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  .card h2 {
+    font-size: 1.5em;
+  }
+  
+  .card p {
+    font-size: 1em;
+  }
+  
+  .card a {
+    color: #007bff;
+    text-decoration: none;
+  }
+  
+  .card a:hover {
+    text-decoration: underline;
+  }
+  

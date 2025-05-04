@@ -7,7 +7,7 @@
   align-items: center;
   justify-content: space-between;
   padding: 0 50px;
-  background-color: #F2F2F2;
+  background-color: #f2f2f2;
   gap: 20px;
   z-index: 999;
 }
@@ -49,7 +49,7 @@ input:focus {
   top: 50%;
   transform: translateY(-50%);
   font-size: 20px;
-  color: #1A1A1A;
+  color: #1a1a1a;
 }
 
 .search-bar:focus-within .search-icon svg {
@@ -71,7 +71,7 @@ input:focus {
   cursor: pointer;
   display: flex;
   align-items: center;
-  color: #1A1A1A;
+  color: #1a1a1a;
   transition: color 0.3s;
 }
 
@@ -79,13 +79,9 @@ input:focus {
   color: #000;
 }
 
-.account-btn::before {
-  margin-right: 8px;
-}
-
-.cart-btn::before {
-  content: "";
-  margin-right: 8px;
+button {
+  border: none;
+  margin:0;
 }
 
 .navbar-container {

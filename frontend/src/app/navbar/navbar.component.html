@@ -1,6 +1,8 @@
 <div class="top-navbar">
   <div class="logo">
-    <a href="/"><img src="/LOGO.png" alt="Logo" /></a>
+    <a routerLink="/home">
+      <img src="/LOGO.png" alt="Logo" />
+    </a>
   </div>
 
   <div class="search-bar">
@@ -16,7 +18,7 @@
         stroke-width="2"
         stroke-linecap="round"
         stroke-linejoin="round"
-        class="lucide lucide-search-icon lucide-search"
+        class="lucide lucide-search"
       >
         <circle cx="11" cy="11" r="8" />
         <path d="m21 21-4.3-4.3" />
@@ -25,7 +27,7 @@
   </div>
 
   <div class="account-cart">
-    <button class="account-btn">
+    <button [routerLink]="['/minha-conta']" aria-label="Minha conta">
       <svg
         xmlns="http://www.w3.org/2000/svg"
         width="30"
@@ -36,14 +38,15 @@
         stroke-width="2"
         stroke-linecap="round"
         stroke-linejoin="round"
-        class="lucide lucide-user-icon lucide-user"
+        class="lucide lucide-user"
       >
         <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" />
         <circle cx="12" cy="7" r="4" />
       </svg>
       Minha Conta
     </button>
-    <button class="cart-btn">
+
+    <button class="cart-btn" aria-label="Carrinho de compras">
       <svg
         xmlns="http://www.w3.org/2000/svg"
         width="30"
@@ -54,7 +57,7 @@
         stroke-width="2"
         stroke-linecap="round"
         stroke-linejoin="round"
-        class="lucide lucide-shopping-bag-icon lucide-shopping-bag"
+        class="lucide lucide-shopping-bag"
       >
         <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z" />
         <path d="M3 6h18" />
@@ -65,13 +68,13 @@
 </div>
 
 <div class="navbar-container">
-  <nav class="navbar">
+  <nav class="navbar" role="navigation">
     <ul class="navbar-list">
-      <li><a href="http://">cama</a></li>
-      <li><a href="http://">travesseiros</a></li>
-      <li><a href="http://">toalhas</a></li>
-      <li><a href="http://">almofadas</a></li>
-      <li><a href="http://">mesa</a></li>
+      <li><a routerLink="/categoria/cama">Cama</a></li>
+      <li><a routerLink="/categoria/travesseiros">Travesseiros</a></li>
+      <li><a routerLink="/categoria/toalhas">Toalhas</a></li>
+      <li><a routerLink="/categoria/almofadas">Almofadas</a></li>
+      <li><a routerLink="/categoria/mesa">Mesa</a></li>
     </ul>
   </nav>
 </div>
