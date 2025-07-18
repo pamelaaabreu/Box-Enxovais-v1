@@ -35,8 +35,8 @@
   padding-right: 45px;
   border: none;
   border-radius: 15px;
-  background-color: #fff; /* garante que o fundo fique branco */
-  box-shadow: none; /* remove o quadrado cinza */
+  background-color: #fff;
+  box-shadow: none;
 }
 
 input:focus {
@@ -53,7 +53,6 @@ input:focus {
 }
 
 .search-bar:focus-within .search-icon svg {
-  /*navegador aplica o estilo quando o input está focado dentro da search-bar*/
   color: #000;
   stroke: #000;
 }
@@ -62,6 +61,42 @@ input:focus {
   display: flex;
   align-items: center;
   gap: 20px;
+}
+
+.account-buttons {
+  display: flex;
+  gap: 10px;
+}
+
+.account-buttons .cadastro-btn {
+  background-color: #0d1b2a;
+  color: #ffffff;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 15.5px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  transition: background-color 0.3s ease;
+}
+
+.account-buttons .cadastro-btn svg {
+  stroke: #ffffff;
+}
+
+.account-buttons .cadastro-btn:hover {
+  background-color: #091322;
+}
+
+.account-buttons .login-btn {
+  background-color: #ffffff;
+  color: #091322;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 15.5px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
 }
 
 .account-cart button {
@@ -81,7 +116,26 @@ input:focus {
 
 button {
   border: none;
-  margin:0;
+  margin: 0;
+}
+
+.btn-general {
+  display: inline;
+  height: 20px;
+  width: 20px;
+  margin: 10px;
+}
+
+.account-buttons .login-btn,
+.account-buttons .cadastro-btn span {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.account-buttons .cadastro-btn:hover {
+  background-color: #091322;
+  color: #ffffff;
 }
 
 .navbar-container {
@@ -132,7 +186,6 @@ button {
   height: 100%;
   cursor: pointer;
   transition: background-color 0.3s ease;
-  border-radius: 0;
 }
 
 .navbar-list li:first-child {
@@ -166,6 +219,7 @@ button {
 .navbar-list li:hover a {
   color: #0e213a;
 }
+
 .navbar-space {
   height: 18em;
 }
