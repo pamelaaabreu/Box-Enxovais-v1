@@ -1,72 +1,84 @@
-<div class="register-container">
-  <mat-card class="register-card">
-    <mat-card-header>
-      <mat-card-title>Crie sua conta</mat-card-title>
-      <mat-card-subtitle>É rápido e fácil 😉</mat-card-subtitle>
-    </mat-card-header>
+<div class="horizontal-form-container">
+  <!-- Aside com imagem decorativa -->
+  <aside class="form-aside">
+    <img src="/testing.svg" alt="Banner Cadastro" class="aside-image" />
+  </aside>
 
-    <mat-card-content>
-      <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
-        <div class="form-row">
-          <mat-form-field appearance="outline" class="full-width">
-            <mat-label>Nome completo</mat-label>
-            <input
-              matInput
-              formControlName="name"
-              placeholder="Ex: Ana Silva"
-              required
-            />
-          </mat-form-field>
-        </div>
+  <!-- Seção do formulário -->
+  <form (ngSubmit)="onSubmit()" class="form-section">
+    <h2>Cadastre-se</h2>
 
-        <div class="form-row">
-          <mat-form-field appearance="outline" class="full-width">
-            <mat-label>Email</mat-label>
-            <input
-              matInput
-              formControlName="email"
-              placeholder="seuemail@exemplo.com"
-              required
-            />
-          </mat-form-field>
-        </div>
+    <!-- Campos grandes -->
+    <div class="form-field">
+      <label for="name">Nome *</label>
+      <input id="name" formControlName="name" type="text" required />
+    </div>
 
-        <div class="form-row">
-          <mat-form-field appearance="outline" class="full-width">
-            <mat-label>Senha</mat-label>
-            <input
-              matInput
-              formControlName="password"
-              placeholder="******"
-              [type]="hide ? 'password' : 'text'"
-              required
-            />
-            <button
-              mat-icon-button
-              matSuffix
-              (click)="hide = !hide"
-              type="button"
-            >
-              <mat-icon>{{ hide ? "visibility_off" : "visibility" }}</mat-icon>
-            </button>
-          </mat-form-field>
-        </div>
+    <div class="form-field">
+      <label for="email">Email *</label>
+      <input id="email" formControlName="email" type="email" required />
+    </div>
 
-        <div class="form-row">
-          <mat-checkbox formControlName="terms"
-            >Aceito os <a href="#">termos de uso</a></mat-checkbox
-          >
-        </div>
+    <div class="form-field">
+      <label for="birth_date">Data de Nascimento *</label>
+      <input id="birth_date" formControlName="birth_date" type="date" required />
+    </div>
 
-        <button
-          mat-raised-button
-          color="primary"
-          type="submit"
-          [disabled]="registerForm.invalid"
-        >
-          Criar conta
-        </button>
-      </form>
-    </mat-card-content>
-  </mat-card>
+    <!-- Campos lado a lado -->
+    <div class="field-group">
+      <div class="form-field">
+        <label for="cpf">CPF *</label>
+        <input id="cpf" formControlName="cpf" type="text" placeholder="000.000.000-00" required />
+      </div>
+
+      <div class="form-field">
+        <label for="phone">Telefone</label>
+        <input id="phone" formControlName="phone" type="text" />
+      </div>
+    </div>
+
+    <!-- Endereço: Rua -->
+    <div class="form-field">
+      <label for="street">Rua</label>
+      <input id="street" formControlName="street" type="text" />
+    </div>
+
+    <!-- Bairro + Número -->
+    <div class="field-group">
+      <div class="form-field">
+        <label for="neighborhood">Bairro</label>
+        <input id="neighborhood" formControlName="neighborhood" type="text" />
+      </div>
+
+      <div class="form-field">
+        <label for="number">Número</label>
+        <input id="number" formControlName="number" type="text" />
+      </div>
+    </div>
+
+    <!-- CEP + Estado + Cidade -->
+    <div class="field-group">
+      <div class="form-field">
+        <label for="zip_code">CEP</label>
+        <input id="zip_code" formControlName="zip_code" type="text" />
+      </div>
+
+      <div class="form-field">
+        <label for="state">Estado (UF)</label>
+        <input id="state" formControlName="state" type="text" maxlength="2" />
+      </div>
+
+      <div class="form-field">
+        <label for="city">Cidade</label>
+        <input id="city" formControlName="city" type="text" />
+      </div>
+    </div>
+
+    <div class="form-field">
+      <label for="password">Senha *</label>
+      <input id="password" formControlName="password" type="password" required />
+    </div>
+
+    <button type="submit">Cadastrar</button>
+  </form>
 </div>

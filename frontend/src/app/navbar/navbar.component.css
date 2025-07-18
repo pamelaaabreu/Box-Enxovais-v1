@@ -99,6 +99,10 @@ input:focus {
   align-items: center;
 }
 
+a {
+  text-decoration: none;
+}
+
 .account-cart button {
   background: none;
   border: none;
