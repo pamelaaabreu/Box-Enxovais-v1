@@ -1,80 +1,40 @@
 package main
 
-import ( 
-	"database/sql"
-	"fmt"
+import (
+	"backend/db"
+	"backend/handlers"
 	"log"
 	"net/http"
-
-	
-	_ "github.com/lib/pq"
 )
 
-const ( 
-	DBHOST     = "localhost"
-	DBPORT     = 5432
-	DBUSER     = "postgres"
-	DBPASSWORD = "Apolo2024**!"
-	DBNAME     = "bd_box"
-)
+func enableCORS(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		// Define os cabeçalhos de CORS
+		w.Header().Set("Access-Control-Allow-Origin", "http://localhost:4200")
+		w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
+		w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization") // Adicionei Authorization por boas práticas
 
-var db *sql.DB 
+		// Se a requisição for OPTIONS, responda com OK e pare aqui
+		if r.Method == http.MethodOptions {
+			w.WriteHeader(http.StatusOK)
+			return
+		}
 
-func main() {
-	// Constrói a string de conexão com o banco de dados
-	connStr := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable",
-		DBHOST, DBPORT, DBUSER, DBPASSWORD, DBNAME)
-	
-	var err error 
-	
-	// Tenta abrir uma conexão com o banco de dados
-	db, err = sql.Open("postgres", connStr)
-	if err != nil {
-		log.Fatal("Erro ao abrir conexão com o banco de dados:", err)
-	}
-	defer db.Close() 
-
-	// Verifica se a conexão com o banco de dados está funcionando
-	err = db.Ping()
-	if err != nil {
-		log.Fatal("Erro ao conectar ao banco de dados:", err)
-	}	
-	fmt.Println("Conexão com PostgreSQL estabelecida com sucesso!")
-
-	// Associa a URL "/produtos" com a função produtosHandler que vai responder as requisições
-	http.HandleFunc("/produtos", produtosHandler)
-	fmt.Println("Starting server on :8080")
-	err = http.ListenAndServe(":8080", nil)
-	if err != nil {
-		log.Fatal("Erro ao iniciar o servidor:", err)
-	}
+		// Prossiga para o próximo handler na cadeia
+		next.ServeHTTP(w, r)
+	})
 }
 
-// produtosHandler é a função que responde quando alguém acessar "/produtos"
-func produtosHandler(w http.ResponseWriter, r *http.Request) {
-	
-	rows, err := db.Query("SELECT nome FROM produto")
-	if err != nil { // se houver erro na consulta, imrpime o erro
-		log.Println("Erro ao consultar produtos:", err)
-		http.Error(w, "Erro ao buscar produtos", http.StatusInternalServerError)
-		return
-	}
-	defer rows.Close()
-	
-	fmt.Fprintln(w, "Lista de produtos:")
-	
-	// Iterar pelos resultados
-	for rows.Next() {
-		var nome string
-		if err := rows.Scan(&nome); err != nil {
-			log.Println("Erro ao ler produto:", err)
-			continue
-		}
-		fmt.Fprintln(w, "- "+nome)
-	}
-	
-	// Verificar erros durante a iteração
-	if err = rows.Err(); err != nil {
-		log.Println("Erro durante a iteração dos produtos:", err)
-	}
+func main() {
+	db.InitDB()
+
+	// 1. Crie um novo roteador (mux)
+	mux := http.NewServeMux()
+
+	// 2. Registre sua rota no novo roteador, envolvendo o handler com o middleware CORS
+	mux.Handle("/users", enableCORS(http.HandlerFunc(handlers.CreateUser)))
+
+	log.Println("🚀 Servidor rodando na porta 8080")
+	// 3. Inicie o servidor usando o seu roteador personalizado
+	log.Fatal(http.ListenAndServe(":8080", mux))
 }

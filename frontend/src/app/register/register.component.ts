@@ -1,47 +1,51 @@
-import { Component } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { NgModule } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
+import { HttpClient } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
-import { ReactiveFormsModule } from '@angular/forms';
-import { MatCardModule } from '@angular/material/card';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
-import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';
-import { MatCheckboxModule } from '@angular/material/checkbox';
 
 @Component({
   selector: 'app-register',
-  imports: [
-    CommonModule,
-    ReactiveFormsModule,
-    MatCardModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatButtonModule,
-    MatIconModule,
-    MatCheckboxModule,
-  ],
+  standalone: true,
+   imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './register.component.html',
   styleUrl: './register.component.css',
 })
-export class RegisterComponent {
-  registerForm: FormGroup;
-  hide = true;
+export class RegisterComponent implements OnInit{
+  userForm!: FormGroup;
 
-  constructor(private fb: FormBuilder) {
-    this.registerForm = this.fb.group({
+ constructor(private fb: FormBuilder, private http: HttpClient) {}
+
+ngOnInit() {
+    this.userForm = this.fb.group({
       name: ['', Validators.required],
       email: ['', [Validators.required, Validators.email]],
-      password: ['', [Validators.required, Validators.minLength(6)]],
-      terms: [false, Validators.requiredTrue],
+      birthDate: ['', Validators.required],
+      cpf: ['', Validators.required],
+      phone: ['', Validators.required],
+      street: ['', Validators.required],
+      neighborhood: ['', Validators.required],
+      number: ['', Validators.required],
+      zipCode: ['', Validators.required],
+      state: ['', Validators.required],
+      city: ['', Validators.required],
+      password: ['', Validators.required],
     });
   }
 
+ 
   onSubmit() {
-    if (this.registerForm.valid) {
-      console.log('Form enviado:', this.registerForm.value);
-      // Aqui você envia pro backend
+    if (this.userForm.valid) {
+      this.http.post('http://localhost:8080/users', this.userForm.value)
+        .subscribe({
+          next: res => alert('✅ Usuário cadastrado com sucesso!'),
+          error: err => alert('❌ Erro ao cadastrar usuário: ' + err.message)
+        });
+    } else {
+      alert('⚠️ Preencha todos os campos!');
     }
   }
 }
+
+
+
+  

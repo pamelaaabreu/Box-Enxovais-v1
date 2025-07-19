@@ -1,87 +1,19 @@
-<div class="horizontal-form-container">
-  <!-- Aside com imagem decorativa -->
-  <aside class="form-aside">
-    <img src="/testing.svg" alt="Banner Cadastro" class="aside-image" />
-  </aside>
-
-  <!-- Seção do formulário -->
-  <form (ngSubmit)="onSubmit()" class="form-section">
-    <h2>Cadastre-se</h2>
-    <hr class="divider" />
-
-    <!-- Campos grandes -->
-    <div class="form-field">
-      <label for="name">Nome *</label>
-      <input id="name" formControlName="name" type="text" required />
-    </div>
-
-    <div class="form-field">
-      <label for="email">Email *</label>
-      <input id="email" formControlName="email" type="email" required />
-    </div>
-
-    <div class="form-field">
-      <label for="birth_date">Data de Nascimento *</label>
-      <input id="birth_date" formControlName="birth_date" type="date" required />
-    </div>
-
-    <!-- Campos lado a lado -->
-    <div class="field-group">
-      <div class="form-field">
-        <label for="cpf">CPF *</label>
-        <input id="cpf" formControlName="cpf" type="text" placeholder="000.000.000-00" required />
-      </div>
-
-      <div class="form-field">
-        <label for="phone">Telefone</label>
-        <input id="phone" formControlName="phone" type="text" />
-      </div>
-    </div>
-
-    <div class="form-field">
-      <label for="street">Rua</label>
-      <input id="street" formControlName="street" type="text" />
-    </div>
-
-    <div class="field-group">
-      <div class="form-field">
-        <label for="neighborhood">Bairro</label>
-        <input id="neighborhood" formControlName="neighborhood" type="text" />
-      </div>
-
-      <div class="form-field">
-        <label for="number">Número</label>
-        <input id="number" formControlName="number" type="text" />
-      </div>
-    </div>
-
-    <div class="field-group">
-      <div class="form-field">
-        <label for="zip_code">CEP</label>
-        <input id="zip_code" formControlName="zip_code" type="text" />
-      </div>
-
-      <div class="form-field">
-        <label for="state">Estado (UF)</label>
-        <input id="state" formControlName="state" type="text" maxlength="2" />
-      </div>
-
-      <div class="form-field">
-        <label for="city">Cidade</label>
-        <input id="city" formControlName="city" type="text" />
-      </div>
-    </div>
-
-    <div class="form-field">
-      <label for="password">Senha *</label>
-      <input id="password" formControlName="password" type="password" required />
-    </div>
-
-    <button type="submit">Cadastrar</button>
-
-    <div class="login-link">
-      Já tem uma conta?
-      <a href="/login">Faça login</a>
-    </div>
-  </form>
-</div>
+<form [formGroup]="userForm" (ngSubmit)="onSubmit()">
+  <input formControlName="name" placeholder="Nome" />
+  <input formControlName="email" placeholder="Email" />
+  <input
+    formControlName="birthDate"
+    placeholder="Data de Nascimento"
+    type="date"
+  />
+  <input formControlName="cpf" placeholder="CPF" />
+  <input formControlName="phone" placeholder="Telefone" />
+  <input formControlName="street" placeholder="Rua" />
+  <input formControlName="neighborhood" placeholder="Bairro" />
+  <input formControlName="number" placeholder="Número" />
+  <input formControlName="zipCode" placeholder="CEP" />
+  <input formControlName="state" placeholder="Estado" />
+  <input formControlName="city" placeholder="Cidade" />
+  <input formControlName="password" placeholder="Senha" type="password" />
+  <button type="submit">Cadastrar</button>
+</form>
