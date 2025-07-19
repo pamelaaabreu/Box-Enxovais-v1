@@ -116,3 +116,30 @@
     gap: 20px;
   }
 }
+
+/* Divider abaixo do título */
+.divider {
+  border: none;
+  border-top: 2px solid #007bff;
+  width: 60px;
+  margin: 0 auto 30px auto;
+}
+
+/* Link de login */
+.login-link {
+  text-align: center;
+  margin-top: 20px;
+  font-size: 14px;
+  color: #555;
+}
+
+.login-link a {
+  color: #007bff;
+  text-decoration: none;
+  font-weight: 600;
+  margin-left: 5px;
+}
+
+.login-link a:hover {
+  text-decoration: underline;
+}
