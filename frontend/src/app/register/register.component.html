@@ -7,6 +7,7 @@
   <!-- Seção do formulário -->
   <form (ngSubmit)="onSubmit()" class="form-section">
     <h2>Cadastre-se</h2>
+    <hr class="divider" />
 
     <!-- Campos grandes -->
     <div class="form-field">
@@ -37,13 +38,11 @@
       </div>
     </div>
 
-    <!-- Endereço: Rua -->
     <div class="form-field">
       <label for="street">Rua</label>
       <input id="street" formControlName="street" type="text" />
     </div>
 
-    <!-- Bairro + Número -->
     <div class="field-group">
       <div class="form-field">
         <label for="neighborhood">Bairro</label>
@@ -56,7 +55,6 @@
       </div>
     </div>
 
-    <!-- CEP + Estado + Cidade -->
     <div class="field-group">
       <div class="form-field">
         <label for="zip_code">CEP</label>
@@ -80,5 +78,10 @@
     </div>
 
     <button type="submit">Cadastrar</button>
+
+    <div class="login-link">
+      Já tem uma conta?
+      <a href="/login">Faça login</a>
+    </div>
   </form>
 </div>
