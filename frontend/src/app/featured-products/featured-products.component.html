@@ -1,0 +1,11 @@
+<app-titulo-decorado titulo="PRODUTOS EM DESTAQUE"></app-titulo-decorado>
+<div class="products-container">
+  <div class="product-card" *ngFor="let produto of produtos">
+    <img [src]="'/assets/images/' + produto.firstimage" alt="{{ produto.name }}">
+    <h2>{{ produto.name }}</h2>
+    <p>{{ produto.description }}</p>
+    <p>R$ {{ produto.price | number:'1.2-2' }}</p>
+    <button>Comprar</button>
+  </div>
+</div>
+
