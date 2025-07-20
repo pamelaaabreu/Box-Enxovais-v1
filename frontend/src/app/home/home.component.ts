@@ -1,19 +1,21 @@
-import { Component, ViewEncapsulation} from '@angular/core';
-import { NavbarComponent } from "../navbar/navbar.component";
+import { Component, ViewEncapsulation } from '@angular/core';
+import { NavbarComponent } from '../navbar/navbar.component';
 import { FooterComponent } from '../footer/footer.component';
 import { CarouselModule } from 'ngx-bootstrap/carousel';
 import { CommonModule } from '@angular/common';
-import { ProdutosDestaqueComponent } from "../produtos-destaque/produtos-destaque.component";
+import { FeaturedProductsComponent } from '../featured-products/featured-products.component';
 
 @Component({
   selector: 'app-home',
-  imports: [NavbarComponent, FooterComponent, CarouselModule, CommonModule, ProdutosDestaqueComponent],
+  imports: [
+    NavbarComponent,
+    FooterComponent,
+    CarouselModule,
+    CommonModule,
+    FeaturedProductsComponent,
+  ],
   templateUrl: './home.component.html',
   styleUrl: './home.component.css',
-  encapsulation: ViewEncapsulation.Emulated
+  encapsulation: ViewEncapsulation.Emulated,
 })
-export class HomeComponent {
-
-
-
-}
+export class HomeComponent {}

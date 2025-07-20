@@ -1,19 +1,185 @@
-<form [formGroup]="userForm" (ngSubmit)="onSubmit()">
-  <input formControlName="name" placeholder="Nome" />
-  <input formControlName="email" placeholder="Email" />
-  <input
-    formControlName="birthDate"
-    placeholder="Data de Nascimento"
-    type="date"
-  />
-  <input formControlName="cpf" placeholder="CPF" />
-  <input formControlName="phone" placeholder="Telefone" />
-  <input formControlName="street" placeholder="Rua" />
-  <input formControlName="neighborhood" placeholder="Bairro" />
-  <input formControlName="number" placeholder="Número" />
-  <input formControlName="zipCode" placeholder="CEP" />
-  <input formControlName="state" placeholder="Estado" />
-  <input formControlName="city" placeholder="Cidade" />
-  <input formControlName="password" placeholder="Senha" type="password" />
-  <button type="submit">Cadastrar</button>
-</form>
+<div class="form-container">
+  <aside class="form-image">
+    <img src="/testing.svg" alt="" />
+  </aside>
+
+  <div class="form-content">
+    <h2>Crie sua conta</h2>
+    <p class="subtitle">Junte-se ao nosso mundo de conforto e elegância!</p>
+
+    <form [formGroup]="userForm" (ngSubmit)="onSubmit()">
+      <!-- Name -->
+      <div class="input-container">
+        <input
+          class="form-control"
+          formControlName="name"
+          id="name"
+          required
+          placeholder=" "
+        />
+        <label class="floating-label" for="name">Nome completo</label>
+        <div class="input-underline"></div>
+      </div>
+
+      <!-- Email -->
+      <div class="input-container">
+        <input
+          class="form-control"
+          formControlName="email"
+          id="email"
+          type="email"
+          required
+          placeholder=" "
+        />
+        <label class="floating-label" for="email">Email</label>
+        <div class="input-underline"></div>
+      </div>
+
+      <!-- Birth Date + CPF -->
+      <div class="input-row">
+        <div class="input-container">
+          <input
+            class="form-control"
+            formControlName="birthDate"
+            id="birthDate"
+            type="date"
+            required
+            placeholder=" "
+          />
+          <label class="floating-label" for="birthDate"
+            >Data de Nascimento</label
+          >
+          <div class="input-underline"></div>
+        </div>
+
+        <div class="input-container">
+          <input
+            class="form-control"
+            formControlName="cpf"
+            id="cpf"
+            required
+            placeholder=" "
+          />
+          <label class="floating-label" for="cpf">CPF</label>
+          <div class="input-underline"></div>
+        </div>
+      </div>
+
+      <!-- Phone -->
+      <div class="input-container">
+        <input
+          class="form-control"
+          formControlName="phone"
+          id="phone"
+          required
+          placeholder=" "
+        />
+        <label class="floating-label" for="phone">Telefone</label>
+        <div class="input-underline"></div>
+      </div>
+
+      <!-- ZIP Code -->
+      <div class="input-container">
+        <input
+          class="form-control"
+          formControlName="zipCode"
+          id="zipCode"
+          maxlength="8"
+          required
+          placeholder=" "
+          (blur)="onCepBlur()"
+        />
+        <label class="floating-label" for="zipCode">CEP</label>
+        <div class="input-underline"></div>
+      </div>
+
+      <!-- Street -->
+      <div class="input-container">
+        <input
+          class="form-control"
+          formControlName="street"
+          id="street"
+          required
+          placeholder=" "
+        />
+        <label class="floating-label" for="street">Logradouro</label>
+        <div class="input-underline"></div>
+      </div>
+
+      <!-- Neighborhood + Number -->
+      <div class="input-row">
+        <div class="input-container">
+          <input
+            class="form-control"
+            formControlName="neighborhood"
+            id="neighborhood"
+            required
+            placeholder=" "
+          />
+          <label class="floating-label" for="neighborhood">Bairro</label>
+          <div class="input-underline"></div>
+        </div>
+
+        <div class="input-container">
+          <input
+            class="form-control"
+            formControlName="number"
+            id="number"
+            required
+            placeholder=" "
+          />
+          <label class="floating-label" for="number">Número</label>
+          <div class="input-underline"></div>
+        </div>
+      </div>
+
+      <!-- State + City -->
+      <div class="input-row">
+        <div class="input-container small-input">
+          <input
+            class="form-control"
+            formControlName="state"
+            id="state"
+            maxlength="2"
+            required
+            placeholder=" "
+          />
+          <label class="floating-label" for="state">Estado</label>
+          <div class="input-underline"></div>
+        </div>
+
+        <div class="input-container">
+          <input
+            class="form-control"
+            formControlName="city"
+            id="city"
+            required
+            placeholder=" "
+          />
+          <label class="floating-label" for="city">Cidade</label>
+          <div class="input-underline"></div>
+        </div>
+      </div>
+
+      <!-- Password -->
+      <div class="input-container">
+        <input
+          class="form-control"
+          formControlName="password"
+          id="password"
+          type="password"
+          required
+          placeholder=" "
+        />
+        <label class="floating-label" for="password">Senha</label>
+        <div class="input-underline"></div>
+      </div>
+
+      <button type="submit" class="submit-button">Cadastre-se</button>
+
+      <p class="login-text">
+        Já tem uma conta? <a routerLink="/login">Faça login</a>
+      </p>
+    </form>
+  </div>
+</div>
