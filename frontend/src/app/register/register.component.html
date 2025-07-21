@@ -58,6 +58,7 @@
             id="cpf"
             required
             placeholder=" "
+            mask="000.000.000-00"
           />
           <label class="floating-label" for="cpf">CPF *</label>
           <div class="input-underline"></div>
@@ -71,6 +72,7 @@
           id="phone"
           required
           placeholder=" "
+          mask="(00) 00000-0000"
         />
         <label class="floating-label" for="phone">Telefone *</label>
         <div class="input-underline"></div>
@@ -81,10 +83,10 @@
           class="form-control"
           formControlName="zipCode"
           id="zipCode"
-          maxlength="8"
           required
           placeholder=" "
           (blur)="onCepBlur()"
+          mask="00000-000"
         />
         <label class="floating-label" for="zipCode">CEP *</label>
         <div class="input-underline"></div>
