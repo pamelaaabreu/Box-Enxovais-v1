@@ -25,7 +25,7 @@ button {
 }
 
 body {
-  background-color: #E5E4E2;
+  background-color: #e5e4e2;
 }
 
 /* Variáveis de tema */
@@ -213,6 +213,26 @@ body {
   text-decoration: underline;
 }
 
+.validations {
+  padding: 0.2rem 0 0 0.2rem;
+}
+
+.validations div {
+  color: #c62828; 
+  font-size: 0.8rem;
+  font-weight: 500;
+  line-height: 1.4;
+  margin-top: 0.2rem;
+  background: #ffecec; 
+  border-left: 3px solid #c62828;
+  padding: 0.3rem 0.6rem;
+  border-radius: 4px;
+}
+
+.validations div + div {
+  margin-top: 0.4rem;
+}
+
 /* Responsividade */
 @media (max-width: 768px) {
   .form-container {
@@ -233,3 +253,4 @@ body {
     gap: 1rem;
   }
 }
+
