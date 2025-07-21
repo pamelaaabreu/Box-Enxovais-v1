@@ -11,21 +11,4 @@ import { RouterOutlet } from '@angular/router';
 })
 export class AppComponent {
   title = 'frontend';
-
-   navbar: HTMLElement | null = null;
-
-  ngAfterViewInit() {
-    this.navbar = document.querySelector('.navbar');
-  }
-
-    @HostListener('window:scroll', [])
-  onWindowScroll() {
-    if (!this.navbar) return;
-
-    if (window.scrollY > 100) {
-      this.navbar.classList.add('hidden');
-    } else {
-      this.navbar.classList.remove('hidden');
-    }
-  }
 }

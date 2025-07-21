@@ -1,6 +1,10 @@
 /* CSS PARA TIRAR O FOCUS PADRÃO DE TODOS OS NAVEGADORES */
-input:focus, textarea:focus, select:focus,
-button:focus, a:focus, [tabindex]:focus {
+input:focus,
+textarea:focus,
+select:focus,
+button:focus,
+a:focus,
+[tabindex]:focus {
   outline: none !important;
   box-shadow: none !important;
 }
@@ -11,10 +15,17 @@ input::-moz-focus-inner {
 }
 
 /* Remove estilos nativos no Safari */
-input, textarea, select, button {
+input,
+textarea,
+select,
+button {
   -webkit-appearance: none;
   -moz-appearance: none;
   appearance: none;
+}
+
+body {
+  background-color: #E5E4E2;
 }
 
 /* Variáveis de tema */
@@ -28,7 +39,8 @@ input, textarea, select, button {
   --white: #ffffff;
   --border-radius: 30px;
   --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-  --box-shadow: rgba(0, 0, 0, 0.16) 0px 10px 36px 0px, rgba(0, 0, 0, 0.06) 0px 0px 0px 1px;
+  --box-shadow: rgba(0, 0, 0, 0.16) 0px 10px 36px 0px,
+    rgba(0, 0, 0, 0.06) 0px 0px 0px 1px;
 }
 
 /* Reset de estilos do Angular */
@@ -37,24 +49,22 @@ input, textarea, select, button {
   display: none !important;
 }
 
-
 .form-container {
   width: 95%;
-  max-width:1300px;
+  max-width: 1300px;
   margin: 2rem auto;
   display: flex;
-  background: var(--white);
   border-radius: var(--border-radius);
   box-shadow: var(--box-shadow);
   overflow: hidden;
   min-height: 650px;
+  background-color: var(--white);
 }
 
 /* Imagem lateral */
 .form-image {
   flex: 1;
   min-width: 50%;
-  background: var(--secondary);
 }
 
 .form-image img {
@@ -63,7 +73,6 @@ input, textarea, select, button {
   object-fit: cover;
 }
 
-/* Área do formulário */
 .form-content {
   flex: 1.2;
   padding: 3rem 4rem;
@@ -72,22 +81,26 @@ input, textarea, select, button {
 }
 
 .form-content h2 {
-  color: var(--text);
+  color: #92402d;
   margin-bottom: 0.5rem;
-  font-size: 1.8rem;
+  font-size: 2rem;
+  letter-spacing: 1px;
+  text-transform: uppercase;
 }
 
 .subtitle {
-  color: var(--gray);
+  color: #766f79;
   margin-bottom: 2rem;
   font-size: 0.9rem;
+  font-weight: 500;
+  letter-spacing: 0.5px;
 }
 
 /* Container de input */
 .input-container {
   position: relative;
   margin-bottom: 2rem;
-  padding-top: 1.2rem; /* Espaço extra para o label */
+  padding-top: 1.2rem;
 }
 
 /* Input */
@@ -95,12 +108,11 @@ input, textarea, select, button {
   width: 100%;
   padding: 0.8rem 0;
   border: none;
-  border-bottom: 1px solid #e0e0e0;
+  border-bottom: 1px solid #8c868f;
   font-size: 1rem;
   background: transparent;
-  color: var(--text);
+  color: #766f79;
   transition: var(--transition);
-  /* Novas propriedades adicionadas: */
   outline: none;
   box-shadow: none;
   -webkit-appearance: none;
@@ -109,35 +121,32 @@ input, textarea, select, button {
 }
 
 .form-control:focus {
-  border-bottom: 2px solid var(--primary);
-  /* Remove qualquer sombra ou outline residual */
+  border-bottom: 2px solid #766f79;
   outline: none;
   box-shadow: none;
 }
 
-
 /* Label flutuante */
 .floating-label {
   position: absolute;
-  top: 2rem; /* Posição inicial */
+  top: 2rem;
   left: 0;
-  color: var(--gray);
+  color: #766f79;
   font-size: 1rem;
   pointer-events: none;
   transition: var(--transition);
   transform-origin: left center;
 }
 
-/* Efeito do label quando o input está focado ou com valor */
 .form-control:focus ~ .floating-label,
 .form-control:not(:placeholder-shown) ~ .floating-label {
   top: 0.2rem;
   font-size: 0.8rem;
-  color: var(--primary);
+  color: #92402d;
+  letter-spacing: 0.5px;
   transform: translateY(0);
 }
 
-/* Underline animado */
 .input-underline {
   position: absolute;
   bottom: 0;
@@ -152,7 +161,6 @@ input, textarea, select, button {
   width: 100%;
 }
 
-/* Linha com múltiplos inputs */
 .input-row {
   display: flex;
   gap: 1.5rem;
@@ -164,11 +172,10 @@ input, textarea, select, button {
   margin-bottom: 0;
 }
 
-/* Botão de submit */
 .submit-button {
   width: 100%;
   padding: 1rem;
-  background: var(--primary);
+  background: #484449;
   color: var(--white);
   border: none;
   border-radius: var(--border-radius);
@@ -177,10 +184,12 @@ input, textarea, select, button {
   margin-top: 1rem;
   cursor: pointer;
   transition: var(--transition);
+  letter-spacing: 1px;
+  text-transform: uppercase;
 }
 
 .submit-button:hover {
-  background: var(--primary-dark);
+  background: #92402d;
   transform: translateY(-2px);
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
@@ -189,17 +198,18 @@ input, textarea, select, button {
 .login-text {
   text-align: center;
   margin-top: 1.5rem;
-  color: var(--gray);
+  color: #766f79;
   font-size: 0.9rem;
 }
 
-.login-text a {
-  color: var(--primary);
+.login a {
+  color: #92402d !important;
   text-decoration: none;
   font-weight: 500;
+  cursor: pointer !important;
 }
 
-.login-text a:hover {
+.login a:hover {
   text-decoration: underline;
 }
 
@@ -209,15 +219,15 @@ input, textarea, select, button {
     flex-direction: column;
     min-height: auto;
   }
-  
+
   .form-image {
     height: 200px;
   }
-  
+
   .form-content {
     padding: 2rem;
   }
-  
+
   .input-row {
     flex-direction: column;
     gap: 1rem;

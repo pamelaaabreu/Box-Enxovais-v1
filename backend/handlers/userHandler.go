@@ -18,6 +18,7 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
 	var user models.User
+	
 	// 1. Tratamento de erro ao decodificar o JSON do corpo da requisição
 	err := json.NewDecoder(r.Body).Decode(&user)
 	if err != nil {
@@ -26,13 +27,11 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// 2. Query SQL corrigida para usar snake_case (padrão em bancos de dados)
 	query := `
 		INSERT INTO users (name, email, birth_date, cpf, phone, street, neighborhood, number, zip_code, state, city, password)
 		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
 	`
 
-	// 3. Execução da query e tratamento de erro do banco de dados
 	_, err = db.DB.Exec(query, user.Name, user.Email, user.BirthDate, user.CPF, user.Phone,
 		user.Street, user.Neighborhood, user.Number, user.ZipCode, user.State, user.City, user.Password)
 

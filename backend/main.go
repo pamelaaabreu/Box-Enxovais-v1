@@ -12,7 +12,7 @@ func enableCORS(next http.Handler) http.Handler {
 		// Define os cabeçalhos de CORS
 		w.Header().Set("Access-Control-Allow-Origin", "http://localhost:4200")
 		w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
-		w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization") // Adicionei Authorization por boas práticas
+		w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization")
 
 		// Se a requisição for OPTIONS, responda com OK e pare aqui
 		if r.Method == http.MethodOptions {
