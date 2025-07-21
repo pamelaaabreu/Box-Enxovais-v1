@@ -33,7 +33,6 @@ func main() {
 
 	// 2. Registre sua rota no novo roteador, envolvendo o handler com o middleware CORS
 	mux.Handle("/users", enableCORS(http.HandlerFunc(handlers.CreateUser)))
-	mux.Handle("/api/produto", enableCORS(http.HandlerFunc(handlers.GetProduto)))
 
 
 	log.Println("🚀 Servidor rodando na porta 8080")
