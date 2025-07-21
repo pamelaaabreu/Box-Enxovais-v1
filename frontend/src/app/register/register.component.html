@@ -1,6 +1,6 @@
 <div class="form-container">
   <aside class="form-image">
-    <img src="/testing.svg" alt="" />
+    <img src="/bannerForm.svg" alt="Banner do Formulário" />
   </aside>
 
   <div class="form-content">
@@ -8,7 +8,6 @@
     <p class="subtitle">Junte-se ao nosso mundo de conforto e elegância!</p>
 
     <form [formGroup]="userForm" (ngSubmit)="onSubmit()">
-      <!-- Name -->
       <div class="input-container">
         <input
           class="form-control"
@@ -17,7 +16,7 @@
           required
           placeholder=" "
         />
-        <label class="floating-label" for="name">Nome completo</label>
+        <label class="floating-label" for="name">Nome completo *</label>
         <div class="input-underline"></div>
       </div>
 
@@ -31,7 +30,7 @@
           required
           placeholder=" "
         />
-        <label class="floating-label" for="email">Email</label>
+        <label class="floating-label" for="email">Email *</label>
         <div class="input-underline"></div>
       </div>
 
@@ -47,7 +46,7 @@
             placeholder=" "
           />
           <label class="floating-label" for="birthDate"
-            >Data de Nascimento</label
+            >Data de Nascimento *</label
           >
           <div class="input-underline"></div>
         </div>
@@ -60,12 +59,11 @@
             required
             placeholder=" "
           />
-          <label class="floating-label" for="cpf">CPF</label>
+          <label class="floating-label" for="cpf">CPF *</label>
           <div class="input-underline"></div>
         </div>
       </div>
 
-      <!-- Phone -->
       <div class="input-container">
         <input
           class="form-control"
@@ -74,11 +72,10 @@
           required
           placeholder=" "
         />
-        <label class="floating-label" for="phone">Telefone</label>
+        <label class="floating-label" for="phone">Telefone *</label>
         <div class="input-underline"></div>
       </div>
 
-      <!-- ZIP Code -->
       <div class="input-container">
         <input
           class="form-control"
@@ -89,11 +86,10 @@
           placeholder=" "
           (blur)="onCepBlur()"
         />
-        <label class="floating-label" for="zipCode">CEP</label>
+        <label class="floating-label" for="zipCode">CEP *</label>
         <div class="input-underline"></div>
       </div>
 
-      <!-- Street -->
       <div class="input-container">
         <input
           class="form-control"
@@ -102,11 +98,10 @@
           required
           placeholder=" "
         />
-        <label class="floating-label" for="street">Logradouro</label>
+        <label class="floating-label" for="street">Logradouro *</label>
         <div class="input-underline"></div>
       </div>
 
-      <!-- Neighborhood + Number -->
       <div class="input-row">
         <div class="input-container">
           <input
@@ -116,7 +111,7 @@
             required
             placeholder=" "
           />
-          <label class="floating-label" for="neighborhood">Bairro</label>
+          <label class="floating-label" for="neighborhood">Bairro *</label>
           <div class="input-underline"></div>
         </div>
 
@@ -128,12 +123,11 @@
             required
             placeholder=" "
           />
-          <label class="floating-label" for="number">Número</label>
+          <label class="floating-label" for="number">Número *</label>
           <div class="input-underline"></div>
         </div>
       </div>
 
-      <!-- State + City -->
       <div class="input-row">
         <div class="input-container small-input">
           <input
@@ -144,7 +138,7 @@
             required
             placeholder=" "
           />
-          <label class="floating-label" for="state">Estado</label>
+          <label class="floating-label" for="state">Estado *</label>
           <div class="input-underline"></div>
         </div>
 
@@ -156,7 +150,7 @@
             required
             placeholder=" "
           />
-          <label class="floating-label" for="city">Cidade</label>
+          <label class="floating-label" for="city">Cidade *</label>
           <div class="input-underline"></div>
         </div>
       </div>
@@ -171,14 +165,14 @@
           required
           placeholder=" "
         />
-        <label class="floating-label" for="password">Senha</label>
+        <label class="floating-label" for="password">Senha *</label>
         <div class="input-underline"></div>
       </div>
 
       <button type="submit" class="submit-button">Cadastre-se</button>
 
       <p class="login-text">
-        Já tem uma conta? <a routerLink="/login">Faça login</a>
+        Já tem uma conta? <a class="login" routerLink="/login">Faça login</a>
       </p>
     </form>
   </div>
