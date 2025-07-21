@@ -22,6 +22,7 @@ import { NgxMaskDirective } from 'ngx-mask';
 export class RegisterComponent implements OnInit {
   userForm!: FormGroup;
 
+  
   constructor(
     private fb: FormBuilder,
     private http: HttpClient,
@@ -41,7 +42,14 @@ export class RegisterComponent implements OnInit {
       zipCode: ['', Validators.required],
       state: ['', Validators.required],
       city: ['', Validators.required],
-      password: ['', Validators.required],
+      password: [
+        '',
+        [
+          Validators.required,
+          Validators.minLength(6),
+          Validators.pattern(/^(?=.*[!@#$%^&*(),.?":{}|<>])/),
+        ],
+      ],
     });
   }
 

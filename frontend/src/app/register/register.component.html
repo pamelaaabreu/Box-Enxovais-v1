@@ -167,6 +167,21 @@
           required
           placeholder=" "
         />
+        <div
+          class="validations"
+          *ngIf="
+            userForm.get('password')?.errors &&
+            userForm.get('password')?.touched
+          "
+        >
+          <div *ngIf="userForm.get('password')?.errors?.['minlength']">
+            A senha deve ter pelo menos 6 caracteres.
+          </div>
+          <div *ngIf="userForm.get('password')?.errors?.['pattern']">
+            A senha deve ter pelo menos 1 símbolo especial.
+          </div>
+        </div>
+
         <label class="floating-label" for="password">Senha *</label>
         <div class="input-underline"></div>
       </div>
