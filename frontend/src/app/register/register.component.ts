@@ -9,19 +9,24 @@ import { HttpClient } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 import { tap } from 'rxjs/operators';
 import { Router } from '@angular/router';
+import { NgxMaskDirective } from 'ngx-mask';
 
 @Component({
   selector: 'app-register',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, NgxMaskDirective],
   templateUrl: './register.component.html',
   styleUrl: './register.component.css',
-   encapsulation: ViewEncapsulation.None
+  encapsulation: ViewEncapsulation.None,
 })
 export class RegisterComponent implements OnInit {
   userForm!: FormGroup;
 
-  constructor(private fb: FormBuilder, private http: HttpClient, private router:Router) {}
+  constructor(
+    private fb: FormBuilder,
+    private http: HttpClient,
+    private router: Router
+  ) {}
 
   ngOnInit() {
     this.userForm = this.fb.group({
@@ -86,21 +91,19 @@ export class RegisterComponent implements OnInit {
     });
   }
 
- onSubmit() {
-  if (this.userForm.valid) {
-    this.http
-      .post('http://localhost:8080/users', this.userForm.value)
-      .subscribe({
-        next: (res) => {
-          alert('✅ Usuário cadastrado com sucesso!');
-          this.router.navigate(['/home']); 
-        },
-        error: (err) =>
-          alert('❌ Erro ao cadastrar usuário: ' + err.message),
-      });
-  } else {
-    alert('⚠️ Preencha todos os campos!');
+  onSubmit() {
+    if (this.userForm.valid) {
+      this.http
+        .post('http://localhost:8080/users', this.userForm.value)
+        .subscribe({
+          next: (res) => {
+            alert('✅ Usuário cadastrado com sucesso!');
+            this.router.navigate(['/home']);
+          },
+          error: (err) => alert('❌ Erro ao cadastrar usuário: ' + err.message),
+        });
+    } else {
+      alert('⚠️ Preencha todos os campos!');
+    }
   }
-}
-
 }
