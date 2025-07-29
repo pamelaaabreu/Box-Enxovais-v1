@@ -1,8 +1,9 @@
 import { ApplicationConfig, importProvidersFrom } from '@angular/core';
 import { provideRouter } from '@angular/router';
 import { provideHttpClient, withFetch } from '@angular/common/http';
-import { provideNgxMask } from 'ngx-mask'; 
-
+import { provideNgxMask } from 'ngx-mask';
+import Swal from 'sweetalert2';
+import { provideAnimations } from '@angular/platform-browser/animations';
 import { routes } from './app.routes';
 import {
   provideClientHydration,
@@ -12,8 +13,10 @@ import {
 export const appConfig: ApplicationConfig = {
   providers: [
     provideRouter(routes),
-    provideHttpClient(withFetch()), 
+    provideHttpClient(withFetch()),
     provideClientHydration(withEventReplay()),
-    provideNgxMask(), 
+    provideNgxMask(),
+    provideAnimations(),
+    { provide: 'Swal', useValue: Swal },
   ],
 };
