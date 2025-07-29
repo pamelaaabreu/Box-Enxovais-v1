@@ -1,42 +1,42 @@
-<div class="form-container">
+<div class="form-container compact-form">
   <aside class="form-image">
     <img src="/bannerForm.svg" alt="Banner do Formulário" />
   </aside>
 
   <div class="form-content">
     <h2>Crie sua conta</h2>
+    <div class="modern-divider"></div>
     <p class="subtitle">Junte-se ao nosso mundo de conforto e elegância!</p>
 
     <form [formGroup]="userForm" (ngSubmit)="onSubmit()">
-      <div class="input-container">
-        <input
-          class="form-control"
-          formControlName="name"
-          id="name"
-          required
-          placeholder=" "
-        />
-        <label class="floating-label" for="name">Nome completo *</label>
-        <div class="input-underline"></div>
+      <div class="form-row">
+        <div class="input-container extra-large-field">
+          <input
+            class="form-control"
+            formControlName="name"
+            id="name"
+            required
+            placeholder=" "
+          />
+          <label class="floating-label" for="name">Nome completo *</label>
+          <div class="input-underline"></div>
+        </div>
+        <div class="input-container large-field">
+          <input
+            class="form-control"
+            formControlName="email"
+            id="email"
+            type="email"
+            required
+            placeholder=" "
+          />
+          <label class="floating-label" for="email">Email *</label>
+          <div class="input-underline"></div>
+        </div>
       </div>
 
-      <!-- Email -->
-      <div class="input-container">
-        <input
-          class="form-control"
-          formControlName="email"
-          id="email"
-          type="email"
-          required
-          placeholder=" "
-        />
-        <label class="floating-label" for="email">Email *</label>
-        <div class="input-underline"></div>
-      </div>
-
-      <!-- Birth Date + CPF -->
-      <div class="input-row">
-        <div class="input-container">
+      <div class="form-row">
+        <div class="input-container birthdate-field">
           <input
             class="form-control"
             formControlName="birthDate"
@@ -45,13 +45,10 @@
             required
             placeholder=" "
           />
-          <label class="floating-label" for="birthDate"
-            >Data de Nascimento *</label
-          >
+          <label class="floating-label" for="birthDate">Data Nasc. *</label>
           <div class="input-underline"></div>
         </div>
-
-        <div class="input-container">
+        <div class="input-container medium-field">
           <input
             class="form-control"
             formControlName="cpf"
@@ -63,48 +60,45 @@
           <label class="floating-label" for="cpf">CPF *</label>
           <div class="input-underline"></div>
         </div>
+        <div class="input-container medium-field">
+          <input
+            class="form-control"
+            formControlName="phone"
+            id="phone"
+            required
+            placeholder=" "
+            mask="(00) 00000-0000"
+          />
+          <label class="floating-label" for="phone">Telefone *</label>
+          <div class="input-underline"></div>
+        </div>
+        <div class="input-container cep-field">
+          <input
+            class="form-control"
+            formControlName="zipCode"
+            id="zipCode"
+            required
+            placeholder=" "
+            (blur)="onCepBlur()"
+            mask="00000-000"
+          />
+          <label class="floating-label" for="zipCode">CEP *</label>
+          <div class="input-underline"></div>
+        </div>
       </div>
 
-      <div class="input-container">
-        <input
-          class="form-control"
-          formControlName="phone"
-          id="phone"
-          required
-          placeholder=" "
-          mask="(00) 00000-0000"
-        />
-        <label class="floating-label" for="phone">Telefone *</label>
-        <div class="input-underline"></div>
-      </div>
-
-      <div class="input-container">
-        <input
-          class="form-control"
-          formControlName="zipCode"
-          id="zipCode"
-          required
-          placeholder=" "
-          (blur)="onCepBlur()"
-          mask="00000-000"
-        />
-        <label class="floating-label" for="zipCode">CEP *</label>
-        <div class="input-underline"></div>
-      </div>
-
-      <div class="input-container">
-        <input
-          class="form-control"
-          formControlName="street"
-          id="street"
-          required
-          placeholder=" "
-        />
-        <label class="floating-label" for="street">Logradouro *</label>
-        <div class="input-underline"></div>
-      </div>
-
-      <div class="input-row">
+      <div class="form-row">
+        <div class="input-container">
+          <input
+            class="form-control"
+            formControlName="street"
+            id="street"
+            required
+            placeholder=" "
+          />
+          <label class="floating-label" for="street">Logradouro *</label>
+          <div class="input-underline"></div>
+        </div>
         <div class="input-container">
           <input
             class="form-control"
@@ -116,8 +110,7 @@
           <label class="floating-label" for="neighborhood">Bairro *</label>
           <div class="input-underline"></div>
         </div>
-
-        <div class="input-container">
+        <div class="input-container small-field">
           <input
             class="form-control"
             formControlName="number"
@@ -130,8 +123,8 @@
         </div>
       </div>
 
-      <div class="input-row">
-        <div class="input-container small-input">
+      <div class="form-row">
+        <div class="input-container state-field">
           <input
             class="form-control"
             formControlName="state"
@@ -143,7 +136,6 @@
           <label class="floating-label" for="state">Estado *</label>
           <div class="input-underline"></div>
         </div>
-
         <div class="input-container">
           <input
             class="form-control"
@@ -155,35 +147,36 @@
           <label class="floating-label" for="city">Cidade *</label>
           <div class="input-underline"></div>
         </div>
-      </div>
-
-      <!-- Password -->
-      <div class="input-container">
-        <input
-          class="form-control"
-          formControlName="password"
-          id="password"
-          type="password"
-          required
-          placeholder=" "
-        />
-        <div
-          class="validations"
-          *ngIf="
-            userForm.get('password')?.errors &&
-            userForm.get('password')?.touched
-          "
-        >
-          <div *ngIf="userForm.get('password')?.errors?.['minlength']">
-            A senha deve ter pelo menos 6 caracteres.
-          </div>
-          <div *ngIf="userForm.get('password')?.errors?.['pattern']">
-            A senha deve ter pelo menos 1 símbolo especial.
+        <div class="input-container password-container">
+          <input
+            class="form-control"
+            formControlName="password"
+            id="password"
+            type="password"
+            required
+            placeholder=" "
+          />
+          <label class="floating-label" for="password">Senha *</label>
+          <div class="input-underline"></div>
+          <div
+            class="validations"
+            *ngIf="
+              userForm.get('password')?.errors &&
+              userForm.get('password')?.touched
+            "
+          >
+            <div *ngIf="userForm.get('password')?.errors?.['minlength']">
+              A senha deve ter pelo menos 6 caracteres.
+            </div>
+            <div *ngIf="userForm.get('password')?.errors?.['pattern']">
+              A senha deve ter pelo menos 1 símbolo especial.
+            </div>
           </div>
         </div>
-
-        <label class="floating-label" for="password">Senha *</label>
-        <div class="input-underline"></div>
+      </div>
+      <div class="terms-container">
+        <input type="checkbox" id="terms" required />
+        <label for="terms"> Eu concordo com os Termos de Uso</label>
       </div>
 
       <button type="submit" class="submit-button">Cadastre-se</button>
