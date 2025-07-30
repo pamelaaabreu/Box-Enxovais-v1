@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
+	"github.com/lib/pq"
 )
 
 func CreateUser(w http.ResponseWriter, r *http.Request) {
@@ -18,7 +19,7 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
 	var user models.User
-	
+
 	// 1. Tratamento de erro ao decodificar o JSON do corpo da requisição
 	err := json.NewDecoder(r.Body).Decode(&user)
 	if err != nil {
@@ -34,14 +35,25 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 
 	_, err = db.DB.Exec(query, user.Name, user.Email, user.BirthDate, user.CPF, user.Phone,
 		user.Street, user.Neighborhood, user.Number, user.ZipCode, user.State, user.City, user.Password)
-
 	if err != nil {
-		// ESTE É O LOG MAIS IMPORTANTE! O erro do banco aparecerá aqui no seu terminal.
 		log.Printf("ERRO AO INSERIR NO BANCO DE DADOS: %v", err)
-		http.Error(w, "Erro interno ao tentar criar usuário", http.StatusInternalServerError) // Erro do servidor (500)
+
+		// Verificar se o erro é de constraint UNIQUE
+		if pqErr, ok := err.(*pq.Error); ok {
+			if pqErr.Code == "23505" { 
+				if pqErr.Constraint == "unique_email" {
+					w.WriteHeader(http.StatusConflict) 
+					json.NewEncoder(w).Encode(map[string]string{"error": "email_duplicado"})
+					return
+				} else if pqErr.Constraint == "unique_cpf" {
+					w.WriteHeader(http.StatusConflict) 
+					json.NewEncoder(w).Encode(map[string]string{"error": "cpf_duplicado"})
+					return
+				}
+			}
+		}
+
+		http.Error(w, "Erro interno ao tentar criar usuário", http.StatusInternalServerError)
 		return
 	}
-
-	w.WriteHeader(http.StatusCreated)
-	json.NewEncoder(w).Encode(map[string]string{"message": "Usuário criado com sucesso!"})
 }
