@@ -158,7 +158,7 @@ export class RegisterComponent implements OnInit {
                   </div>
                 `,
                 icon: 'error',
-                confirmButtonText: 'Entendi',
+                confirmButtonText: 'Entendi!',
                 confirmButtonColor: '#92402d',
                 background: '#f5f5f5',
                 customClass: {
@@ -182,7 +182,7 @@ export class RegisterComponent implements OnInit {
                   </div>
                 `,
                 icon: 'error',
-                confirmButtonText: 'Entendi',
+                confirmButtonText: 'Entendi!',
                 confirmButtonColor: '#92402d',
                 background: '#f5f5f5',
                 customClass: {
