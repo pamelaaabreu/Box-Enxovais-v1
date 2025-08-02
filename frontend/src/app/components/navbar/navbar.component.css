@@ -1,0 +1,229 @@
+.top-navbar {
+  position: fixed;
+  top: 40px;
+  left: 0;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 50px;
+  background-color: #f2f2f2;
+  gap: 20px;
+  z-index: 999;
+}
+
+.logo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.logo img {
+  width: 120px;
+}
+
+.search-bar {
+  position: relative;
+  flex-grow: 1;
+  max-width: 500px;
+  margin: 0 50px;
+}
+
+.search-input {
+  width: 100%;
+  padding: 13px 20px;
+  padding-right: 45px;
+  border: none;
+  border-radius: 15px;
+  background-color: #fff;
+  box-shadow: none;
+}
+
+input:focus {
+  outline: none;
+}
+
+.search-icon svg {
+  position: absolute;
+  right: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 20px;
+  color: #1a1a1a;
+}
+
+.search-bar:focus-within .search-icon svg {
+  color: #000;
+  stroke: #000;
+}
+
+.account-cart {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.account-buttons {
+  display: flex;
+  gap: 10px;
+}
+
+.account-buttons .cadastro-btn {
+  background-color: #0d1b2a;
+  color: #ffffff;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 15.5px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  transition: background-color 0.3s ease;
+}
+
+.account-buttons .cadastro-btn svg {
+  stroke: #ffffff;
+}
+
+.account-buttons .cadastro-btn:hover {
+  background-color: #091322;
+}
+
+.account-buttons .login-btn {
+  background-color: #ffffff;
+  color: #091322;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 15.5px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+}
+
+a {
+  text-decoration: none;
+}
+
+.account-cart button {
+  background: none;
+  border: none;
+  font-size: 14px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  color: #1a1a1a;
+  transition: color 0.3s;
+}
+
+.account-cart button:hover {
+  color: #000;
+}
+
+button {
+  border: none;
+  margin: 0;
+}
+
+.btn-general {
+  display: inline;
+  height: 20px;
+  width: 20px;
+  margin: 10px;
+}
+
+.account-buttons .login-btn,
+.account-buttons .cadastro-btn span {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.account-buttons .cadastro-btn:hover {
+  background-color: #091322;
+  color: #ffffff;
+}
+
+.navbar-container {
+  position: fixed;
+  top: 180px;
+  left: 0;
+  right: 0;
+  margin: 0 auto;
+  max-width: 1200px;
+  padding: 10px 20px;
+  z-index: 998;
+}
+
+.navbar {
+  background-color: #0d1b2a;
+  display: flex;
+  height: 60px;
+  justify-content: center;
+  align-items: center;
+  border-radius: 20px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  padding: 0;
+}
+
+.navbar.hidden {
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease-out;
+}
+
+.navbar-list {
+  display: flex;
+  align-items: stretch;
+  justify-content: space-between;
+  list-style: none;
+  gap: 0;
+  padding: 0;
+  margin: 0;
+  height: 100%;
+  width: 100%;
+}
+
+.navbar-list li {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.navbar-list li:first-child {
+  border-top-left-radius: 20px;
+  border-bottom-left-radius: 20px;
+}
+
+.navbar-list li:last-child {
+  border-top-right-radius: 20px;
+  border-bottom-right-radius: 20px;
+}
+
+.navbar-list li:hover {
+  background-color: #b0c4d6;
+}
+
+.navbar-list li a {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  width: 100%;
+  padding: 0 20px;
+  color: #ffffff;
+  text-transform: uppercase;
+  font-size: 14px;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.navbar-list li:hover a {
+  color: #0e213a;
+}
+
+.navbar-space {
+  height: 18em;
+}

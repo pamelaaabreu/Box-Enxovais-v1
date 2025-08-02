@@ -1,0 +1,74 @@
+<div class="top-navbar">
+  <div class="logo">
+    <a routerLink="/home">
+      <img src="/LOGO.png" alt="Logo" />
+    </a>
+  </div>
+
+  <div class="search-bar">
+    <input type="text" placeholder="O que você procura?" class="search-input" />
+    <span class="search-icon">
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="24"
+        height="24"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        class="lucide lucide-search"
+      >
+        <circle cx="11" cy="11" r="8" />
+        <path d="m21 21-4.3-4.3" />
+      </svg>
+    </span>
+  </div>
+
+  <div class="account-cart">
+    <div class="account-buttons">
+      <button class="login-btn">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-log-in-icon lucide-log-in"><path d="m10 17 5-5-5-5"/><path d="M15 12H3"/><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/></svg>
+        Login</button>
+      <a class="cadastro-btn" routerLink="/register">
+        <span >
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-user-round-icon lucide-user-round"><circle cx="12" cy="8" r="5"/><path d="M20 21a8 8 0 0 0-16 0"/></svg>
+          Cadastro</span>
+        </a>
+    </div>
+
+    <button class="cart-btn" aria-label="Carrinho de compras">
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="30"
+        height="30"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        class="lucide lucide-shopping-bag"
+      >
+        <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z" />
+        <path d="M3 6h18" />
+        <path d="M16 10a4 4 0 0 1-8 0" />
+      </svg>
+    </button>
+  </div>
+</div>
+
+<div class="navbar-container">
+  <nav class="navbar" role="navigation">
+    <ul class="navbar-list">
+      <li><a routerLink="/categoria/cama">Cama</a></li>
+      <li><a routerLink="/categoria/travesseiros">Travesseiros</a></li>
+      <li><a routerLink="/categoria/toalhas">Toalhas</a></li>
+      <li><a routerLink="/categoria/almofadas">Almofadas</a></li>
+      <li><a routerLink="/categoria/mesa">Mesa</a></li>
+    </ul>
+  </nav>
+</div>
+
+<div class="navbar-space"></div>

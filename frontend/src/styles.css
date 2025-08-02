@@ -1,17 +1,75 @@
-@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap");
 
 :root {
   --swal2-confirm: #92402d;
   --swal2-border-radius: 30px;
-  --swal2-icon-offset: 15px; /* Novo: controle do posicionamento do ícone */
+  --swal2-icon-offset: 15px;
 }
 
-* {
+*,
+*::before,
+*::after {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  font-family: 'Montserrat', sans-serif;
+  font-family: "Montserrat", sans-serif;
 }
+
+html,
+body {
+  height: 100%;
+  line-height: 1.5;
+}
+
+ul,
+ol {
+  list-style: none;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+img {
+  max-width: 100%;
+  display: block;
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+  background: none;
+  border: none;
+  outline: none;
+}
+
+input,
+textarea,
+select {
+  width: 100%;
+  border: none;
+  border-radius: 4px;
+  padding: 0.75em 1em;
+  box-shadow: none !important;
+  transition: all 0.2s ease;
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+  outline: none !important;
+  box-shadow: none !important;
+  -webkit-box-shadow: none !important;
+  border: none !important;
+  background: transparent !important;
+}
+
+/* =====================================================
+   SWEETALERT Customizado
+===================================================== */
 
 .swal2-container {
   z-index: 99999 !important;
@@ -33,10 +91,9 @@
   flex-direction: column !important;
   align-items: center !important;
   overflow: visible !important;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15) !important;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15) !important; 
 }
 
-/* Ajustes específicos para o ícone */
 .swal2-icon {
   width: 5em !important;
   height: 5em !important;
@@ -46,11 +103,10 @@
   order: 0 !important;
 }
 
-.swal2-success [class^=swal2-success-line] {
+.swal2-success [class^="swal2-success-line"] {
   height: 0.25em !important;
 }
 
-/* Título e conteúdo */
 .swal2-title {
   order: 1 !important;
   margin: 0.5em 0 0.25em !important;
@@ -68,7 +124,6 @@
   line-height: 1.5 !important;
 }
 
-/* Botões */
 .swal2-actions {
   order: 3 !important;
   margin: 0 !important;
@@ -79,7 +134,7 @@
 .swal2-confirm {
   background-color: var(--swal2-confirm) !important;
   padding: 0.75em 2em !important;
-  border-radius: 50px !important;
+  border-radius: 50px !important; 
   font-weight: 500 !important;
   font-size: 1rem !important;
   transition: all 0.2s ease !important;
@@ -90,6 +145,7 @@
   box-shadow: 0 4px 8px rgba(146, 64, 45, 0.3) !important;
 }
 
-.swal2-show, .swal2-hide {
+.swal2-show,
+.swal2-hide {
   animation: none !important;
 }
