@@ -4,13 +4,28 @@ import {
   FormGroup,
   Validators,
   ReactiveFormsModule,
+  AbstractControl,
+  ValidationErrors,
+  ValidatorFn,
 } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { NgxMaskDirective } from 'ngx-mask';
 import Swal from 'sweetalert2';
-import { AbstractControl, ValidationErrors } from '@angular/forms';
+import { SweetAlertService } from '../../../services/sweet-alert.service';
+
+export class CepValidators {
+  static cepInvalido(): ValidatorFn {
+    return (control: AbstractControl): ValidationErrors | null => {
+      const cep = control.value?.replace(/\D/g, '');
+      if (cep && /^(\d)\1{7}$/.test(cep)) {
+        return { cepInvalido: true };
+      }
+      return null;
+    };
+  }
+}
 
 @Component({
   selector: 'app-register',
@@ -22,11 +37,27 @@ import { AbstractControl, ValidationErrors } from '@angular/forms';
 })
 export class RegisterComponent implements OnInit {
   userForm!: FormGroup;
+  private ultimoCepValidado: string = '';
+  private fieldNamesMap: Record<string, string> = {
+    name: 'Nome completo',
+    email: 'E-mail',
+    birthDate: 'Data de nascimento',
+    cpf: 'CPF',
+    phone: 'Telefone',
+    street: 'Logradouro',
+    neighborhood: 'Bairro',
+    number: 'Número',
+    zipCode: 'CEP',
+    state: 'Estado',
+    city: 'Cidade',
+    password: 'Senha',
+  };
 
   constructor(
     private fb: FormBuilder,
     private http: HttpClient,
     private router: Router,
+    private alertService: SweetAlertService,
     @Inject('Swal') private swal: typeof Swal
   ) {}
 
@@ -40,7 +71,7 @@ export class RegisterComponent implements OnInit {
       street: ['', Validators.required],
       neighborhood: ['', Validators.required],
       number: ['', Validators.required],
-      zipCode: ['', Validators.required],
+      zipCode: ['', [Validators.required, CepValidators.cepInvalido()]],
       state: ['', Validators.required],
       city: ['', Validators.required],
       password: [
@@ -55,45 +86,7 @@ export class RegisterComponent implements OnInit {
   }
 
   onCepBlur() {
-    const cep = this.userForm.get('zipCode')?.value?.replace(/\D/g, '');
-
-    if (cep && cep.length === 8) {
-      this.http.get(`https://viacep.com.br/ws/${cep}/json/`).subscribe({
-        next: (dados: any) => {
-          Swal.close();
-          if (dados.erro) {
-            Swal.fire({
-              title: 'CEP não encontrado',
-              text: 'Verifique o CEP digitado.',
-              scrollbarPadding: false,
-              icon: 'warning',
-              customClass: {
-                container: 'custom-swal-container',
-              },
-              confirmButtonColor: '#92402d',
-              background: '#f5f5f5',
-            });
-            this.resetEndereco();
-          } else {
-            this.patchEndereco(dados);
-          }
-        },
-        error: () => {
-          Swal.fire({
-            title: 'Erro na consulta',
-            text: 'Serviço indisponível no momento.',
-            icon: 'error',
-            customClass: {
-              container: 'custom-swal-container',
-            },
-            scrollbarPadding: false,
-            confirmButtonColor: '#92402d',
-            background: '#f5f5f5',
-          });
-          this.resetEndereco();
-        },
-      });
-    }
+    this.validateCepOnBlur();
   }
 
   private patchEndereco(dados: any) {
@@ -114,195 +107,123 @@ export class RegisterComponent implements OnInit {
     });
   }
 
-  onSubmit() {
-    // Verifica se o usuário tem menos de 18 anos
-    if (this.userForm.get('birthDate')?.errors?.['minAge']) {
-      Swal.fire({
-        title: 'Idade insuficiente',
-        text: 'Você deve ter 18 anos ou mais para se cadastrar.',
-        icon: 'warning',
-        confirmButtonColor: '#92402d',
-        background: '#f5f5f5',
-        customClass: {
-          container: 'custom-swal-container',
-        },
-      });
+  private validateCepOnBlur(): void {
+    const cepControl = this.userForm.get('zipCode');
+    const cep = cepControl?.value?.replace(/\D/g, '');
+
+    if (cep === this.ultimoCepValidado) {
       return;
     }
-    
-    if (this.userForm.valid) {
-      Swal.fire({
-        title: 'Criando sua conta...',
-        allowOutsideClick: false,
-        customClass: {
-          container: 'custom-swal-container',
-        },
-        didOpen: () => Swal.showLoading(),
-        background: '#f5f5f5',
-      });
 
-      this.http
-        .post('http://localhost:8080/users', this.userForm.value)
-        .subscribe({
-          next: () => {
-            Swal.fire({
-              title: 'Cadastro concluído!',
-              text: 'Sua conta foi criada com sucesso.',
-              icon: 'success',
-              confirmButtonText: 'Ir para a página inicial',
-              confirmButtonColor: '#92402d',
-              background: '#f5f5f5',
-              scrollbarPadding: false,
-              willClose: () => this.router.navigate(['/home']),
-            });
-          },
-          error: (err) => {
-            const errorMsg = this.getErrorMessage(err);
+    this.ultimoCepValidado = cep;
+    if (cepControl?.invalid) {
+      return;
+    }
 
-            if (errorMsg === 'email_duplicado') {
-              Swal.fire({
-                title: 'E-mail já cadastrado',
-                html: `
-                  <div style="display: flex; align-items: center; gap: 1rem;">
-                    <div style="font-size: 2rem;">✉️</div>
-                    <div>
-                      <p style="margin-bottom: 0.5rem;">O e-mail <strong>${
-                        this.userForm.get('email')?.value
-                      }</strong> já está cadastrado.</p>
-                      <p style="font-size: 0.9rem;">Por favor, utilize outro e-mail ou <a href="/login" style="color: #92402d; font-weight: 600;">faça login</a>.</p>
-                    </div>
-                  </div>
-                `,
-                icon: 'error',
-                confirmButtonText: 'Entendi!',
-                confirmButtonColor: '#92402d',
-                background: '#f5f5f5',
-                customClass: {
-                  container: 'no-scroll-swal',
-                  popup: 'email-duplicate-popup',
-                },
-                scrollbarPadding: false,
-              });
-            } else if (errorMsg === 'cpf_duplicado') {
-              Swal.fire({
-                title: 'CPF já cadastrado',
-                html: `
-                  <div style="display: flex; align-items: center; gap: 1rem;">
-                    <div style="font-size: 2rem;">🆔</div>
-                    <div>
-                      <p style="margin-bottom: 0.5rem;">O CPF <strong>${
-                        this.userForm.get('cpf')?.value
-                      }</strong> já está cadastrado.</p>
-                      <p style="font-size: 0.9rem;">Verifique os dados ou entre em contato com o suporte.</p>
-                    </div>
-                  </div>
-                `,
-                icon: 'error',
-                confirmButtonText: 'Entendi!',
-                confirmButtonColor: '#92402d',
-                background: '#f5f5f5',
-                customClass: {
-                  container: 'no-scroll-swal',
-                  popup: 'cpf-duplicate-popup',
-                },
-                scrollbarPadding: false,
-              });
-            } else {
-              Swal.fire({
-                title: 'Erro no cadastro',
-                text: errorMsg,
-                icon: 'error',
-                confirmButtonText: 'Entendi',
-                confirmButtonColor: '#92402d',
-                background: '#f5f5f5',
-                customClass: {
-                  container: 'no-scroll-swal',
-                },
-                scrollbarPadding: false,
-              });
-            }
-          },
+    if (!cep || cep.length !== 8) {
+      return;
+    }
+
+    this.http.get(`https://viacep.com.br/ws/${cep}/json/`).subscribe({
+      next: (dados: any) => {
+        if (dados.erro) {
+          Swal.fire({
+            title: 'CEP não encontrado',
+            text: 'Verifique o CEP digitado. Se estiver correto, preencha o endereço manualmente.',
+            icon: 'warning',
+            confirmButtonColor: '#92402d',
+            background: '#f5f5f5',
+          });
+          this.resetEndereco();
+        } else {
+          this.patchEndereco(dados);
+        }
+      },
+      error: () => {
+        Swal.fire({
+          title: 'Erro na consulta do CEP',
+          text: 'Serviço indisponível. Preencha o endereço manualmente.',
+          icon: 'error',
+          confirmButtonColor: '#92402d',
+          background: '#f5f5f5',
         });
-    } else {
-      this.showFormErrors();
-    }
-  }
-
-  private showFormErrors() {
-    const emptyFields = this.getEmptyFields();
-
-    if (emptyFields.length === Object.keys(this.userForm.controls).length) {
-      Swal.fire({
-        title: 'Atenção!',
-        text: 'Todos os campos são obrigatórios.',
-        icon: 'warning',
-        customClass: {
-          container: 'custom-swal-container',
-        },
-        scrollbarPadding: false,
-        confirmButtonText: 'Entendi',
-        confirmButtonColor: '#92402d',
-        background: '#f5f5f5',
-      });
-    } else {
-      const fieldsList = emptyFields
-        .map((f) => this.getFieldName(f))
-        .join(', ');
-      Swal.fire({
-        title: 'Campos obrigatórios',
-        html: `Preencha os seguintes campos: <strong>${fieldsList}</strong>`,
-        icon: 'warning',
-        customClass: {
-          container: 'custom-swal-container',
-        },
-        scrollbarPadding: false,
-        confirmButtonText: 'Entendi',
-        confirmButtonColor: '#92402d',
-        background: '#f5f5f5',
-      });
-    }
-  }
-
-  private getEmptyFields(): string[] {
-    return Object.keys(this.userForm.controls).filter((key) => {
-      const control = this.userForm.get(key);
-      return control?.errors?.['required'] && control?.pristine;
+        this.resetEndereco();
+      },
     });
   }
 
-  private getFieldName(key: string): string {
-    const fieldNames: Record<string, string> = {
-      name: 'Nome completo',
-      email: 'E-mail',
-      birthDate: 'Data de nascimento',
-      cpf: 'CPF',
-      phone: 'Telefone',
-      street: 'Logradouro',
-      neighborhood: 'Bairro',
-      number: 'Número',
-      zipCode: 'CEP',
-      state: 'Estado',
-      city: 'Cidade',
-      password: 'Senha',
-    };
-    return fieldNames[key] || key;
+  async onSubmit() {
+    this.userForm.markAllAsTouched();
+
+    if (this.userForm.get('zipCode')?.hasError('cepInvalido')) {
+      this.alertService.showError(
+        'CEP inválido',
+        'O CEP informado não é válido. Por favor, corrija.'
+      );
+      return;
+    }
+
+    if (this.userForm.get('birthDate')?.hasError('minAge')) {
+      this.alertService.showWarning(
+        'Idade insuficiente',
+        'Você deve ter 18 anos ou mais para se cadastrar.'
+      );
+      return;
+    }
+
+    if (this.userForm.invalid) {
+      this.showFormErrors();
+      return;
+    }
+
+    this.enviarCadastro();
+  }
+
+  private async enviarCadastro() {
+  this.alertService.showLoading('Criando sua conta...');
+
+  this.http
+    .post('http://localhost:8080/users', this.userForm.value)
+    .subscribe({
+      next: async () => {
+        this.alertService.hideLoading();
+
+        await this.alertService.showSuccess(
+          'Cadastro concluído!',
+          'Sua conta foi criada com sucesso.'
+        );
+
+        this.router.navigate(['/home']);
+      },
+      error: (err) => {
+        this.alertService.hideLoading();
+        const errorMsg = this.getErrorMessage(err);
+        const email = this.userForm.get('email')?.value;
+        const cpf = this.userForm.get('cpf')?.value;
+        
+        if (errorMsg === 'email_duplicado') {
+          this.alertService.showEmailDuplicate(email);
+        } else if (errorMsg === 'cpf_duplicado') {
+          this.alertService.showCpfDuplicate(cpf);
+        } else {
+          this.alertService.showError('Erro no cadastro', errorMsg);
+        }
+      },
+    });
+}
+  private showFormErrors() {
+    this.alertService.showFormValidationErrors(
+      this.userForm,
+      this.fieldNamesMap
+    );
   }
 
   private getErrorMessage(err: any): string {
-    if (err.error && typeof err.error === 'object') {
-      if (err.error.error === 'email_duplicado') {
-        return 'email_duplicado';
-      }
-      if (err.error.error === 'cpf_duplicado') {
-        return 'cpf_duplicado';
-      }
-    } else if (err.status === 409) {
-      return 'Conflito: Dado duplicado.';
-    } else if (err.status === 400) {
-      return 'Dados inválidos. Verifique as informações.';
-    } else if (err.status === 0) {
-      return 'Erro de conexão com o servidor.';
-    }
+    if (err.error?.error === 'email_duplicado') return 'email_duplicado';
+    if (err.error?.error === 'cpf_duplicado') return 'cpf_duplicado';
+    if (err.status === 409) return 'Conflito: Dado duplicado.';
+    if (err.status === 400) return 'Dados inválidos. Verifique as informações.';
+    if (err.status === 0) return 'Erro de conexão com o servidor.';
     return 'Ocorreu um erro inesperado. Tente novamente mais tarde.';
   }
 }
@@ -310,25 +231,17 @@ export class RegisterComponent implements OnInit {
 export class AgeValidator {
   static minimumAge(minAge: number) {
     return (control: AbstractControl): ValidationErrors | null => {
-      if (!control.value) {
-        return null;
-      }
-
+      if (!control.value) return null;
       const birthDate = new Date(control.value);
       const today = new Date();
-
       let age = today.getFullYear() - birthDate.getFullYear();
       const m = today.getMonth() - birthDate.getMonth();
-
       if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
         age--;
       }
-
-      if (age >= minAge) {
-        return null;
-      } else {
-        return { minAge: { requiredAge: minAge, actualAge: age } };
-      }
+      return age >= minAge
+        ? null
+        : { minAge: { requiredAge: minAge, actualAge: age } };
     };
   }
 }
