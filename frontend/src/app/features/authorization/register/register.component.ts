@@ -10,6 +10,7 @@ import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { NgxMaskDirective } from 'ngx-mask';
 import Swal from 'sweetalert2';
+import { AbstractControl, ValidationErrors } from '@angular/forms';
 
 @Component({
   selector: 'app-register',
@@ -33,7 +34,7 @@ export class RegisterComponent implements OnInit {
     this.userForm = this.fb.group({
       name: ['', Validators.required],
       email: ['', [Validators.required, Validators.email]],
-      birthDate: ['', Validators.required],
+      birthDate: ['', [Validators.required, AgeValidator.minimumAge(18)]],
       cpf: ['', Validators.required],
       phone: ['', Validators.required],
       street: ['', Validators.required],
@@ -114,6 +115,21 @@ export class RegisterComponent implements OnInit {
   }
 
   onSubmit() {
+    // Verifica se o usuário tem menos de 18 anos
+    if (this.userForm.get('birthDate')?.errors?.['minAge']) {
+      Swal.fire({
+        title: 'Idade insuficiente',
+        text: 'Você deve ter 18 anos ou mais para se cadastrar.',
+        icon: 'warning',
+        confirmButtonColor: '#92402d',
+        background: '#f5f5f5',
+        customClass: {
+          container: 'custom-swal-container',
+        },
+      });
+      return;
+    }
+    
     if (this.userForm.valid) {
       Swal.fire({
         title: 'Criando sua conta...',
@@ -288,5 +304,31 @@ export class RegisterComponent implements OnInit {
       return 'Erro de conexão com o servidor.';
     }
     return 'Ocorreu um erro inesperado. Tente novamente mais tarde.';
+  }
+}
+
+export class AgeValidator {
+  static minimumAge(minAge: number) {
+    return (control: AbstractControl): ValidationErrors | null => {
+      if (!control.value) {
+        return null;
+      }
+
+      const birthDate = new Date(control.value);
+      const today = new Date();
+
+      let age = today.getFullYear() - birthDate.getFullYear();
+      const m = today.getMonth() - birthDate.getMonth();
+
+      if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+        age--;
+      }
+
+      if (age >= minAge) {
+        return null;
+      } else {
+        return { minAge: { requiredAge: minAge, actualAge: age } };
+      }
+    };
   }
 }

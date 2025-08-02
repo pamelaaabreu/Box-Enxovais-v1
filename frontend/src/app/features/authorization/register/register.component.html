@@ -1,0 +1,189 @@
+<div class="register-container">
+  <div class="background-image"></div>
+  
+  <div class="form-container compact-form">
+    <div class="form-content">
+      <h2>Cadastre-se</h2>
+      <div class="modern-divider"></div>
+      <p class="subtitle">Junte-se ao nosso mundo de conforto e elegância!</p>
+
+      <form [formGroup]="userForm" (ngSubmit)="onSubmit()">
+        <div class="form-row">
+          <div class="input-container extra-large-field">
+            <input
+              class="form-control"
+              formControlName="name"
+              id="name"
+              required
+              placeholder=" "
+            />
+            <label class="floating-label" for="name">Nome completo *</label>
+            <div class="input-underline"></div>
+          </div>
+          <div class="input-container large-field">
+            <input
+              class="form-control"
+              formControlName="email"
+              id="email"
+              type="email"
+              required
+              placeholder=" "
+            />
+            <label class="floating-label" for="email">Email *</label>
+            <div class="input-underline"></div>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="input-container birthdate-field">
+            <input
+              class="form-control"
+              formControlName="birthDate"
+              id="birthDate"
+              type="date"
+              required
+              placeholder=" "
+            />
+            <label class="floating-label" for="birthDate">Data de Nascimento *</label>
+            <div class="input-underline"></div>
+          </div>
+          <div class="input-container medium-field">
+            <input
+              class="form-control"
+              formControlName="cpf"
+              id="cpf"
+              required
+              placeholder=" "
+              mask="000.000.000-00"
+            />
+            <label class="floating-label" for="cpf">CPF *</label>
+            <div class="input-underline"></div>
+          </div>
+          <div class="input-container medium-field">
+            <input
+              class="form-control"
+              formControlName="phone"
+              id="phone"
+              required
+              placeholder=" "
+              mask="(00) 00000-0000"
+            />
+            <label class="floating-label" for="phone">Telefone *</label>
+            <div class="input-underline"></div>
+          </div>
+          <div class="input-container cep-field">
+            <input
+              class="form-control"
+              formControlName="zipCode"
+              id="zipCode"
+              required
+              placeholder=" "
+              (blur)="onCepBlur()"
+              mask="00000-000"
+            />
+            <label class="floating-label" for="zipCode">CEP *</label>
+            <div class="input-underline"></div>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="input-container">
+            <input
+              class="form-control"
+              formControlName="street"
+              id="street"
+              required
+              placeholder=" "
+            />
+            <label class="floating-label" for="street">Logradouro *</label>
+            <div class="input-underline"></div>
+          </div>
+          <div class="input-container">
+            <input
+              class="form-control"
+              formControlName="neighborhood"
+              id="neighborhood"
+              required
+              placeholder=" "
+            />
+            <label class="floating-label" for="neighborhood">Bairro *</label>
+            <div class="input-underline"></div>
+          </div>
+          <div class="input-container small-field">
+            <input
+              class="form-control"
+              formControlName="number"
+              id="number"
+              required
+              placeholder=" "
+            />
+            <label class="floating-label" for="number">Número *</label>
+            <div class="input-underline"></div>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="input-container state-field">
+            <input
+              class="form-control"
+              formControlName="state"
+              id="state"
+              maxlength="2"
+              required
+              placeholder=" "
+            />
+            <label class="floating-label" for="state">Estado *</label>
+            <div class="input-underline"></div>
+          </div>
+          <div class="input-container">
+            <input
+              class="form-control"
+              formControlName="city"
+              id="city"
+              required
+              placeholder=" "
+            />
+            <label class="floating-label" for="city">Cidade *</label>
+            <div class="input-underline"></div>
+          </div>
+          <div class="input-container password-container">
+            <input
+              class="form-control"
+              formControlName="password"
+              id="password"
+              type="password"
+              required
+              placeholder=" "
+            />
+            <label class="floating-label" for="password">Senha *</label>
+            <div class="input-underline"></div>
+            <div
+              class="validations"
+              *ngIf="
+                userForm.get('password')?.errors &&
+                userForm.get('password')?.touched
+              "
+            >
+              <div *ngIf="userForm.get('password')?.errors?.['minlength']">
+                A senha deve ter pelo menos 6 caracteres.
+              </div>
+              <div *ngIf="userForm.get('password')?.errors?.['pattern']">
+                A senha deve ter pelo menos 1 símbolo especial.
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="terms-container">
+          <input type="checkbox" id="terms" required />
+          <label for="terms"> Eu concordo com os Termos de Uso</label>
+        </div>
+
+        <button type="submit" class="submit-button">Cadastre-se</button>
+
+        <p class="login-text">
+          Já tem uma conta? <a class="login" routerLink="/login">Faça login</a>
+        </p>
+      </form>
+    </div>
+  </div>
+</div>

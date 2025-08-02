@@ -1,142 +1,128 @@
-input:focus, textarea:focus, select:focus, button:focus, a:focus, [tabindex]:focus {
-  outline: none !important;
-  box-shadow: none !important;
+.register-container {
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 1rem;
 }
 
-input::-moz-focus-inner {
-  border: 0;
-}
-
-input, textarea, select, button {
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  appearance: none;
-}
-
-body {
-  background-color: #e5e4e2;
-  font-family: Arial, sans-serif;
+.background-image {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: url('/BannerFormRegister.png');
+  background-size: cover;
+  background-position: center;
+  filter: blur(3px);
+  z-index: -1;
 }
 
 .form-container {
-  width: 95%;
-  max-width: 1400px;
-  margin: 2rem auto;
-  display: flex;
-  border-radius: 30px;
+  width: 90%;
+  max-width: 1100px;
+  background-color: rgba(255, 255, 255, 0.95);
+  border-radius: 40px;
   box-shadow: rgba(0, 0, 0, 0.16) 0px 10px 36px 0px, rgba(0, 0, 0, 0.06) 0px 0px 0px 1px;
-  overflow: hidden;
-  background-color: #ffffff;
-}
-
-.form-image {
-  flex: 0.5;
-  min-width: 30%;
-}
-
-.form-image img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
+  padding: 2rem;
 }
 
 .form-content {
-  flex: 1.5;
-  padding: 3rem;
+  width: 100%;
 }
 
 .form-content h2 {
   color: #92402d;
   margin-bottom: 0.8rem;
-  font-size: 2.2rem;
+  font-size: 2rem;
   font-weight: 600;
+  text-align: center;
+  letter-spacing: 2px;
+  text-transform: uppercase;
 }
 
 .modern-divider {
-  height: 3px;
+  height: 2px;
   width: 100px;
   background: #92402d;
-  margin: 0.5rem 0 1.5rem;
+  margin: 0.5rem auto 1rem;
   position: relative;
-  border-radius: 3px;
+  border-radius: 1px;
 }
 
 .modern-divider::after {
   content: '';
   position: absolute;
-  left: 85px;
+  left: 70px;
   top: 1px;
   height: 1px;
-  width: calc(100% - 80px);
+  width: calc(100% - 70px);
   background: linear-gradient(to right, #92402d, transparent);
 }
 
 .subtitle {
   color: #766f79;
-  margin-bottom: 2.5rem;
-  font-size: 1rem;
+  margin-bottom: 1.5rem;
+  font-size: 0.95rem;
   line-height: 1.5;
+  text-align: center;
 }
 
 .form-row {
   display: flex;
   flex-wrap: wrap;
-  gap: 1.8rem;
-  margin-bottom: 1.8rem;
-  align-items: flex-start; 
-  min-height: 5rem; 
+  gap: 1rem;
+  margin-bottom: 1rem;
+  align-items: flex-start;
 }
-
 
 .input-container {
   position: relative;
   flex: 1;
-  padding-top: 1.2rem;
+  padding-top: 1rem;
+  min-width: 120px;
 }
 
 .input-container.extra-large-field {
-  flex: 4;
-  min-width: 450px;
+  flex: 3;
+  min-width: 300px;
 }
 
 .input-container.large-field {
-  flex: 3;
-  min-width: 380px;
+  flex: 2;
+  min-width: 250px;
 }
 
 .input-container.medium-field {
-  flex: 2;
-  min-width: 220px;
-  max-width: 300px;
+  flex: 1;
+  min-width: 150px;
 }
 
 .input-container.cep-field {
-  flex: 1.2;
-  min-width: 160px;
-  max-width: 200px;
+  flex: 0.5;
+  min-width: 120px;
 }
 
 .input-container.small-field {
-  flex: 0.8;
-  min-width: 100px;
-  max-width: 120px;
+  flex: 0.4;
+  min-width: 80px;
 }
 
 .input-container.state-field {
-  flex: 0.7;
-  min-width: 80px;
-  max-width: 100px;
+  flex: 0.3;
+  min-width: 60px;
 }
 
 .input-container.birthdate-field {
-  flex: 2.5;
-  min-width: 95px;
-  max-width: 170px;
+  flex: 0.8;
+  min-width: 140px;
 }
 
 .floating-label {
   position: absolute;
-  top: 2rem;
+  top: 1.8rem;
   left: 0;
   color: #766f79;
   font-size: 1rem;
@@ -147,10 +133,10 @@ body {
 
 .form-control {
   width: 100%;
-  padding: 1rem 0;
+  padding: 0.8rem 1rem;
   border: none;
   border-bottom: 1px solid #8c868f;
-  font-size: 1.05rem;
+  font-size: 0.95rem;
   background: transparent;
   color: #766f79;
   transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
@@ -162,10 +148,11 @@ body {
 
 .form-control:focus ~ .floating-label,
 .form-control:not(:placeholder-shown) ~ .floating-label {
-  top: 0.2rem;
-  font-size: 0.8rem;
+  top: 0.1rem;
+  font-size: 0.75rem;
   color: #92402d;
   transform: translateY(0);
+  border-color: none !important;
 }
 
 .input-underline {
@@ -185,34 +172,37 @@ body {
 .terms-container {
   display: flex;
   align-items: center;
-  margin: 2.5rem 0 2rem;
+  margin: 1.5rem 0 1rem;
+  justify-content: center;
 }
 
 .terms-container input {
-  margin-right: 1rem;
-  width: 20px;
-  height: 20px;
+  margin-right: 0.8rem;
+  width: 18px;
+  height: 18px;
   accent-color: #92402d;
 }
 
 .terms-container label {
-  font-size: 1rem;
+  font-size: 0.9rem;
   color: #766f79;
   cursor: pointer;
 }
 
 .submit-button {
   width: 100%;
-  padding: 1.2rem;
+  max-width: 350px;
+  padding: 1rem;
   background: #484449;
   color: #ffffff;
   border: none;
   border-radius: 30px;
-  font-size: 1.1rem;
+  font-size: 1rem;
   font-weight: 500;
   cursor: pointer;
   transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-  margin-bottom: 1.5rem;
+  margin: 0 auto 1rem;
+  display: block;
   letter-spacing: 0.5px;
 }
 
@@ -225,7 +215,7 @@ body {
 .login-text {
   text-align: center;
   color: #766f79;
-  font-size: 1rem;
+  font-size: 0.9rem;
   margin: 0;
 }
 
@@ -242,103 +232,82 @@ body {
 }
 
 .validations {
-  margin-top: 0.5rem;
+  margin-top: 0.3rem;
   position: relative;
 }
 
 .validations div {
   color: #c62828;
-  font-size: 0.85rem;
+  font-size: 0.8rem;
   background: #ffebee;
-  padding: 0.5rem;
+  padding: 0.4rem;
   border-radius: 4px;
-  margin-top: 0.3rem;
+  margin-top: 0.2rem;
   box-shadow: 0 1px 2px rgba(0,0,0,0.1);
 }
 
 .password-container {
   position: relative;
-  margin-bottom: 1.5rem;
+  margin-bottom: 1rem;
 }
 
 .password-container .input-underline {
   background: #8b6b61;
 }
 
-.ng-invalid.ng-touched .form-control {
-  border-bottom: 1px solid #8c868f; 
-}
-
-.ng-invalid.ng-touched .input-underline {
-  background: #8b6b61;
-}
-
-
+/* Responsividade */
 @media (max-width: 1200px) {
   .form-container {
-    max-width: 1200px;
-  }
-  .input-container.extra-large-field {
-    min-width: 400px;
-  }
-  .input-container.large-field {
-    min-width: 350px;
+    max-width: 1000px;
   }
 }
 
 @media (max-width: 992px) {
   .form-container {
-    max-width: 1000px;
-  }
-  .form-content {
-    padding: 2.5rem;
+    padding: 1.5rem;
   }
   .input-container.extra-large-field {
-    min-width: 350px;
+    min-width: 250px;
   }
   .input-container.large-field {
-    min-width: 320px;
-  }
-  .form-row {
-    gap: 1.5rem;
+    min-width: 220px;
   }
 }
 
 @media (max-width: 768px) {
   .form-container {
-    flex-direction: column;
-    max-width: 600px;
+    width: 95%;
+    padding: 1.5rem;
   }
-  .form-image {
-    height: 220px;
+  .input-container, 
+  .input-container.extra-large-field, 
+  .input-container.large-field, 
+  .input-container.medium-field, 
+  .input-container.cep-field, 
+  .input-container.small-field, 
+  .input-container.state-field,
+  .input-container.birthdate-field {
+    flex: 1 1 100%;
     min-width: 100%;
-  }
-  .form-content {
-    padding: 2rem;
   }
   .form-row {
     flex-direction: column;
-    gap: 1.8rem;
-  }
-  .input-container, .input-container.extra-large-field, .input-container.large-field, .input-container.medium-field, .input-container.cep-field, .input-container.small-field, .input-container.state-field {
-    flex: 1 1 100% !important;
-    min-width: 100% !important;
-    max-width: 100% !important;
+    gap: 1rem;
   }
 }
 
 @media (max-width: 480px) {
-  .form-content {
-    padding: 1.8rem;
+  .register-container {
+    padding: 0.5rem;
+  }
+  .form-container {
+    padding: 1rem;
   }
   .form-content h2 {
-    font-size: 1.9rem;
-  }
-  .form-control {
-    padding: 0.9rem 0;
+    font-size: 1.8rem;
   }
   .submit-button {
-    padding: 1rem;
+    padding: 0.9rem;
   }
 }
 

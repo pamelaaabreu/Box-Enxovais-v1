@@ -4,9 +4,9 @@ import (
 	"backend/db"
 	"backend/models"
 	"encoding/json"
+	"github.com/lib/pq"
 	"log"
 	"net/http"
-	"github.com/lib/pq"
 )
 
 func CreateUser(w http.ResponseWriter, r *http.Request) {
@@ -38,15 +38,16 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		log.Printf("ERRO AO INSERIR NO BANCO DE DADOS: %v", err)
 
-		// Verificar se o erro é de constraint UNIQUE
+		// Verificar se o erro é de constraint violada (email ou CPF duplicado)
+
 		if pqErr, ok := err.(*pq.Error); ok {
-			if pqErr.Code == "23505" { 
-				if pqErr.Constraint == "unique_email" {
-					w.WriteHeader(http.StatusConflict) 
+			if pqErr.Code == "23505" {
+				if pqErr.Constraint == "users_email_key" {
+					w.WriteHeader(http.StatusConflict)
 					json.NewEncoder(w).Encode(map[string]string{"error": "email_duplicado"})
 					return
-				} else if pqErr.Constraint == "unique_cpf" {
-					w.WriteHeader(http.StatusConflict) 
+				} else if pqErr.Constraint == "users_cpf_key" {
+					w.WriteHeader(http.StatusConflict)
 					json.NewEncoder(w).Encode(map[string]string{"error": "cpf_duplicado"})
 					return
 				}
