@@ -133,9 +133,13 @@
               maxlength="2"
               required
               placeholder=" "
-             
             />
-            <label class="floating-label" for="state">Estado *</label>
+            <label class="floating-label" for="state">Estado *</label
+            ><app-tooltip
+              [text]="
+                'O campo estado é preenchido apenas com as siglas. Ex: SP.'
+              "
+            ></app-tooltip>
             <div class="input-underline"></div>
           </div>
           <div class="input-container">
@@ -149,6 +153,7 @@
             <label class="floating-label" for="city">Cidade *</label>
             <div class="input-underline"></div>
           </div>
+
           <div class="input-container password-container">
             <input
               class="form-control"
@@ -159,32 +164,65 @@
               placeholder=" "
             />
             <label class="floating-label" for="password">Senha *</label>
-            <div class="input-underline"></div>
-            <div
-              class="validations"
-              *ngIf="
-                userForm.get('password')?.errors &&
-                userForm.get('password')?.touched
+            <app-tooltip
+              [text]="
+                'A senha deve ter no mínimo 6 caracteres, com pelo menos um símbolo especial (?@#$%&).'
               "
-            >
-              <div *ngIf="userForm.get('password')?.errors?.['minlength']">
-                A senha deve ter pelo menos 6 caracteres.
-              </div>
-              <div *ngIf="userForm.get('password')?.errors?.['pattern']">
-                A senha deve ter pelo menos 1 símbolo especial.
+            ></app-tooltip>
+            <div class="input-underline"></div>
+
+            <div class="validations">
+              <div
+                class="validation-message"
+                *ngIf="userForm.get('password')?.errors?.['minlength']"
+              >
+                <span class="icon">
+                  <svg
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="#b71c1c"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  >
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <line x1="12" y1="8" x2="12" y2="12"></line>
+                    <circle cx="12" cy="16" r="1"></circle>
+                  </svg>
+                </span>
+                A senha deve ter pelo menos 6 caracteres e pelo menos um símbolo especial (*&%#).
               </div>
             </div>
           </div>
         </div>
+
         <div class="terms-container">
-          <input type="checkbox" id="terms" required />
-          <label for="terms"> Eu concordo com os Termos de Uso</label>
+          <input
+            type="checkbox"
+            id="terms"
+            class="custom-checkbox"
+            formControlName="terms"
+          />
+
+          <label for="terms" class="checkbox-label"></label>
+
+          <label for="terms" class="terms-label-text"
+            >Eu concordo com os Termos de Uso!</label
+          >
         </div>
 
-        <button type="submit" class="submit-button">Cadastre-se</button>
-
+        <button type="submit" class="submit-button">CADASTRAR</button>
         <p class="login-text">
-          Já tem uma conta? <a class="login" routerLink="/login">Faça login</a>
+          Já tem uma conta?
+          <button
+            type="button"
+            class="login-button-as-link"
+            routerLink="/login"
+          >
+            Faça login!
+          </button>
         </p>
       </form>
     </div>

@@ -1,11 +1,15 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-tooltip',
-  imports: [],
+  imports: [CommonModule],
+  standalone: true,
   templateUrl: './tooltip.component.html',
-  styleUrl: './tooltip.component.css'
+  styleUrl: './tooltip.component.css',
 })
 export class TooltipComponent {
+  @Input() text: string = 'Dica não informada.';
 
+  isTooltipVisible = false;
 }
