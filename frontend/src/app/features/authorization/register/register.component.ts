@@ -14,6 +14,7 @@ import { Router } from '@angular/router';
 import { NgxMaskDirective } from 'ngx-mask';
 import Swal from 'sweetalert2';
 import { SweetAlertService } from '../../../services/sweet-alert.service';
+import { TooltipComponent } from '../../../shared/ui/tooltip/tooltip.component';
 
 export class CepValidators {
   static cepInvalido(): ValidatorFn {
@@ -30,7 +31,12 @@ export class CepValidators {
 @Component({
   selector: 'app-register',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, NgxMaskDirective],
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    NgxMaskDirective,
+    TooltipComponent,
+  ],
   templateUrl: './register.component.html',
   styleUrl: './register.component.css',
   encapsulation: ViewEncapsulation.None,
@@ -82,6 +88,7 @@ export class RegisterComponent implements OnInit {
           Validators.pattern(/^(?=.*[!@#$%^&*(),.?":{}|<>])/),
         ],
       ],
+      terms: [false, Validators.requiredTrue],
     });
   }
 
@@ -155,6 +162,8 @@ export class RegisterComponent implements OnInit {
   async onSubmit() {
     this.userForm.markAllAsTouched();
 
+    
+
     if (this.userForm.get('zipCode')?.hasError('cepInvalido')) {
       this.alertService.showError(
         'CEP inválido',
@@ -171,6 +180,14 @@ export class RegisterComponent implements OnInit {
       return;
     }
 
+    if (this.userForm.controls['terms'].errors?.['required']) {
+      this.alertService.showWarning(
+        'Termos de Uso',
+        'Você precisa aceitar os Termos de Uso para continuar.'
+      );
+      return;
+    }
+
     if (this.userForm.invalid) {
       this.showFormErrors();
       return;
@@ -180,37 +197,37 @@ export class RegisterComponent implements OnInit {
   }
 
   private async enviarCadastro() {
-  this.alertService.showLoading('Criando sua conta...');
+    this.alertService.showLoading('Criando sua conta...');
 
-  this.http
-    .post('http://localhost:8080/users', this.userForm.value)
-    .subscribe({
-      next: async () => {
-        this.alertService.hideLoading();
+    this.http
+      .post('http://localhost:8080/users', this.userForm.value)
+      .subscribe({
+        next: async () => {
+          this.alertService.hideLoading();
 
-        await this.alertService.showSuccess(
-          'Cadastro concluído!',
-          'Sua conta foi criada com sucesso.'
-        );
+          await this.alertService.showSuccess(
+            'Cadastro concluído!',
+            'Sua conta foi criada com sucesso.'
+          );
 
-        this.router.navigate(['/home']);
-      },
-      error: (err) => {
-        this.alertService.hideLoading();
-        const errorMsg = this.getErrorMessage(err);
-        const email = this.userForm.get('email')?.value;
-        const cpf = this.userForm.get('cpf')?.value;
-        
-        if (errorMsg === 'email_duplicado') {
-          this.alertService.showEmailDuplicate(email);
-        } else if (errorMsg === 'cpf_duplicado') {
-          this.alertService.showCpfDuplicate(cpf);
-        } else {
-          this.alertService.showError('Erro no cadastro', errorMsg);
-        }
-      },
-    });
-}
+          this.router.navigate(['/home']);
+        },
+        error: (err) => {
+          this.alertService.hideLoading();
+          const errorMsg = this.getErrorMessage(err);
+          const email = this.userForm.get('email')?.value;
+          const cpf = this.userForm.get('cpf')?.value;
+
+          if (errorMsg === 'email_duplicado') {
+            this.alertService.showEmailDuplicate(email);
+          } else if (errorMsg === 'cpf_duplicado') {
+            this.alertService.showCpfDuplicate(cpf);
+          } else {
+            this.alertService.showError('Erro no cadastro', errorMsg);
+          }
+        },
+      });
+  }
   private showFormErrors() {
     this.alertService.showFormValidationErrors(
       this.userForm,
