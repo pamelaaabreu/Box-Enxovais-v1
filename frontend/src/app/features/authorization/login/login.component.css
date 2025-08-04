@@ -1,0 +1,199 @@
+.background-image {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: url("/assets/bed-linen.jpg") no-repeat center center / cover;
+  z-index: -1;
+}
+
+.login-container {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 2rem;
+  background: rgba(255, 255, 255, 0.7);
+}
+
+.form-container {
+  display: flex;
+  flex-direction: row;
+  max-width: 900px;
+  width: 100%;
+  height: 500px; /* Dica: defina altura fixa ou min-height */
+  background: #ffffff;
+  border-radius: 30px;
+  overflow: hidden;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+}
+
+.image-panel {
+  flex: 1; /* Ocupa metade */
+  height: 100%;
+}
+
+.image-panel img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover; 
+  display: block;
+}
+
+.form-panel {
+  flex: 1; /* Outra metade */
+  padding: 3rem 2rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.form-content {
+  width: 100%;
+  max-width: 400px;
+}
+
+.form-content h2 {
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+  color: #333;
+}
+
+.subtitle {
+  color: #666;
+  margin-bottom: 1.5rem;
+}
+
+.input-container {
+  position: relative;
+  margin-bottom: 1.5rem;
+}
+
+.form-control {
+  width: 100%;
+  border: none;
+  border-bottom: 2px solid #ccc;
+  padding: 0.75rem 0;
+  font-size: 1rem;
+  background: transparent;
+  outline: none;
+  transition: border-color 0.3s;
+}
+
+.form-control:focus {
+  border-color: #92402d;
+}
+
+.floating-label {
+  position: absolute;
+  top: 0.75rem;
+  left: 0;
+  font-size: 0.85rem;
+  color: #999;
+  transition: all 0.3s;
+  pointer-events: none;
+}
+
+.form-control:focus + .floating-label,
+.form-control:not(:placeholder-shown) + .floating-label {
+  top: -0.75rem;
+  font-size: 0.75rem;
+  color: #92402d;
+}
+
+.password-toggle-btn {
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+}
+
+.form-options {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.submit-button {
+  width: 100%;
+  padding: 0.75rem;
+  background: #92402d;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.submit-button:hover {
+  background: #7a3325;
+}
+
+.submit-button:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+}
+
+.register-link {
+  margin-top: 1rem;
+  text-align: center;
+  font-size: 0.9rem;
+}
+
+.register-link a {
+  color: #92402d;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.register-link a:hover {
+  text-decoration: underline;
+}
+
+.forgot-password-link {
+  font-size: 0.85rem;
+  color: #92402d;
+  text-decoration: none;
+}
+
+.forgot-password-link:hover {
+  text-decoration: underline;
+}
+
+.remember-me {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.custom-checkbox {
+  accent-color: #92402d;
+}
+
+.checkbox-label {
+  cursor: pointer;
+}
+
+@media (max-width: 768px) {
+  .form-container {
+    flex-direction: column;
+    height: auto;
+  }
+
+  .image-panel,
+  .form-panel {
+    flex: none;
+    width: 100%;
+    height: 200px; 
+  }
+
+  .image-panel img {
+    height: 100%;
+  }
+}

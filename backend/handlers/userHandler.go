@@ -7,6 +7,8 @@ import (
 	"github.com/lib/pq"
 	"log"
 	"net/http"
+
+	"golang.org/x/crypto/bcrypt"
 )
 
 func CreateUser(w http.ResponseWriter, r *http.Request) {
@@ -24,7 +26,15 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 	err := json.NewDecoder(r.Body).Decode(&user)
 	if err != nil {
 		log.Printf("ERRO AO DECODIFICAR JSON: %v", err)
-		http.Error(w, "Corpo da requisição inválido", http.StatusBadRequest) // Erro do cliente (400)
+		http.Error(w, "Corpo da requisição inválido", http.StatusBadRequest) 
+		return
+	}
+
+	// 2. Validação de campos e hashing da senha
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
+	if err != nil {
+		log.Printf("ERRO AO GERAR HASH DA SENHA: %v", err)
+		http.Error(w, "Erro interno", http.StatusInternalServerError)
 		return
 	}
 
@@ -34,12 +44,11 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 	`
 
 	_, err = db.DB.Exec(query, user.Name, user.Email, user.BirthDate, user.CPF, user.Phone,
-		user.Street, user.Neighborhood, user.Number, user.ZipCode, user.State, user.City, user.Password)
+		user.Street, user.Neighborhood, user.Number, user.ZipCode, user.State, user.City, string(hashedPassword))
 	if err != nil {
 		log.Printf("ERRO AO INSERIR NO BANCO DE DADOS: %v", err)
 
 		// Verificar se o erro é de constraint violada (email ou CPF duplicado)
-
 		if pqErr, ok := err.(*pq.Error); ok {
 			if pqErr.Code == "23505" {
 				if pqErr.Constraint == "users_email_key" {
