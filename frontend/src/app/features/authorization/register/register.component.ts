@@ -13,8 +13,9 @@ import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { NgxMaskDirective } from 'ngx-mask';
 import Swal from 'sweetalert2';
-import { SweetAlertService } from '../../../services/sweet-alert.service';
+import { SweetAlertService } from '../../../core/services/sweet-alert.service';
 import { TooltipComponent } from '../../../shared/ui/tooltip/tooltip.component';
+import { AuthService } from '../../../core/services/auth.service';
 
 export class CepValidators {
   static cepInvalido(): ValidatorFn {
@@ -64,6 +65,7 @@ export class RegisterComponent implements OnInit {
     private http: HttpClient,
     private router: Router,
     private alertService: SweetAlertService,
+    private authService: AuthService,
     @Inject('Swal') private swal: typeof Swal
   ) {}
 
@@ -134,26 +136,20 @@ export class RegisterComponent implements OnInit {
     this.http.get(`https://viacep.com.br/ws/${cep}/json/`).subscribe({
       next: (dados: any) => {
         if (dados.erro) {
-          Swal.fire({
-            title: 'CEP não encontrado',
-            text: 'Verifique o CEP digitado. Se estiver correto, preencha o endereço manualmente.',
-            icon: 'warning',
-            confirmButtonColor: '#92402d',
-            background: '#f5f5f5',
-          });
+          this.alertService.showWarning(
+            'CEP não encontrado',
+            'Verifique o CEP digitado. Se estiver correto, preencha o endereço manualmente.'
+          );
           this.resetEndereco();
         } else {
           this.patchEndereco(dados);
         }
       },
       error: () => {
-        Swal.fire({
-          title: 'Erro na consulta do CEP',
-          text: 'Serviço indisponível. Preencha o endereço manualmente.',
-          icon: 'error',
-          confirmButtonColor: '#92402d',
-          background: '#f5f5f5',
-        });
+        this.alertService.showError(
+          'Erro na consulta do CEP',
+          'Serviço indisponível. Preencha o endereço manualmente.'
+        );
         this.resetEndereco();
       },
     });
@@ -161,8 +157,6 @@ export class RegisterComponent implements OnInit {
 
   async onSubmit() {
     this.userForm.markAllAsTouched();
-
-    
 
     if (this.userForm.get('zipCode')?.hasError('cepInvalido')) {
       this.alertService.showError(
@@ -199,35 +193,33 @@ export class RegisterComponent implements OnInit {
   private async enviarCadastro() {
     this.alertService.showLoading('Criando sua conta...');
 
-    this.http
-      .post('http://localhost:8080/users', this.userForm.value)
-      .subscribe({
-        next: async () => {
-          this.alertService.hideLoading();
+      this.authService.register(this.userForm.value).subscribe({
+    next: async () => {
+      this.alertService.hideLoading();
+      await this.alertService.showSuccess(
+        'Cadastro concluído!',
+        'Sua conta foi criada com sucesso.'
+      );
+      // Redireciona para o login para que o usuário possa entrar
+      this.router.navigate(['/login']); 
+    },
+    error: (err) => {
+      this.alertService.hideLoading();
+      const errorMsg = this.getErrorMessage(err);
+      const email = this.userForm.get('email')?.value;
+      const cpf = this.userForm.get('cpf')?.value;
 
-          await this.alertService.showSuccess(
-            'Cadastro concluído!',
-            'Sua conta foi criada com sucesso.'
-          );
+      if (errorMsg === 'email_duplicado') {
+        this.alertService.showEmailDuplicate(email);
+      } else if (errorMsg === 'cpf_duplicado') {
+        this.alertService.showCpfDuplicate(cpf);
+      } else {
+        this.alertService.showError('Erro no cadastro', errorMsg);
+      }
+    },
+  });
+}
 
-          this.router.navigate(['/home']);
-        },
-        error: (err) => {
-          this.alertService.hideLoading();
-          const errorMsg = this.getErrorMessage(err);
-          const email = this.userForm.get('email')?.value;
-          const cpf = this.userForm.get('cpf')?.value;
-
-          if (errorMsg === 'email_duplicado') {
-            this.alertService.showEmailDuplicate(email);
-          } else if (errorMsg === 'cpf_duplicado') {
-            this.alertService.showCpfDuplicate(cpf);
-          } else {
-            this.alertService.showError('Erro no cadastro', errorMsg);
-          }
-        },
-      });
-  }
   private showFormErrors() {
     this.alertService.showFormValidationErrors(
       this.userForm,
