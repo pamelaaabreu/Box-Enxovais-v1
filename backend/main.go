@@ -26,9 +26,11 @@ func enableCORS(next http.Handler) http.Handler {
 func main() {
 	err := godotenv.Load()
 	if err != nil {
-		log.Println("Aviso: Erro ao carregar o arquivo .env. Usando variáveis de ambiente do sistema.")
+		log.Fatal("Erro ao carregar o arquivo .env")
 	}
-	
+
+	// JWT_SECRET := os.Getenv("JWT_SECRET")
+
 	db.InitDB()
 
 	mux := http.NewServeMux()
