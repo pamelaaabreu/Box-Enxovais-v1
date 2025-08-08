@@ -12,8 +12,6 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-// Leia a chave do ambiente para maior segurança
-var jwtKey = []byte(os.Getenv("JWT_SECRET"))
 
 func LoginUser(w http.ResponseWriter, r *http.Request) {
 	var creds models.Credentials
@@ -45,8 +43,7 @@ func LoginUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// --- Se chegou até aqui, a senha está correta ---
-	// O resto do seu código para gerar o token já está perfeito.
+	var jwtKey = []byte(os.Getenv("JWT_SECRET"))
 
 	expirationTime := time.Now().Add(24 * time.Hour)
 	claims := &models.Claims{
