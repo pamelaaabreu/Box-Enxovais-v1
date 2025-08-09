@@ -226,10 +226,10 @@
   color: #666;
 }
 
-/* Links */
-.forgot-password-link {
-  font-size: 0.85rem;
-  color: #92402d;
+.forgot-password-link a {
+  font-size: 0.20rem !important;
+  color: #92402d !important;
+  font-weight: 400 ;
   text-decoration: none;
   transition: color 0.2s ease, text-decoration 0.2s ease;
 }
@@ -241,7 +241,6 @@
   outline: none;
 }
 
-/* Botão submit */
 .submit-button {
   width: 100%;
   padding: 0.75rem;
