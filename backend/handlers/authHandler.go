@@ -4,6 +4,7 @@ import (
 	"backend/db"
 	"backend/models"
 	"encoding/json"
+	"log"
 	"net/http"
 	"os" // pacote os para ler variáveis de ambiente
 	"time"
@@ -12,10 +13,8 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-
 func LoginUser(w http.ResponseWriter, r *http.Request) {
 	var creds models.Credentials
-	// SEMPRE defina o Content-Type como JSON no início para respostas de erro
 	w.Header().Set("Content-Type", "application/json")
 
 	err := json.NewDecoder(r.Body).Decode(&creds)
@@ -25,6 +24,8 @@ func LoginUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	log.Printf("Tentando login com email: %s", creds.Email)
+
 	var storedUser models.User
 	query := `SELECT id, password FROM users WHERE email = $1`
 	err = db.DB.QueryRow(query, creds.Email).Scan(&storedUser.ID, &storedUser.Password)
@@ -32,11 +33,14 @@ func LoginUser(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusUnauthorized)
 		json.NewEncoder(w).Encode(map[string]string{"error": "Email ou senha inválidos"})
 		return
+
 	}
 
-	// Compara o hash da senha
+	    log.Printf("DEBUG: Comparando senha recebida '[%s]' com hash do BD '[%s]'", creds.Password, storedUser.Password) // <-- ADICIONE ESTA LINHA
+
 	err = bcrypt.CompareHashAndPassword([]byte(storedUser.Password), []byte(creds.Password))
 	if err != nil {
+		log.Printf("Usuário não encontrado: %v", err)
 		// Esta era a linha que faltava corrigir
 		w.WriteHeader(http.StatusUnauthorized)
 		json.NewEncoder(w).Encode(map[string]string{"error": "Email ou senha inválidos"})
@@ -61,7 +65,6 @@ func LoginUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Envia a resposta de sucesso
 	json.NewEncoder(w).Encode(map[string]string{
 		"token": tokenString,
 	})

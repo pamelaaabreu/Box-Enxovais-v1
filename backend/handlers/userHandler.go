@@ -26,7 +26,7 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 	err := json.NewDecoder(r.Body).Decode(&user)
 	if err != nil {
 		log.Printf("ERRO AO DECODIFICAR JSON: %v", err)
-		http.Error(w, "Corpo da requisição inválido", http.StatusBadRequest) 
+		http.Error(w, "Corpo da requisição inválido", http.StatusBadRequest)
 		return
 	}
 
@@ -66,4 +66,9 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Erro interno ao tentar criar usuário", http.StatusInternalServerError)
 		return
 	}
+
+	w.WriteHeader(http.StatusCreated) // Define o status HTTP para 201 Created
+	json.NewEncoder(w).Encode(map[string]string{
+		"message": "Usuário criado com sucesso",
+	})
 }

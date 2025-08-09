@@ -15,7 +15,7 @@ type User struct {
 	ZipCode      string `json:"zipCode"` 
 	State        string `json:"state"`
 	City         string `json:"city"`
-	Password     string `json:"-"` // Senha não pode ser retornada na resposta
+	Password     string `json:"password"` 
 }
 
 type Credentials struct {
