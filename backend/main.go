@@ -5,7 +5,6 @@ import (
 	"backend/handlers"
 	"log"
 	"net/http"
-
 	"github.com/joho/godotenv"
 )
 
@@ -42,4 +41,6 @@ func main() {
 
 	handlerComCORS := enableCORS(mux)
 	log.Fatal(http.ListenAndServe(":8080", handlerComCORS))
+
 }
+
