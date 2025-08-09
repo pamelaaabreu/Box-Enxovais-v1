@@ -13,12 +13,19 @@ export class AuthService {
   private registerUrl = 'http://localhost:8080/register';
   constructor() {}
 
-  login(credentials: { email: string; password: string }): Observable<any> {
+  login(credentials: {
+    email: string;
+    password: string;
+    remember?: boolean;
+  }): Observable<any> {
     return this.http.post<any>(this.apiUrl, credentials).pipe(
       tap((response) => {
-        // Aqui, salva o token se ele vier na resposta da API.
         if (response && response.token) {
-          localStorage.setItem('authToken', response.token);
+          if (credentials.remember) {
+            localStorage.setItem('authToken', response.token);
+          } else {
+            sessionStorage.setItem('authToken', response.token);
+          }
         }
       })
     );
@@ -34,11 +41,14 @@ export class AuthService {
   }
 
   isLoggedIn(): boolean {
-    // O '!!' converte o valor (string ou null) em um booleano (true ou false).
-    return !!localStorage.getItem('authToken');
+    return !!(
+      localStorage.getItem('authToken') || sessionStorage.getItem('authToken')
+    );
   }
 
   getToken(): string | null {
-    return localStorage.getItem('authToken');
+    return (
+      localStorage.getItem('authToken') || sessionStorage.getItem('authToken')
+    );
   }
 }

@@ -2,14 +2,14 @@ import { Component, inject } from '@angular/core';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../../core/services/auth.service';
-import { CommonModule } from '@angular/common'; 
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [ReactiveFormsModule, CommonModule, RouterLink], 
+  imports: [ReactiveFormsModule, CommonModule, RouterLink],
   templateUrl: './login.component.html',
-  styleUrl: './login.component.css'
+  styleUrl: './login.component.css',
 })
 export class LoginComponent {
   private fb = inject(FormBuilder);
@@ -20,6 +20,7 @@ export class LoginComponent {
   loginForm = this.fb.group({
     email: ['', [Validators.required, Validators.email]],
     password: ['', [Validators.required]],
+    remember: [false],
   });
 
   togglePasswordVisibility(): void {
@@ -28,24 +29,18 @@ export class LoginComponent {
 
   onLogin() {
     if (this.loginForm.valid) {
-   
       const credentials = {
         email: this.loginForm.value.email!,
-        password: this.loginForm.value.password!
+        password: this.loginForm.value.password!,
+        remember: this.loginForm.value.remember!,
       };
 
-      
       this.authService.login(credentials).subscribe({
-        next: () => {
-          this.router.navigate(['/home']);
+        next: () => this.router.navigate(['/home']),
+        error: () => {
+          alert('Email ou senha inválidos!');
         },
-        error: (err) => {
-          console.error('Erro no login:', err);
-          alert('Email ou senha inválidos! Por favor, tente novamente.');
-          console.log('deu errado')
-        }
       });
     }
-     console.log('Funcionou')
   }
 }

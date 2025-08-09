@@ -54,7 +54,6 @@
   text-align: center;
 }
 
-
 .form-row {
   display: flex;
   flex-wrap: wrap;
@@ -128,13 +127,12 @@
   color: #d9534f;
 }
 
-/* Label Flutuante (Consistente com o Login) */
 .floating-label {
   position: absolute;
   top: 1.25rem;
   left: 0;
   font-size: 1rem;
-  color: #999;
+  color: #666;
   transition: all 0.3s ease;
   pointer-events: none;
 }
@@ -146,7 +144,6 @@
   color: #92402d;
 }
 
-/* Underline animado (Consistente com o Login) */
 .input-underline {
   position: absolute;
   bottom: 0;
@@ -161,10 +158,6 @@
 .form-control:focus ~ .input-underline {
   width: 100%;
 }
-
-/* ==========================================================================
-   Validação e Tooltips
-   ========================================================================== */
 
 .input-container app-tooltip {
   position: absolute;
@@ -189,9 +182,6 @@
   margin-top: 4px;
 }
 
-/* ==========================================================================
-   Checkbox e Termos
-   ========================================================================== */
 
 .terms-container {
   display: flex;
