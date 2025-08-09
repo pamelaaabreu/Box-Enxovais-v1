@@ -88,7 +88,7 @@ export class RegisterComponent implements OnInit {
         [
           Validators.required,
           Validators.minLength(6),
-          Validators.pattern(/^(?=.*[!@#$%^&*(),.?":{}|<>])/),
+          Validators.pattern(/^(?=.*[?@#$%&]).{6,}$/),
         ],
       ],
       terms: [false, Validators.requiredTrue],
@@ -183,6 +183,14 @@ export class RegisterComponent implements OnInit {
       return;
     }
 
+    if (!/^(?=.*[?@#$%&]).{6,}$/.test(this.userForm.value.password)) {
+      this.alertService.showWarning(
+        'Senha inválida',
+        'A senha deve ter no mínimo 6 caracteres e pelo menos um símbolo especial (?@#$%&).'
+      );
+      return;
+    }
+
     if (this.userForm.invalid) {
       this.showFormErrors();
       return;
@@ -194,32 +202,32 @@ export class RegisterComponent implements OnInit {
   private async enviarCadastro() {
     this.alertService.showLoading('Criando sua conta...');
 
-      this.authService.register(this.userForm.value).subscribe({
-    next: async () => {
-      this.alertService.hideLoading();
-      await this.alertService.showSuccess(
-        'Cadastro concluído!',
-        'Sua conta foi criada com sucesso.'
-      );
-      // Redireciona para o login para que o usuário possa entrar
-      this.router.navigate(['/login']); 
-    },
-    error: (err) => {
-      this.alertService.hideLoading();
-      const errorMsg = this.getErrorMessage(err);
-      const email = this.userForm.get('email')?.value;
-      const cpf = this.userForm.get('cpf')?.value;
+    this.authService.register(this.userForm.value).subscribe({
+      next: async () => {
+        this.alertService.hideLoading();
+        await this.alertService.showSuccess(
+          'Cadastro concluído!',
+          'Sua conta foi criada com sucesso.'
+        );
+        // Redireciona para o login para que o usuário possa entrar
+        this.router.navigate(['/login']);
+      },
+      error: (err) => {
+        this.alertService.hideLoading();
+        const errorMsg = this.getErrorMessage(err);
+        const email = this.userForm.get('email')?.value;
+        const cpf = this.userForm.get('cpf')?.value;
 
-      if (errorMsg === 'email_duplicado') {
-        this.alertService.showEmailDuplicate(email);
-      } else if (errorMsg === 'cpf_duplicado') {
-        this.alertService.showCpfDuplicate(cpf);
-      } else {
-        this.alertService.showError('Erro no cadastro', errorMsg);
-      }
-    },
-  });
-}
+        if (errorMsg === 'email_duplicado') {
+          this.alertService.showEmailDuplicate(email);
+        } else if (errorMsg === 'cpf_duplicado') {
+          this.alertService.showCpfDuplicate(cpf);
+        } else {
+          this.alertService.showError('Erro no cadastro', errorMsg);
+        }
+      },
+    });
+  }
 
   private showFormErrors() {
     this.alertService.showFormValidationErrors(

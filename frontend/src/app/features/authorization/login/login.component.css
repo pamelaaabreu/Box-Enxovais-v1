@@ -117,7 +117,7 @@
   top: 0.75rem;
   left: 0;
   font-size: 0.85rem;
-  color: #999;
+  color: #666;
   transition: all 0.3s;
   pointer-events: none;
 }
@@ -251,7 +251,8 @@
   border-radius: 25px;
   font-size: 1rem;
   cursor: pointer;
-  transition: background-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
+  transition: background-color 0.3s ease, box-shadow 0.3s ease,
+    transform 0.3s ease;
   box-shadow: 0 4px 8px rgba(146, 64, 45, 0.2);
   font-family: inherit;
 }
