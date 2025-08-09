@@ -1,10 +1,11 @@
+/* Fundo e container */
 .background-image {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background: url("/assets/bed-linen.jpg") no-repeat center center / cover;
+  background: url("/BannerForm.png") no-repeat center center / cover;
   z-index: -1;
 }
 
@@ -22,27 +23,28 @@
   flex-direction: row;
   max-width: 900px;
   width: 100%;
-  height: 500px; /* Dica: defina altura fixa ou min-height */
-  background: #ffffff;
+  height: 500px;
+  background: rgba(255, 255, 255, 0.95);
   border-radius: 30px;
   overflow: hidden;
-  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
 }
 
+/* Painéis e imagens */
 .image-panel {
-  flex: 1; /* Ocupa metade */
+  flex: 1;
   height: 100%;
 }
 
 .image-panel img {
   width: 100%;
   height: 100%;
-  object-fit: cover; 
+  object-fit: cover;
   display: block;
 }
 
 .form-panel {
-  flex: 1; /* Outra metade */
+  flex: 1;
   padding: 3rem 2rem;
   display: flex;
   flex-direction: column;
@@ -56,8 +58,10 @@
 
 .form-content h2 {
   font-size: 2rem;
+  font-weight: 600;
   margin-bottom: 0.5rem;
   color: #333;
+  text-transform: uppercase;
 }
 
 .subtitle {
@@ -65,6 +69,7 @@
   margin-bottom: 1.5rem;
 }
 
+/* Inputs */
 .input-container {
   position: relative;
   margin-bottom: 1.5rem;
@@ -78,13 +83,35 @@
   font-size: 1rem;
   background: transparent;
   outline: none;
-  transition: border-color 0.3s;
+  transition: border-color 0.4s ease, box-shadow 0.4s ease;
+  border-radius: 4px 4px 0 0;
+  font-family: inherit;
+  color: #333;
 }
 
+/* Foco acessível */
+.form-control:focus-visible {
+  outline: 3px solid #c27b5c;
+  outline-offset: 2px;
+}
+
+/* Foco normal */
 .form-control:focus {
-  border-color: #92402d;
+  border-color: #7a3325;
+  box-shadow: 0 0 8px #92402d88;
 }
 
+/* Campos inválidos */
+.form-control.ng-invalid.ng-touched {
+  border-color: #d9534f;
+  box-shadow: 0 0 6px #d9534f88;
+}
+
+.form-control.ng-invalid.ng-touched + .floating-label {
+  color: #d9534f;
+}
+
+/* Labels flutuantes */
 .floating-label {
   position: absolute;
   top: 0.75rem;
@@ -102,6 +129,22 @@
   color: #92402d;
 }
 
+/* Underline animado */
+.input-underline {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background: #8b6b61;
+  transition: width 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+.form-control:focus ~ .input-underline {
+  width: 100%;
+}
+
+/* Botão de mostrar/ocultar senha */
 .password-toggle-btn {
   position: absolute;
   right: 0;
@@ -110,60 +153,24 @@
   background: transparent;
   border: none;
   cursor: pointer;
+  color: #666;
+  transition: color 0.25s ease;
 }
 
+.password-toggle-btn:hover,
+.password-toggle-btn:focus-visible {
+  color: #92402d;
+  outline: none;
+}
+
+/* Opções do formulário */
 .form-options {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 1rem;
-}
-
-.submit-button {
-  width: 100%;
-  padding: 0.75rem;
-  background: #92402d;
-  color: #fff;
-  border: none;
-  border-radius: 8px;
-  font-size: 1rem;
-  cursor: pointer;
-  transition: background 0.3s;
-}
-
-.submit-button:hover {
-  background: #7a3325;
-}
-
-.submit-button:disabled {
-  background: #ccc;
-  cursor: not-allowed;
-}
-
-.register-link {
-  margin-top: 1rem;
-  text-align: center;
-  font-size: 0.9rem;
-}
-
-.register-link a {
-  color: #92402d;
-  font-weight: 600;
-  text-decoration: none;
-}
-
-.register-link a:hover {
-  text-decoration: underline;
-}
-
-.forgot-password-link {
-  font-size: 0.85rem;
-  color: #92402d;
-  text-decoration: none;
-}
-
-.forgot-password-link:hover {
-  text-decoration: underline;
+  flex-wrap: wrap;
+  gap: 0.5rem;
 }
 
 .remember-me {
@@ -172,14 +179,133 @@
   gap: 0.5rem;
 }
 
+/* Checkbox personalizado */
 .custom-checkbox {
-  accent-color: #92402d;
+  opacity: 0;
+  width: 0;
+  height: 0;
+  position: absolute;
 }
 
 .checkbox-label {
+  display: inline-block;
+  width: 38px;
+  height: 22px;
+  background-color: #bdbdbd;
+  border-radius: 11px;
+  position: relative;
   cursor: pointer;
+  transition: background-color 0.3s ease;
 }
 
+.checkbox-label::after {
+  content: "";
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 16px;
+  height: 16px;
+  background-color: #ffffff;
+  border-radius: 50%;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+  transition: transform 0.3s ease;
+}
+
+.custom-checkbox:checked + .checkbox-label {
+  background-color: #92402d;
+}
+
+.custom-checkbox:checked + .checkbox-label::after {
+  transform: translateX(16px);
+}
+
+.terms-label-text {
+  cursor: pointer;
+  user-select: none;
+  font-size: 0.85rem;
+  color: #666;
+}
+
+/* Links */
+.forgot-password-link {
+  font-size: 0.85rem;
+  color: #92402d;
+  text-decoration: none;
+  transition: color 0.2s ease, text-decoration 0.2s ease;
+}
+
+.forgot-password-link:hover,
+.forgot-password-link:focus-visible {
+  text-decoration: underline;
+  color: #7a3325;
+  outline: none;
+}
+
+/* Botão submit */
+.submit-button {
+  width: 100%;
+  padding: 0.75rem;
+  background: #92402d;
+  color: #fff;
+  border: none;
+  border-radius: 25px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
+  box-shadow: 0 4px 8px rgba(146, 64, 45, 0.2);
+  font-family: inherit;
+}
+
+.submit-button:hover,
+.submit-button:focus-visible {
+  background: #7a3325;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(146, 64, 45, 0.3);
+  outline: none;
+}
+
+.submit-button:active {
+  transform: scale(0.98);
+  box-shadow: 0 3px 8px rgba(146, 64, 45, 0.5);
+}
+
+.submit-button:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+/* Link para registro */
+.register-link {
+  margin-top: 1rem;
+  text-align: center;
+  font-size: 0.9rem;
+  color: #666;
+}
+
+.login-button-as-link {
+  all: unset;
+  background: none !important;
+  letter-spacing: 0.5px;
+  color: #92402d !important;
+  cursor: pointer !important;
+  font-size: inherit !important;
+  font-weight: 700 !important;
+  text-decoration: underline !important;
+  border: none !important;
+  padding: 0 !important;
+  display: inline;
+  transition: color 0.2s ease;
+}
+
+.login-button-as-link:hover,
+.login-button-as-link:focus-visible {
+  color: #7a3325 !important;
+  outline: none;
+}
+
+/* Responsividade */
 @media (max-width: 768px) {
   .form-container {
     flex-direction: column;
@@ -190,10 +316,29 @@
   .form-panel {
     flex: none;
     width: 100%;
-    height: 200px; 
   }
 
-  .image-panel img {
-    height: 100%;
+  .image-panel {
+    height: 200px;
+  }
+
+  .form-panel {
+    padding: 2rem 1.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .login-container {
+    padding: 1rem;
+  }
+
+  .form-options {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+
+  .forgot-password-link {
+    align-self: flex-end;
   }
 }

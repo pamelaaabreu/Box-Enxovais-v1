@@ -10,7 +10,7 @@ import {
 } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { NgxMaskDirective } from 'ngx-mask';
 import Swal from 'sweetalert2';
 import { SweetAlertService } from '../../../core/services/sweet-alert.service';
@@ -37,6 +37,7 @@ export class CepValidators {
     ReactiveFormsModule,
     NgxMaskDirective,
     TooltipComponent,
+    RouterLink,
   ],
   templateUrl: './register.component.html',
   styleUrl: './register.component.css',
