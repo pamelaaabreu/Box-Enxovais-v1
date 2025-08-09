@@ -30,6 +30,8 @@ ol {
 a {
   text-decoration: none;
   color: inherit;
+  color: #92402d;
+  font-size: 0.86rem;
 }
 
 img {

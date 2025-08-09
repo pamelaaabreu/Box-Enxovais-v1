@@ -42,6 +42,7 @@ export class CepValidators {
   templateUrl: './register.component.html',
   styleUrl: './register.component.css',
   encapsulation: ViewEncapsulation.None,
+  
 })
 export class RegisterComponent implements OnInit {
   userForm!: FormGroup;
