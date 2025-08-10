@@ -3,15 +3,12 @@ import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../../core/services/auth.service';
 import { CommonModule } from '@angular/common';
+import { SweetAlertService } from '../../../core/services/sweet-alert.service';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [
-    ReactiveFormsModule,
-    CommonModule,
-    RouterLink,
-  ],
+  imports: [ReactiveFormsModule, CommonModule, RouterLink],
   templateUrl: './login.component.html',
   styleUrl: './login.component.css',
 })
@@ -19,6 +16,8 @@ export class LoginComponent {
   private fb = inject(FormBuilder);
   private authService = inject(AuthService);
   private router = inject(Router);
+  private alertService = inject(SweetAlertService);
+
   showPassword = false;
 
   loginForm = this.fb.group({
@@ -41,8 +40,9 @@ export class LoginComponent {
 
       this.authService.login(credentials).subscribe({
         next: () => this.router.navigate(['/home']),
-        error: () => {
-          alert('Email ou senha inválidos!');
+        error: (err) => {
+          const errorMessage = err.error?.error || 'Email ou senha inválidos!';
+          this.alertService.showError('Falha no Login', errorMessage);
         },
       });
     }

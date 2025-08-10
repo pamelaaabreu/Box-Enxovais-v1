@@ -32,7 +32,11 @@ export class ResetPasswordComponent implements OnInit {
     private alertService: SweetAlertService
   ) {
     this.resetForm = this.fb.group({
-      newPassword: ['', [Validators.required, Validators.minLength(6)]],
+      newPassword: ['', [
+        Validators.required,
+        Validators.minLength(6),
+        Validators.pattern(/.*[?@#$%&].*/) // Validação de caractere especial
+      ]],
       confirmPassword: ['', [Validators.required]],
     });
   }
@@ -57,8 +61,22 @@ export class ResetPasswordComponent implements OnInit {
   }
 
   onSubmit(): void {
-    if (this.resetForm.invalid) {
-            this.alertService.showError('Formulário Inválido', 'Por favor, preencha todos os campos corretamente.');
+    const newPasswordControl = this.resetForm.get('newPassword');
+    const confirmPasswordControl = this.resetForm.get('confirmPassword');
+
+    // Validação sequencial para exibir alertas específicos
+    if (newPasswordControl?.errors?.['required'] || confirmPasswordControl?.errors?.['required']) {
+      this.alertService.showError('Campos Obrigatórios', 'Por favor, preencha a nova senha e a confirmação.');
+      return;
+    }
+
+    if (newPasswordControl?.errors?.['minlength']) {
+      this.alertService.showError('Senha Curta', 'A senha deve ter pelo menos 6 caracteres.');
+      return;
+    }
+
+    if (newPasswordControl?.errors?.['pattern']) {
+      this.alertService.showError('Senha Inválida', 'A senha deve conter um símbolo especial (?@#$%&).');
       return;
     }
 
@@ -74,6 +92,7 @@ export class ResetPasswordComponent implements OnInit {
       return;
     }
 
+    // Se todas as validações passarem, envia para a API
     this.isLoading = true;
 
     this.authService.resetPassword(this.token, newPassword).subscribe({

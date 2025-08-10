@@ -1,6 +1,5 @@
-// auth.service.ts
-
-import { Injectable, inject } from '@angular/core';
+import { Injectable, inject, PLATFORM_ID } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { Observable, tap } from 'rxjs';
@@ -11,8 +10,8 @@ import { Observable, tap } from 'rxjs';
 export class AuthService {
   private http = inject(HttpClient);
   private router = inject(Router);
-  // ✅ 1. Defina uma URL base para a API
   private baseUrl = 'http://localhost:8080';
+  private platformId = inject(PLATFORM_ID);
 
   constructor() {}
 
@@ -21,14 +20,13 @@ export class AuthService {
     password: string;
     remember?: boolean;
   }): Observable<any> {
-    // ✅ 2. Use a URL base para montar as rotas
     return this.http.post<any>(`${this.baseUrl}/login`, credentials).pipe(
       tap((response) => {
-        if (response && response.token) {
-          if (credentials.remember) {
-            localStorage.setItem('authToken', response.token);
-          } else {
-            sessionStorage.setItem('authToken', response.token);
+        if (isPlatformBrowser(this.platformId) && response && response.token) {
+          const storage = credentials.remember ? localStorage : sessionStorage;
+          storage.setItem('authToken', response.token);
+          if (response.name) {
+            storage.setItem('userName', response.name);
           }
         }
       })
@@ -55,21 +53,39 @@ export class AuthService {
   }
 
   logout(): void {
-    // ✅ 3. (Bônus) Limpe o sessionStorage também!
-    localStorage.removeItem('authToken');
-    sessionStorage.removeItem('authToken');
-    this.router.navigate(['/login']);
+    if (isPlatformBrowser(this.platformId)) {
+      localStorage.removeItem('authToken');
+      sessionStorage.removeItem('authToken');
+      localStorage.removeItem('userName');
+      sessionStorage.removeItem('userName');
+      this.router.navigate(['/login']);
+    }
   }
 
   isLoggedIn(): boolean {
-    return !!(
-      localStorage.getItem('authToken') || sessionStorage.getItem('authToken')
-    );
+    if (isPlatformBrowser(this.platformId)) {
+      return !!(
+        localStorage.getItem('authToken') || sessionStorage.getItem('authToken')
+      );
+    }
+    return false;
+  }
+
+  getUserName(): string | null {
+    if (isPlatformBrowser(this.platformId)) {
+      return (
+        localStorage.getItem('userName') || sessionStorage.getItem('userName')
+      );
+    }
+    return null;
   }
 
   getToken(): string | null {
-    return (
-      localStorage.getItem('authToken') || sessionStorage.getItem('authToken')
-    );
+    if (isPlatformBrowser(this.platformId)) {
+      return (
+        localStorage.getItem('authToken') || sessionStorage.getItem('authToken')
+      );
+    }
+    return null;
   }
 }
