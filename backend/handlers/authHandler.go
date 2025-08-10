@@ -27,16 +27,15 @@ func LoginUser(w http.ResponseWriter, r *http.Request) {
 	log.Printf("Tentando login com email: %s", creds.Email)
 
 	var storedUser models.User
-	query := `SELECT id, password FROM users WHERE email = $1`
-	err = db.DB.QueryRow(query, creds.Email).Scan(&storedUser.ID, &storedUser.Password)
+	query := `SELECT id, name, password FROM users WHERE email = $1`
+	err = db.DB.QueryRow(query, creds.Email).Scan(&storedUser.ID, &storedUser.Name, &storedUser.Password)
 	if err != nil {
 		w.WriteHeader(http.StatusUnauthorized)
 		json.NewEncoder(w).Encode(map[string]string{"error": "Email ou senha inválidos"})
 		return
-
 	}
 
-	    log.Printf("DEBUG: Comparando senha recebida '[%s]' com hash do BD '[%s]'", creds.Password, storedUser.Password) // <-- ADICIONE ESTA LINHA
+	log.Printf("DEBUG: Comparando senha recebida '[%s]' com hash do BD '[%s]'", creds.Password, storedUser.Password) // <-- ADICIONE ESTA LINHA
 
 	err = bcrypt.CompareHashAndPassword([]byte(storedUser.Password), []byte(creds.Password))
 	if err != nil {
@@ -67,5 +66,6 @@ func LoginUser(w http.ResponseWriter, r *http.Request) {
 
 	json.NewEncoder(w).Encode(map[string]string{
 		"token": tokenString,
+		"name":  storedUser.Name,
 	})
 }

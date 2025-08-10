@@ -79,11 +79,15 @@ html, body {
 }
 
 .input-container {
-  position: relative;
   flex: 1 1 150px;
   padding-top: 0.5rem;
   box-sizing: border-box;
 }
+
+.input-wrapper {
+  position: relative; 
+}
+
 
 /* Classes de dimensionamento */
 .input-container.extra-large-field {
@@ -163,23 +167,26 @@ html, body {
   color: #d9534f;
 }
 
+/* ✅ CORREÇÃO DO SUBLINHADO */
 .input-underline {
   position: absolute;
   bottom: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 0;
+  left: 0; /* Alinha à esquerda */
+  width: 100%; /* Ocupa a largura total */
   height: 2px;
-  background: #8b6b61;
-  transition: width 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+  background: #7a3325; /* Cor mais forte para combinar com o foco */
+  transform: scaleX(0); /* Começa com largura zero */
+  transform-origin: center; /* A animação expande a partir do centro */
+  transition: transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
 }
 
 .form-control:focus ~ .input-underline {
-  width: 100%;
+  transform: scaleX(1); /* Expande para a largura total */
 }
 
+
 /* Tooltip */
-.input-container app-tooltip {
+.input-wrapper app-tooltip {
   position: absolute;
   top: -0.25rem;
   right: 0;
