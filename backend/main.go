@@ -32,11 +32,17 @@ func main() {
 
 	mux := http.NewServeMux()
 
+	fs := http.FileServer(http.Dir("./uploads"))
+	mux.Handle("/uploads/", http.StripPrefix("/uploads/", fs))
+
 	mux.HandleFunc("/register", handlers.CreateUser)
 	mux.HandleFunc("/login", handlers.LoginUser)
 	mux.HandleFunc("/forgot-password", handlers.ForgotPassword)
 	mux.HandleFunc("/reset-password", handlers.ResetPassword)
-	mux.HandleFunc("/validate-reset-token/", handlers.ValidateResetToken) // note a barra no final
+	mux.HandleFunc("/validate-reset-token/", handlers.ValidateResetToken)
+	mux.HandleFunc("/upload-image", handlers.UploadProductImage)
+	mux.HandleFunc("/products", handlers.CreateProduct)
+	mux.HandleFunc("/products/", handlers.GetProduct)
 
 	log.Println("🚀 Servidor rodando na porta 8080")
 

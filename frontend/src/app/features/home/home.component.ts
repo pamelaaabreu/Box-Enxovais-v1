@@ -6,6 +6,7 @@ import { MainNavbarComponent } from '../../components/main-navbar/main-navbar.co
 import { CarouselComponent } from "../../components/carousel/carousel.component";
 import { TopWelcomeHeaderComponent } from "../../components/top-welcome-header/top-welcome-header.component";
 import { TopNavbarComponent } from "../../components/top-navbar/top-navbar.component";
+import { FeaturedProductsComponent } from "../featured-products/featured-products.component";
 // import { FeaturedProductsComponent } from '../featured-products/featured-products.component';
 
 @Component({
@@ -19,7 +20,8 @@ import { TopNavbarComponent } from "../../components/top-navbar/top-navbar.compo
     MainNavbarComponent,
     CarouselComponent,
     TopWelcomeHeaderComponent,
-    TopNavbarComponent
+    TopNavbarComponent,
+    FeaturedProductsComponent
 ],
   styleUrl: './home.component.css',
   encapsulation: ViewEncapsulation.Emulated,

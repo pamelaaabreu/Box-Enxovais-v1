@@ -1,23 +1,23 @@
 .navbar-container {
-        position: sticky;
-        /* AJUSTADO: O top agora é a altura da .mini-navbar (40px).
-           Quando rolar, ela vai parar exatamente abaixo da barra de boas-vindas. */
-        top: 40px;
-        z-index: 1000;
-        display: flex;
-        justify-content: center;
-        padding: 20px 0; /* Espaçamento para o efeito flutuante inicial */
-    }
+  position: sticky;
+  top: 40px;
+  z-index: 1000;
+  display: flex;
+  justify-content: center;
+  padding: 20px 0;
+}
 
 .navbar-custom {
   display: flex;
   align-items: center;
   background-color: #0d1b2a;
-  border-radius: 50px;
+  border-radius: 20px;
   box-shadow: 0 5px 20px rgba(0, 0, 0, 0.25);
   height: 65px;
-   padding: 0 20px;
+  padding: 0 20px;
+    overflow: hidden;
 }
+
 .nav-menu {
   display: flex;
   list-style: none;
@@ -25,22 +25,29 @@
   padding: 0;
   height: 100%;
 }
+
 .nav-item {
   height: 100%;
 }
+
 .nav-link {
-        color: #ffffff;
-        text-decoration: none;
-        font-size: 1rem;
-        font-weight: 500;
-        /* AJUSTE: Aumentei o padding horizontal para espaçar mais os itens */
-        padding: 0 35px;
-        height: 100%;
-        display: flex;
-        align-items: center;
-        transition: background-color 0.3s ease;
-        border-radius: 50px;
-    }
+  color: #ffffff;
+  text-decoration: none;
+  font-size: 0.9rem;
+  font-weight: 500;
+  padding: 0 35px;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  transition: background-color 0.3s ease;
+  border-radius: 0;
+  letter-spacing: 0.9px;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
 .nav-item:hover .nav-link {
   background-color: #b5838d;
 }
+
+
