@@ -8,7 +8,18 @@
   <div class="search-bar">
     <input type="text" placeholder="O que você procura?" class="search-input" />
     <span class="search-icon">
-      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-search">
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="24"
+        height="24"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        class="lucide lucide-search"
+      >
         <circle cx="11" cy="11" r="8" />
         <path d="m21 21-4.3-4.3" />
       </svg>
@@ -19,7 +30,18 @@
     <!-- Bloco para utilizadores NÃO autenticados -->
     <div *ngIf="!isLoggedIn" class="account-buttons">
       <button class="login-btn" routerLink="/login">
-        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-log-in">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          class="lucide lucide-log-in"
+        >
           <path d="m10 17 5-5-5-5" />
           <path d="M15 12H3" />
           <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4" />
@@ -28,7 +50,18 @@
       </button>
       <a class="cadastro-btn" routerLink="/register">
         <span>
-          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-user-round">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            class="lucide lucide-user-round"
+          >
             <circle cx="12" cy="8" r="5" />
             <path d="M20 21a8 8 0 0 0-16 0" />
           </svg>
@@ -39,26 +72,109 @@
 
     <!-- Bloco para utilizadores AUTENTICADOS com menu dropdown -->
     <div *ngIf="isLoggedIn" class="user-profile-menu">
-      <button class="profile-btn" (click)="toggleMenu()">
+      <button class="profile-btn" (click)="toggleMenu($event)">
         <span>Olá, {{ userName }}</span>
-        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="chevron-icon" [class.open]="isMenuOpen">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="20"
+          height="20"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          class="chevron-icon"
+          [class.open]="isMenuOpen"
+        >
           <polyline points="6 9 12 15 18 9"></polyline>
         </svg>
       </button>
 
-      <!-- Menu Dropdown -->
-      <div class="dropdown-menu" *ngIf="isMenuOpen">
+      <div class="dropdown-menu" [class.show]="isMenuOpen">
         <ul>
-          <li><a >Minha Conta</a></li>
-          <li><a >Meus Pedidos</a></li>
+          <li>
+            <a
+              >Minha Conta
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                class="lucide lucide-user-icon lucide-user"
+              >
+                <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" />
+                <circle cx="12" cy="7" r="4" />
+              </svg>
+            </a>
+          </li>
+          <li>
+            <a
+              >Meus Pedidos
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                class="lucide lucide-baggage-claim-icon lucide-baggage-claim"
+              >
+                <path d="M22 18H6a2 2 0 0 1-2-2V7a2 2 0 0 0-2-2" />
+                <path d="M17 14V4a2 2 0 0 0-2-2h-1a2 2 0 0 0-2 2v10" />
+                <rect width="13" height="8" x="8" y="6" rx="1" />
+                <circle cx="18" cy="20" r="2" />
+                <circle cx="9" cy="20" r="2" />
+              </svg>
+            </a>
+          </li>
           <li class="divider"></li>
-          <li><button (click)="logout()">Sair</button></li>
+          <li>
+            <button (click)="logout()">
+              Sair
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                class="lucide lucide-log-out-icon lucide-log-out"
+              >
+                <path d="m16 17 5-5-5-5" />
+                <path d="M21 12H9" />
+                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+              </svg>
+            </button>
+          </li>
         </ul>
       </div>
     </div>
 
     <button class="cart-btn" aria-label="Carrinho de compras">
-      <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-shopping-bag">
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="30"
+        height="30"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        class="lucide lucide-shopping-bag"
+      >
         <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z" />
         <path d="M3 6h18" />
         <path d="M16 10a4 4 0 0 1-8 0" />

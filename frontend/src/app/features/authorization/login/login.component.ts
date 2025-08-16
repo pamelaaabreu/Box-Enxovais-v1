@@ -4,11 +4,17 @@ import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../../core/services/auth.service';
 import { CommonModule } from '@angular/common';
 import { SweetAlertService } from '../../../core/services/sweet-alert.service';
+import { ShowPasswordComponent } from '../../../shared/css/show-password/show-password.component';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [ReactiveFormsModule, CommonModule, RouterLink],
+  imports: [
+    ReactiveFormsModule,
+    CommonModule,
+    RouterLink,
+    ShowPasswordComponent,
+  ],
   templateUrl: './login.component.html',
   styleUrl: './login.component.css',
 })
@@ -18,17 +24,13 @@ export class LoginComponent {
   private router = inject(Router);
   private alertService = inject(SweetAlertService);
 
-  showPassword = false;
+  isPasswordVisible = false;
 
   loginForm = this.fb.group({
     email: ['', [Validators.required, Validators.email]],
     password: ['', [Validators.required]],
     remember: [false],
   });
-
-  togglePasswordVisibility(): void {
-    this.showPassword = !this.showPassword;
-  }
 
   onLogin() {
     if (this.loginForm.valid) {

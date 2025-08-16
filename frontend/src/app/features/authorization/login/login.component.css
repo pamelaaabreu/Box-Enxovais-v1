@@ -144,26 +144,6 @@
   width: 100%;
 }
 
-/* Botão de mostrar/ocultar senha */
-.password-toggle-btn {
-  position: absolute;
-  right: 0;
-  top: 50%;
-  transform: translateY(-50%);
-  background: transparent;
-  border: none;
-  cursor: pointer;
-  color: #666;
-  transition: color 0.25s ease;
-}
-
-.password-toggle-btn:hover,
-.password-toggle-btn:focus-visible {
-  color: #92402d;
-  outline: none;
-}
-
-/* Opções do formulário */
 .form-options {
   display: flex;
   justify-content: space-between;
@@ -227,9 +207,9 @@
 }
 
 .forgot-password-link a {
-  font-size: 0.20rem !important;
+  font-size: 0.2rem !important;
   color: #92402d !important;
-  font-weight: 400 ;
+  font-weight: 400;
   text-decoration: none;
   transition: color 0.2s ease, text-decoration 0.2s ease;
 }
@@ -341,4 +321,23 @@
   .forgot-password-link {
     align-self: flex-end;
   }
+}
+
+.input-container app-show-password {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%); 
+  z-index: 2;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease-in-out;
+}
+
+.input-container:focus-within app-show-password {
+  opacity: 1;
+  pointer-events: auto;
+}
+.input-container .form-control {
+  padding-right: 40px; 
 }

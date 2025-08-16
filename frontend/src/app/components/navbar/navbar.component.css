@@ -10,6 +10,7 @@
   background-color: #f2f2f2;
   gap: 20px;
   z-index: 999;
+  overflow: visible;
 }
 
 .logo {
@@ -31,30 +32,45 @@
 
 .search-input {
   width: 100%;
-  padding: 13px 20px;
-  padding-right: 45px;
+  padding: 13px 20px 13px 25px;
+  padding-right: 50px;
   border: none;
-  border-radius: 15px;
-  background-color: #fff;
-  box-shadow: none;
+  border-radius: 30px;
+  background-color: #ffffff;
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.05);
+  font-size: 1rem;
+  transition: all 0.3s ease;
 }
 
-input:focus {
+.search-bar  .search-input:focus {
   outline: none;
+  background-color: #fff;
+  border-color: #C5B4A8;
+   box-shadow: 0 0 0 4px rgba(197, 180, 168, 0.4);
 }
-
 .search-icon svg {
   position: absolute;
   right: 20px;
   top: 50%;
   transform: translateY(-50%);
   font-size: 20px;
-  color: #1a1a1a;
+  color: #5d5550;
+  transition: color 0.3s ease, transform 0.3s ease;
 }
 
 .search-bar:focus-within .search-icon svg {
-  color: #000;
-  stroke: #000;
+  color: #8b4513;
+  transform: translateY(-50%) scale(1.1);
+}
+
+.search-bar:focus-within {
+  background-color: #fff;
+  border-radius: 30px;
+}
+
+.search-input::placeholder {
+  color: #5d5550;
+  font-weight: 400;
 }
 
 .account-cart {
@@ -99,11 +115,7 @@ input:focus {
   align-items: center;
 }
 
-a {
-  text-decoration: none;
-}
-
-.account-cart button {
+.cart-btn {
   background: none;
   border: none;
   font-size: 14px;
@@ -114,20 +126,8 @@ a {
   transition: color 0.3s;
 }
 
-.account-cart button:hover {
+.cart-btn:hover {
   color: #000;
-}
-
-button {
-  border: none;
-  margin: 0;
-}
-
-.btn-general {
-  display: inline;
-  height: 20px;
-  width: 20px;
-  margin: 10px;
 }
 
 .account-buttons .login-btn,
@@ -135,11 +135,6 @@ button {
   display: flex;
   align-items: center;
   gap: 8px;
-}
-
-.account-buttons .cadastro-btn:hover {
-  background-color: #091322;
-  color: #ffffff;
 }
 
 .navbar-container {
@@ -161,13 +156,6 @@ button {
   align-items: center;
   border-radius: 20px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  padding: 0;
-}
-
-.navbar.hidden {
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.3s ease-out;
 }
 
 .navbar-list {
@@ -187,23 +175,6 @@ button {
   display: flex;
   align-items: center;
   justify-content: center;
-  height: 100%;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
-
-.navbar-list li:first-child {
-  border-top-left-radius: 20px;
-  border-bottom-left-radius: 20px;
-}
-
-.navbar-list li:last-child {
-  border-top-right-radius: 20px;
-  border-bottom-right-radius: 20px;
-}
-
-.navbar-list li:hover {
-  background-color: #b0c4d6;
 }
 
 .navbar-list li a {
@@ -220,10 +191,97 @@ button {
   transition: color 0.3s ease;
 }
 
+.navbar-list li:hover {
+  background-color: #b0c4d6;
+}
+
 .navbar-list li:hover a {
   color: #0e213a;
 }
 
 .navbar-space {
   height: 18em;
+}
+.user-profile-menu {
+  position: relative;
+}
+
+.top-navbar .user-profile-menu .profile-btn {
+  all: unset;
+  background-color: transparent;
+  color: #0d1b2a;
+  padding: 10px;
+  border-radius: 20px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 16px;
+  font-weight: 500;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.top-navbar .user-profile-menu .profile-btn:hover {
+  background-color: transparent;
+  color: #8b4513;
+}
+
+.top-navbar .user-profile-menu .profile-btn .chevron-icon {
+  transition: transform 0.3s ease;
+}
+
+.top-navbar .user-profile-menu .profile-btn .chevron-icon.open {
+  transform: rotate(180deg);
+}
+
+.top-navbar .dropdown-menu {
+  position: absolute;
+  top: calc(100% + 5px);
+  right: 0;
+  background-color: #fcfbf9;
+  border-radius: 20px;
+  box-shadow: 0 10px 30px -5px rgba(130, 110, 95, 0.15);
+  border: 1px solid rgba(224, 212, 203, 0.5);
+  width: 240px;
+  z-index: 1000;
+  overflow: hidden;
+  padding: 10px;
+}
+
+.top-navbar .dropdown-menu ul {
+  list-style: none;
+  padding: 12px 0;
+  margin: 0;
+}
+
+.top-navbar .dropdown-menu ul li a,
+.top-navbar .dropdown-menu ul li button {
+  all: unset;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  box-sizing: border-box;
+  text-align: left;
+  padding: 14px 16px;
+  font-size: 15px;
+  font-weight: 500;
+  color: #5d5550;
+  border-radius: 15px;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.top-navbar .dropdown-menu ul li a:hover,
+.top-navbar .dropdown-menu ul li button:hover {
+  background-color: #f6f1eb;
+  color: #8b4513;
+  transform: translateX(4px);
+}
+
+.top-navbar .dropdown-menu .divider {
+  height: 1px;
+  background-color: #eae2da;
+  margin: 10px 10px;
 }
