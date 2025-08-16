@@ -1,0 +1,23 @@
+<div class="product-form-container">
+  <h2 class="form-title">Cadastrar Imagem do Produto</h2>
+
+  <div class="form-field">
+    <label for="productId" class="form-label">ID do Produto:</label>
+    <input type="text" id="productId" [(ngModel)]="productId" class="form-input">
+  </div>
+
+  <div class="form-field">
+    <label for="file" class="form-label">Selecione a Imagem:</label>
+    <input type="file" id="file" (change)="onFileSelected($event)" class="form-file">
+  </div>
+  
+  <div *ngIf="selectedFile" class="file-info">
+    <p>Arquivo selecionado: <strong>{{ selectedFile.name }}</strong></p>
+  </div>
+
+  <button (click)="onUpload()" class="form-button">Enviar Imagem</button>
+
+  <div *ngIf="uploadResponse" class="response-message">
+    <p>{{ uploadResponse }}</p>
+  </div>
+</div>

@@ -47,6 +47,22 @@ export const routes: Routes = [
   },
 
   {
+    path: 'image-upload/:id', // <--- CORREÇÃO AQUI
+    loadComponent: () =>
+      import(
+        './features/product-image-upload/product-image-upload.component'
+      ).then((m) => m.ProductImageUploadComponent),
+  },
+
+  {
+    path: 'image-register',
+    loadComponent: () =>
+      import('./features/product-create/product-create.component').then(
+        (m) => m.ProductCreateComponent
+      ),
+  },
+
+  {
     path: '404',
     loadComponent: () =>
       import('./features/not-found/not-found.component').then(
