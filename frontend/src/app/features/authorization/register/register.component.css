@@ -1,4 +1,3 @@
-/* Reset básico para evitar inconsistências */
 html,
 body {
   height: 100%;
@@ -7,7 +6,6 @@ body {
   overflow-x: hidden;
 }
 
-/* Container principal */
 .register-container {
   min-height: 100vh;
   height: 100%;
@@ -18,7 +16,6 @@ body {
   box-sizing: border-box;
 }
 
-/* Imagem de fundo com fallback */
 .background-image {
   position: fixed;
   top: 0;
@@ -31,7 +28,6 @@ body {
   z-index: -1;
 }
 
-/* Container do formulário */
 .form-container {
   width: 100%;
   max-width: 1100px;
@@ -42,7 +38,6 @@ body {
   box-sizing: border-box;
 }
 
-/* Conteúdo do formulário */
 .form-content {
   width: 100%;
 }
@@ -71,7 +66,6 @@ body {
   text-align: center;
 }
 
-/* Layout dos campos */
 .form-row {
   display: flex;
   flex-wrap: wrap;
@@ -100,7 +94,7 @@ body {
   z-index: 2;
   opacity: 0;
   pointer-events: none;
-  transition: opacity 0.2s ease-in-out; /* 2. Adiciona uma transição suave */
+  transition: opacity 0.2s ease-in-out; 
 }
 
 .input-wrapper:focus-within app-show-password {
@@ -111,7 +105,6 @@ body {
   padding-right: 40px;
 }
 
-/* Classes de dimensionamento */
 .input-container.extra-large-field {
   flex-grow: 3;
 }
@@ -136,7 +129,6 @@ body {
   flex-grow: 1;
 }
 
-/* Estilos dos campos */
 .form-control {
   width: 100%;
   border: none;
@@ -167,7 +159,6 @@ body {
   box-shadow: 0 0 6px #d9534f88;
 }
 
-/* Labels flutuantes */
 .floating-label {
   position: absolute;
   top: 1.25rem;
@@ -189,31 +180,28 @@ body {
   color: #d9534f;
 }
 
-/* ✅ CORREÇÃO DO SUBLINHADO */
 .input-underline {
   position: absolute;
   bottom: 0;
-  left: 0; /* Alinha à esquerda */
-  width: 100%; /* Ocupa a largura total */
+  left: 0; 
+  width: 100%;
   height: 2px;
-  background: #7a3325; /* Cor mais forte para combinar com o foco */
-  transform: scaleX(0); /* Começa com largura zero */
-  transform-origin: center; /* A animação expande a partir do centro */
+  background: #7a3325; 
+  transform: scaleX(0); 
+  transform-origin: center; 
   transition: transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
 }
 
 .form-control:focus ~ .input-underline {
-  transform: scaleX(1); /* Expande para a largura total */
+  transform: scaleX(1); 
 }
 
-/* Tooltip */
 .input-wrapper app-tooltip {
   position: absolute;
   top: -0.25rem;
   right: 0;
 }
 
-/* Mensagens de validação */
 .validations {
   padding-top: 0.5rem;
 }
@@ -231,7 +219,6 @@ body {
   margin-top: 4px;
 }
 
-/* Termos e condições */
 .terms-container {
   display: flex;
   align-items: center;
@@ -286,7 +273,6 @@ body {
   color: #666;
 }
 
-/* Botão de submit */
 .submit-button {
   width: 100%;
   padding: 0.85rem;
@@ -318,7 +304,6 @@ body {
   box-shadow: none;
 }
 
-/* Link para login */
 .login-text {
   text-align: center;
   font-size: 0.9rem;
@@ -347,7 +332,6 @@ body {
   outline: none;
 }
 
-/* Responsividade */
 @media (max-width: 768px) {
   .form-container {
     padding: 2rem 1.5rem;

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { ProductService } from '../../core/services/product.service';
 import { Product } from '../../shared/models';
 import { CommonModule, CurrencyPipe } from '@angular/common';
@@ -12,6 +12,7 @@ import { CommonModule, CurrencyPipe } from '@angular/common';
   styleUrl: './featured-products.component.css',
 })
 export class FeaturedProductsComponent implements OnInit {
+  @Input() titulo: string = 'Título Padrão'
   product: Product | null = null;
   backendUrl = 'http://localhost:8080';
 
@@ -19,7 +20,7 @@ export class FeaturedProductsComponent implements OnInit {
 
   ngOnInit(): void {
     // Para este exemplo, vamos buscar o produto com ID = 1
-    const featuredProductId = 3;
+    const featuredProductId = 4;
 
     this.productService.getProduct(featuredProductId).subscribe({
       next: (data) => {

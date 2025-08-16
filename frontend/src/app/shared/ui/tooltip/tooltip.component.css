@@ -17,7 +17,7 @@
   text-align: center;
   line-height: 16px;
   cursor: pointer;
-  user-select: none; /* Evita seleção de texto */
+  user-select: none;
 }
 
 .tooltip-box {
