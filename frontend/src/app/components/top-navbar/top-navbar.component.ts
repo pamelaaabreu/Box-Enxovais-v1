@@ -1,17 +1,15 @@
-import { Component, OnInit, HostListener, ElementRef } from '@angular/core';
+import { Component, ElementRef, HostListener, OnInit } from '@angular/core';
+import { AuthService } from '../../core/services/auth.service';
 import { Router, RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { AuthService } from '../../core/services/auth.service';
 
 @Component({
-  selector: 'app-navbar',
-  standalone: true,
+  selector: 'app-top-navbar',
   imports: [CommonModule, RouterLink],
-  templateUrl: './navbar.component.html',
-  styleUrls: ['./navbar.component.css'],
-  
+  templateUrl: './top-navbar.component.html',
+  styleUrl: './top-navbar.component.css'
 })
-export class NavbarComponent implements OnInit {
+export class TopNavbarComponent implements OnInit {
   isLoggedIn = false;
   isMenuOpen = false;
   userName: string | null = null;

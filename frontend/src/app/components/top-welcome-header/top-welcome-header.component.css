@@ -1,0 +1,36 @@
+  .mini-navbar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 10px 50px;
+        background-color: #102542;
+        z-index: 1001; /* Z-index mais alto para ficar acima de tudo */
+        height: 40px;
+        box-sizing: border-box;
+    }
+.mini-navbar span {
+  font-size: 14px;
+  color: #ffffff;
+  letter-spacing: 0.9px;
+}
+
+.mini-navbar .atendimento {
+  margin-left: 20px;
+}
+
+.mini-navbar .social-media a {
+  display: inline-block;
+  margin-left: 10px;
+  text-decoration: none;
+  color: #e0e0e0;
+  transition: color 0.5s ease, transform 0.3s ease;
+}
+
+.mini-navbar .social-media a:hover {
+  color: #ffffff;
+  transform: scale(1.15);
+}

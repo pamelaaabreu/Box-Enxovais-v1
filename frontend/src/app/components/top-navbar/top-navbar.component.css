@@ -1,33 +1,36 @@
 .top-navbar {
-  position: fixed;
-  top: 40px;
-  left: 0;
   width: 100%;
-  display: flex;
-  align-items: center;
+  display: flex; /* Transforma a barra num container flexível */
+  margin-top: 23px;
+  align-items: center; 
+  /* 3. USE O PADDING PARA CONTROLAR O ESPAÇO EM BRANCO */
+  padding: 20px 50px; /* Aumente o '20px' se quiser mais espaço acima/abaixo */
+
+  /* O resto das suas propriedades */
   justify-content: space-between;
-  padding: 0 50px;
   background-color: #f2f2f2;
   gap: 20px;
-  z-index: 999;
-  overflow: visible;
-}
-
-.logo {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+  box-sizing: border-box;
 }
 
 .logo img {
-  width: 120px;
+  /* É bom garantir que a imagem seja tratada como um bloco para evitar problemas */
+  display: block; 
+  width: 120px; /* ou o tamanho que desejar */
 }
+.logo img {
+  width: 100px;
+  /* display: block remove qualquer espaço extra que o navegador 
+     possa adicionar em volta da imagem */
+  display: block; 
+}
+
+/* --- O RESTANTE DO SEU CÓDIGO (sem alterações necessárias) --- */
 
 .search-bar {
   position: relative;
   flex-grow: 1;
   max-width: 500px;
-  margin: 0 50px;
 }
 
 .search-input {
@@ -42,11 +45,11 @@
   transition: all 0.3s ease;
 }
 
-.search-bar  .search-input:focus {
+.search-bar .search-input:focus {
   outline: none;
   background-color: #fff;
-  border-color: #C5B4A8;
-   box-shadow: 0 0 0 4px rgba(197, 180, 168, 0.4);
+  border-color: #c5b4a8;
+  box-shadow: 0 0 0 4px rgba(197, 180, 168, 0.4);
 }
 .search-icon svg {
   position: absolute;
@@ -137,71 +140,6 @@
   gap: 8px;
 }
 
-.navbar-container {
-  position: fixed;
-  top: 180px;
-  left: 0;
-  right: 0;
-  margin: 0 auto;
-  max-width: 1200px;
-  padding: 10px 20px;
-  z-index: 998;
-}
-
-.navbar {
-  background-color: #0d1b2a;
-  display: flex;
-  height: 60px;
-  justify-content: center;
-  align-items: center;
-  border-radius: 20px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-}
-
-.navbar-list {
-  display: flex;
-  align-items: stretch;
-  justify-content: space-between;
-  list-style: none;
-  gap: 0;
-  padding: 0;
-  margin: 0;
-  height: 100%;
-  width: 100%;
-}
-
-.navbar-list li {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.navbar-list li a {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100%;
-  width: 100%;
-  padding: 0 20px;
-  color: #ffffff;
-  text-transform: uppercase;
-  font-size: 14px;
-  text-decoration: none;
-  transition: color 0.3s ease;
-}
-
-.navbar-list li:hover {
-  background-color: #b0c4d6;
-}
-
-.navbar-list li:hover a {
-  color: #0e213a;
-}
-
-.navbar-space {
-  height: 18em;
-}
 .user-profile-menu {
   position: relative;
 }

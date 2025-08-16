@@ -9,18 +9,20 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../../core/services/auth.service';
 import { SweetAlertService } from '../../core/services/sweet-alert.service';
+import { ShowPasswordComponent } from '../css/show-password/show-password.component';
 
 @Component({
   selector: 'app-reset-password',
   standalone: true,
-  imports: [ReactiveFormsModule, CommonModule],
+  imports: [ReactiveFormsModule, CommonModule, ShowPasswordComponent],
   templateUrl: './reset-password.component.html',
   styleUrls: ['./reset-password.component.css'],
 })
 export class ResetPasswordComponent implements OnInit {
+  isPasswordVisible = false;
   resetForm: FormGroup;
   private token: string | null = null;
-  
+
   isLoading = false;
   showPassword = false;
 
@@ -32,11 +34,14 @@ export class ResetPasswordComponent implements OnInit {
     private alertService: SweetAlertService
   ) {
     this.resetForm = this.fb.group({
-      newPassword: ['', [
-        Validators.required,
-        Validators.minLength(6),
-        Validators.pattern(/.*[?@#$%&].*/) // Validação de caractere especial
-      ]],
+      newPassword: [
+        '',
+        [
+          Validators.required,
+          Validators.minLength(6),
+          Validators.pattern(/.*[?@#$%&].*/), // Validação de caractere especial
+        ],
+      ],
       confirmPassword: ['', [Validators.required]],
     });
   }
@@ -45,7 +50,10 @@ export class ResetPasswordComponent implements OnInit {
     const tokenFromUrl = this.route.snapshot.queryParamMap.get('token');
 
     if (!tokenFromUrl) {
-      this.alertService.showError('Token Inválido', 'Token não encontrado. Por favor, use o link enviado para o seu e-mail.');
+      this.alertService.showError(
+        'Token Inválido',
+        'Token não encontrado. Por favor, use o link enviado para o seu e-mail.'
+      );
       this.resetForm.disable();
       return;
     }
@@ -53,7 +61,9 @@ export class ResetPasswordComponent implements OnInit {
     this.token = tokenFromUrl;
     this.authService.validateResetToken(this.token).subscribe({
       error: (err) => {
-        const errorMessage = err.error?.message || 'O link de redefinição de senha é inválido ou expirou.';
+        const errorMessage =
+          err.error?.message ||
+          'O link de redefinição de senha é inválido ou expirou.';
         this.alertService.showError('Erro de Validação', errorMessage);
         this.resetForm.disable();
       },
@@ -65,30 +75,48 @@ export class ResetPasswordComponent implements OnInit {
     const confirmPasswordControl = this.resetForm.get('confirmPassword');
 
     // Validação sequencial para exibir alertas específicos
-    if (newPasswordControl?.errors?.['required'] || confirmPasswordControl?.errors?.['required']) {
-      this.alertService.showError('Campos Obrigatórios', 'Por favor, preencha a nova senha e a confirmação.');
+    if (
+      newPasswordControl?.errors?.['required'] ||
+      confirmPasswordControl?.errors?.['required']
+    ) {
+      this.alertService.showError(
+        'Campos Obrigatórios',
+        'Por favor, preencha a nova senha e a confirmação.'
+      );
       return;
     }
 
     if (newPasswordControl?.errors?.['minlength']) {
-      this.alertService.showError('Senha Curta', 'A senha deve ter pelo menos 6 caracteres.');
+      this.alertService.showError(
+        'Senha Curta',
+        'A senha deve ter pelo menos 6 caracteres.'
+      );
       return;
     }
 
     if (newPasswordControl?.errors?.['pattern']) {
-      this.alertService.showError('Senha Inválida', 'A senha deve conter um símbolo especial (?@#$%&).');
+      this.alertService.showError(
+        'Senha Inválida',
+        'A senha deve conter um símbolo especial (?@#$%&).'
+      );
       return;
     }
 
     const { newPassword, confirmPassword } = this.resetForm.value;
 
     if (newPassword !== confirmPassword) {
-      this.alertService.showError('Senhas não conferem', 'Por favor, digite as senhas novamente.');
+      this.alertService.showError(
+        'Senhas não conferem',
+        'Por favor, digite as senhas novamente.'
+      );
       return;
     }
 
     if (!this.token) {
-      this.alertService.showError('Erro de Token', 'Token não disponível. A sessão pode ter expirado.');
+      this.alertService.showError(
+        'Erro de Token',
+        'Token não disponível. A sessão pode ter expirado.'
+      );
       return;
     }
 
@@ -99,15 +127,21 @@ export class ResetPasswordComponent implements OnInit {
       next: () => {
         this.isLoading = false;
         this.resetForm.disable();
-        
-        this.alertService.showSuccess('Sucesso!', 'Senha alterada com sucesso! Será redirecionado para a página de login.')
+
+        this.alertService
+          .showSuccess(
+            'Sucesso!',
+            'Senha alterada com sucesso! Será redirecionado para a página de login.'
+          )
           .then(() => {
             this.router.navigate(['/login']);
           });
       },
       error: (err) => {
         this.isLoading = false;
-        const errorMessage = err.error?.message || 'Não foi possível alterar a senha. O token pode ter expirado.';
+        const errorMessage =
+          err.error?.message ||
+          'Não foi possível alterar a senha. O token pode ter expirado.';
         this.alertService.showError('Erro ao Salvar', errorMessage);
       },
     });
