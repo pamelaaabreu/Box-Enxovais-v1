@@ -12,7 +12,13 @@
         <div class="form-row">
           <div class="input-container extra-large-field">
             <div class="input-wrapper">
-              <input class="form-control" formControlName="name" id="name" required placeholder=" " />
+              <input
+                class="form-control"
+                formControlName="name"
+                id="name"
+                required
+                placeholder=" "
+              />
               <label class="floating-label" for="name">Nome completo *</label>
               <div class="input-underline"></div>
             </div>
@@ -20,7 +26,14 @@
           </div>
           <div class="input-container large-field">
             <div class="input-wrapper">
-              <input class="form-control" formControlName="email" id="email" type="email" required placeholder=" " />
+              <input
+                class="form-control"
+                formControlName="email"
+                id="email"
+                type="email"
+                required
+                placeholder=" "
+              />
               <label class="floating-label" for="email">Email *</label>
               <div class="input-underline"></div>
             </div>
@@ -31,28 +44,59 @@
         <div class="form-row">
           <div class="input-container birthdate-field">
             <div class="input-wrapper">
-              <input class="form-control" formControlName="birthDate" id="birthDate" type="date" required placeholder=" " />
-              <label class="floating-label" for="birthDate">Data de Nascimento *</label>
+              <input
+                class="form-control"
+                formControlName="birthDate"
+                id="birthDate"
+                type="date"
+                required
+                placeholder=" "
+              />
+              <label class="floating-label" for="birthDate"
+                >Data de Nascimento *</label
+              >
               <div class="input-underline"></div>
             </div>
           </div>
           <div class="input-container medium-field">
             <div class="input-wrapper">
-              <input class="form-control" formControlName="cpf" id="cpf" required placeholder=" " mask="000.000.000-00" />
+              <input
+                class="form-control"
+                formControlName="cpf"
+                id="cpf"
+                required
+                placeholder=" "
+                mask="000.000.000-00"
+              />
               <label class="floating-label" for="cpf">CPF *</label>
               <div class="input-underline"></div>
             </div>
           </div>
           <div class="input-container medium-field">
             <div class="input-wrapper">
-              <input class="form-control" formControlName="phone" id="phone" required placeholder=" " mask="(00) 00000-0000" />
+              <input
+                class="form-control"
+                formControlName="phone"
+                id="phone"
+                required
+                placeholder=" "
+                mask="(00) 00000-0000"
+              />
               <label class="floating-label" for="phone">Telefone *</label>
               <div class="input-underline"></div>
             </div>
           </div>
           <div class="input-container cep-field">
             <div class="input-wrapper">
-              <input class="form-control" formControlName="zipCode" id="zipCode" required placeholder=" " (blur)="onCepBlur()" mask="00000-000" />
+              <input
+                class="form-control"
+                formControlName="zipCode"
+                id="zipCode"
+                required
+                placeholder=" "
+                (blur)="onCepBlur()"
+                mask="00000-000"
+              />
               <label class="floating-label" for="zipCode">CEP *</label>
               <div class="input-underline"></div>
             </div>
@@ -63,21 +107,39 @@
         <div class="form-row">
           <div class="input-container">
             <div class="input-wrapper">
-              <input class="form-control" formControlName="street" id="street" required placeholder=" " />
+              <input
+                class="form-control"
+                formControlName="street"
+                id="street"
+                required
+                placeholder=" "
+              />
               <label class="floating-label" for="street">Logradouro *</label>
               <div class="input-underline"></div>
             </div>
           </div>
           <div class="input-container">
             <div class="input-wrapper">
-              <input class="form-control" formControlName="neighborhood" id="neighborhood" required placeholder=" " />
+              <input
+                class="form-control"
+                formControlName="neighborhood"
+                id="neighborhood"
+                required
+                placeholder=" "
+              />
               <label class="floating-label" for="neighborhood">Bairro *</label>
               <div class="input-underline"></div>
             </div>
           </div>
           <div class="input-container small-field">
             <div class="input-wrapper">
-              <input class="form-control" formControlName="number" id="number" required placeholder=" " />
+              <input
+                class="form-control"
+                formControlName="number"
+                id="number"
+                required
+                placeholder=" "
+              />
               <label class="floating-label" for="number">Número *</label>
               <div class="input-underline"></div>
             </div>
@@ -88,39 +150,82 @@
         <div class="form-row">
           <div class="input-container state-field">
             <div class="input-wrapper">
-              <input class="form-control" formControlName="state" id="state" maxlength="2" required placeholder=" " />
+              <input
+                class="form-control"
+                formControlName="state"
+                id="state"
+                maxlength="2"
+                required
+                placeholder=" "
+              />
               <label class="floating-label" for="state">Estado *</label>
-              <app-tooltip [text]="'O campo estado é preenchido apenas com as siglas. Ex: SP.'"></app-tooltip>
+              <app-tooltip
+                [text]="
+                  'O campo estado é preenchido apenas com as siglas. Ex: SP.'
+                "
+              ></app-tooltip>
               <div class="input-underline"></div>
             </div>
           </div>
           <div class="input-container">
             <div class="input-wrapper">
-              <input class="form-control" formControlName="city" id="city" required placeholder=" " />
+              <input
+                class="form-control"
+                formControlName="city"
+                id="city"
+                required
+                placeholder=" "
+              />
               <label class="floating-label" for="city">Cidade *</label>
               <div class="input-underline"></div>
             </div>
           </div>
           <div class="input-container password-container">
             <div class="input-wrapper">
-              <input class="form-control" formControlName="password" id="password" type="password" required placeholder=" " />
+              <input
+                class="form-control"
+                formControlName="password"
+                id="password"
+                [type]="isPasswordVisible ? 'text' : 'password'"
+                required
+                placeholder=" "
+              />
               <label class="floating-label" for="password">Senha *</label>
-              <app-tooltip [text]="'A senha deve ter no mínimo 6 caracteres, com pelo menos um símbolo especial (?@#$%&).'"></app-tooltip>
+              <app-tooltip
+                [text]="
+                  'A senha deve ter no mínimo 6 caracteres, com pelo menos um símbolo especial (?@#$%&).'
+                "
+              ></app-tooltip>
               <div class="input-underline"></div>
+              <app-show-password
+                (visibilityChange)="isPasswordVisible = $event"
+              >
+              </app-show-password>
             </div>
           </div>
         </div>
 
         <!-- Termos e Botão -->
         <div class="terms-container">
-          <input type="checkbox" id="terms" class="custom-checkbox" formControlName="terms" />
+          <input
+            type="checkbox"
+            id="terms"
+            class="custom-checkbox"
+            formControlName="terms"
+          />
           <label for="terms" class="checkbox-label"></label>
-          <label for="terms" class="terms-label-text">Eu concordo com os Termos de Uso!</label>
+          <label for="terms" class="terms-label-text"
+            >Eu concordo com os Termos de Uso!</label
+          >
         </div>
         <button type="submit" class="submit-button">CADASTRAR</button>
         <p class="login-text">
           Já tem uma conta?
-          <button type="button" class="login-button-as-link" routerLink="/login">
+          <button
+            type="button"
+            class="login-button-as-link"
+            routerLink="/login"
+          >
             Faça login!
           </button>
         </p>

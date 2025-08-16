@@ -19,7 +19,7 @@
 html,
 body {
   height: 100%;
-  line-height: 1.5;
+  line-height: 1;
 }
 
 ul,
@@ -69,10 +69,6 @@ select:focus {
   border: none !important;
   background: transparent !important;
 }
-
-/* =====================================================
-   SWEETALERT Customizado
-===================================================== */
 
 .swal2-container {
   z-index: 99999 !important;

@@ -9,6 +9,7 @@ import { AuthService } from '../../core/services/auth.service';
   imports: [CommonModule, RouterLink],
   templateUrl: './navbar.component.html',
   styleUrls: ['./navbar.component.css'],
+  
 })
 export class NavbarComponent implements OnInit {
   isLoggedIn = false;
@@ -23,6 +24,7 @@ export class NavbarComponent implements OnInit {
 
   ngOnInit(): void {
     this.isLoggedIn = this.authService.isLoggedIn();
+    // this.isLoggedIn = true;
     if (this.isLoggedIn) {
       const fullName = this.authService.getUserName();
       if (fullName) {
@@ -31,8 +33,10 @@ export class NavbarComponent implements OnInit {
     }
   }
 
-  toggleMenu(): void {
+  toggleMenu(event: MouseEvent): void {
+     event.stopPropagation();
     this.isMenuOpen = !this.isMenuOpen;
+     console.log('Menu state:', this.isMenuOpen);
   }
 
   logout(): void {

@@ -16,6 +16,7 @@ import Swal from 'sweetalert2';
 import { SweetAlertService } from '../../../core/services/sweet-alert.service';
 import { TooltipComponent } from '../../../shared/ui/tooltip/tooltip.component';
 import { AuthService } from '../../../core/services/auth.service';
+import { ShowPasswordComponent } from '../../../shared/css/show-password/show-password.component';
 
 export class CepValidators {
   static cepInvalido(): ValidatorFn {
@@ -38,13 +39,14 @@ export class CepValidators {
     NgxMaskDirective,
     TooltipComponent,
     RouterLink,
+    ShowPasswordComponent,
   ],
   templateUrl: './register.component.html',
   styleUrl: './register.component.css',
   encapsulation: ViewEncapsulation.None,
-  
 })
 export class RegisterComponent implements OnInit {
+  isPasswordVisible = false;
   userForm!: FormGroup;
   private ultimoCepValidado: string = '';
   private fieldNamesMap: Record<string, string> = {

@@ -1,7 +1,7 @@
 .mini-navbar {
   position: fixed;
   left: 0;
-  width: 100%; /* Ocupa toda a largura da tela */
+  width: 100%; 
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -22,13 +22,16 @@
 }
 
 .mini-navbar .social-media a {
+    display: inline-block;
   margin-left: 10px;
   text-decoration: none;
-  color: #ffffff;
+  color: #E0E0E0;
+  transition: color 0.5s ease, transform 0.3s ease;
 }
 
 .mini-navbar .social-media a:hover {
-  color: #3a506b;
+  color: #FFFFFF;
+   transform: scale(1.15); 
 }
 
 .carousel-inner {
@@ -50,7 +53,7 @@
 
 @media (max-width: 768px) {
   #carouselExampleIndicators img {
-    max-height: 300px; /* menor altura para mobile */
+    max-height: 300px; 
   }
 
   .btn-comprar-grande {
