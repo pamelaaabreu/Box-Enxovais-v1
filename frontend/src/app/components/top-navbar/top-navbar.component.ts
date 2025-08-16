@@ -1,4 +1,10 @@
-import { Component, ElementRef, HostListener, OnInit } from '@angular/core';
+import {
+  Component,
+  ElementRef,
+  HostListener,
+  Input,
+  OnInit,
+} from '@angular/core';
 import { AuthService } from '../../core/services/auth.service';
 import { Router, RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
@@ -7,9 +13,10 @@ import { CommonModule } from '@angular/common';
   selector: 'app-top-navbar',
   imports: [CommonModule, RouterLink],
   templateUrl: './top-navbar.component.html',
-  styleUrl: './top-navbar.component.css'
+  styleUrl: './top-navbar.component.css',
 })
 export class TopNavbarComponent implements OnInit {
+  @Input() isScrolled: boolean = false;
   isLoggedIn = false;
   isMenuOpen = false;
   userName: string | null = null;
@@ -32,9 +39,9 @@ export class TopNavbarComponent implements OnInit {
   }
 
   toggleMenu(event: MouseEvent): void {
-     event.stopPropagation();
+    event.stopPropagation();
     this.isMenuOpen = !this.isMenuOpen;
-     console.log('Menu state:', this.isMenuOpen);
+    console.log('Menu state:', this.isMenuOpen);
   }
 
   logout(): void {

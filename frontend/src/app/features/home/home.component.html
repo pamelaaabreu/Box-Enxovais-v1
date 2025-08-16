@@ -1,11 +1,13 @@
-<!DOCTYPE html>
-<header><app-top-welcome-header></app-top-welcome-header></header>
+<app-top-welcome-header></app-top-welcome-header>
+<app-top-navbar [isScrolled]="isScrolled"></app-top-navbar>
+<app-main-navbar [isHidden]="isScrolled"></app-main-navbar>
 
-<main class="home">
-   <app-top-navbar></app-top-navbar>
-  <app-main-navbar></app-main-navbar>
+<main class="home-content">
   <app-carousel></app-carousel>
-  <app-featured-products></app-featured-products>
+  <app-featured-products
+    ngSkipHydration
+    [titulo]="'Produtos em Destaque'"
+  ></app-featured-products>
 </main>
 
 <app-footer></app-footer>

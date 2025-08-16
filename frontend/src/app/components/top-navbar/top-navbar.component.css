@@ -1,23 +1,21 @@
 .top-navbar {
   width: 100%;
   display: flex;
-  margin-top: 23px;
+  /* margin-top: 23px; */
+  position: sticky;
   align-items: center;
-  padding: 20px 50px;
+  padding: 10px 50px;
   justify-content: space-between;
   background-color: #f2f2f2;
   gap: 20px;
   box-sizing: border-box;
+  transition: padding 0.3s ease-in-out;
 }
 
 .logo img {
   display: block;
-  width: 120px;
-}
-
-.logo img {
-  width: 100px;
-  display: block;
+  width: 90px;
+  transition: width 0.3s ease-in-out;
 }
 
 .search-bar {
@@ -65,6 +63,31 @@
 .search-bar:focus-within {
   background-color: #fff;
   border-radius: 16px;
+}
+
+.top-navbar.navbar-scrolled {
+  padding: 10px 50px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.top-navbar.navbar-scrolled .logo img {
+  width: 90px;
+}
+
+.top-navbar.navbar-scrolled .search-input {
+  padding: 8px 20px 8px 25px;
+  font-size: 0.9rem;
+}
+
+.top-navbar.navbar-scrolled .account-buttons .cadastro-btn,
+.top-navbar.navbar-scrolled .account-buttons .login-btn {
+  padding: 8px 15px;
+  font-size: 0.9rem;
+}
+
+.account-buttons .cadastro-btn,
+.account-buttons .login-btn {
+  transition: padding 0.3s ease-in-out, font-size 0.3s ease-in-out;
 }
 
 .search-input::placeholder {
@@ -176,7 +199,7 @@
   border-radius: 16px;
   box-shadow: 0 10px 30px -5px rgba(130, 110, 95, 0.15);
   border: 1px solid rgba(224, 212, 203, 0.5);
-   z-index: 10000;
+  z-index: 10000;
   overflow: hidden;
   opacity: 0;
   visibility: hidden;
@@ -189,7 +212,6 @@
   visibility: visible;
   transform: translateY(0);
 }
-
 
 .top-navbar .dropdown-menu ul {
   list-style: none;
