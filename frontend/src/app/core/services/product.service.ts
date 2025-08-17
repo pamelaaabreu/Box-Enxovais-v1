@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Product } from '../../shared/models';
-import { Observable, of } from 'rxjs';
+import { forkJoin, Observable, of } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
@@ -17,5 +17,10 @@ export class ProductService {
 
    getProduct(id: number): Observable<Product> {
     return this.http.get<Product>(`${this.apiUrl}/${id}`);
+  }
+
+    getProductsByIds(ids: number[]): Observable<Product[]> {
+    const requests = ids.map(id => this.getProduct(id));
+    return forkJoin(requests);
   }
 }
