@@ -1,160 +1,73 @@
-<div class="container mt-4">
+<div class="form-container">
   <h2>Cadastrar Novo Produto</h2>
-  <form (ngSubmit)="onSubmit()" #productForm="ngForm">
+
+  <form (ngSubmit)="onSubmit()" #productForm="ngForm" class="product-form">
     <div class="form-group">
       <label for="name">Nome do Produto</label>
-      <input
-        type="text"
-        id="name"
-        class="form-control"
-        name="name"
-        [(ngModel)]="product.name"
-        required
-      />
+      <input type="text" id="name" name="name" [(ngModel)]="product.name" required />
     </div>
 
     <div class="form-group">
       <label for="description">Descrição</label>
-      <textarea
-        id="description"
-        class="form-control"
-        name="description"
-        [(ngModel)]="product.description"
-      ></textarea>
+      <textarea id="description" name="description" [(ngModel)]="product.description"></textarea>
     </div>
 
-    <div class="row">
-      <div class="col-md-6 form-group">
+    <div class="form-row">
+      <div class="form-group">
         <label for="price">Preço (R$)</label>
-        <input
-          type="number"
-          id="price"
-          class="form-control"
-          name="price"
-          [(ngModel)]="product.price"
-          required
-        />
+        <input type="number" id="price" name="price" [(ngModel)]="product.price" required />
       </div>
 
-      <div class="col-md-6 form-group">
+      <div class="form-group">
         <label for="quantity">Quantidade em Estoque</label>
-        <input
-          type="number"
-          id="quantity"
-          class="form-control"
-          name="quantity"
-          [(ngModel)]="product.quantity"
-          required
-        />
+        <input type="number" id="quantity" name="quantity" [(ngModel)]="product.quantity" required />
       </div>
     </div>
 
     <hr />
     <h4>Medidas</h4>
-    <div class="row">
-      <div class="col-md-3 form-group">
-        <label for="casal">Casal</label>
-        <input
-          type="text"
-          id="casal"
-          class="form-control"
-          name="casal"
-          [(ngModel)]="product.measurements['casal']"
-        />
-      </div>
-
-      <div class="col-md-3 form-group">
-        <label for="queen">Queen</label>
-        <input
-          type="text"
-          id="queen"
-          class="form-control"
-          name="queen"
-          [(ngModel)]="product.measurements['queen']"
-        />
-      </div>
-
-      <div class="col-md-3 form-group">
-        <label for="super_king">Super King</label>
-        <input
-          type="text"
-          id="super_king"
-          class="form-control"
-          name="super_king"
-          [(ngModel)]="product.measurements['super_king']"
-        />
-      </div>
-
-      <div class="col-md-3 form-group">
-        <label for="solteiro">Solteiro</label>
-        <input
-          type="text"
-          id="solteiro"
-          class="form-control"
-          name="solteiro"
-          [(ngModel)]="product.measurements['solteiro']"
-        />
-      </div>
+    <div class="form-row">
+      <div class="form-group"><label for="casal">Casal</label><input type="text" id="casal" name="casal" [(ngModel)]="product.measurements['casal']" /></div>
+      <div class="form-group"><label for="queen">Queen</label><input type="text" id="queen" name="queen" [(ngModel)]="product.measurements['queen']" /></div>
+      <div class="form-group"><label for="super_king">Super King</label><input type="text" id="super_king" name="super_king" [(ngModel)]="product.measurements['super_king']" /></div>
+      <div class="form-group"><label for="solteiro">Solteiro</label><input type="text" id="solteiro" name="solteiro" [(ngModel)]="product.measurements['solteiro']" /></div>
     </div>
 
     <hr />
-
     <div class="form-group">
       <label for="care_instructions">Instruções de Cuidado</label>
-      <textarea
-        id="care_instructions"
-        class="form-control"
-        name="care_instructions"
-        [(ngModel)]="product.care_instructions"
-      ></textarea>
+      <textarea id="care_instructions" name="care_instructions" [(ngModel)]="product.care_instructions"></textarea>
     </div>
 
-    <div class="row">
-      <div class="col-md-4 form-group">
+    <div class="form-row">
+      <div class="form-group">
         <label for="brand_id">Marca</label>
-        <select
-          id="brand_id"
-          class="form-control"
-          name="brand_id"
-          [(ngModel)]="product.brand_id"
-        >
+        <select id="brand_id" name="brand_id" [(ngModel)]="product.brand_id">
           <option [ngValue]="undefined">Selecione...</option>
           <option [ngValue]="1">Marca A</option>
           <option [ngValue]="2">Marca B</option>
         </select>
       </div>
-      <div class="col-md-4 form-group">
+
+      <div class="form-group">
         <label for="product_type_id">Tipo de Produto</label>
-        <select
-          id="product_type_id"
-          class="form-control"
-          name="product_type_id"
-          [(ngModel)]="product.product_type_id"
-        >
+        <select id="product_type_id" name="product_type_id" [(ngModel)]="product.product_type_id">
           <option [ngValue]="undefined">Selecione...</option>
           <option [ngValue]="1">Tipo 1</option>
           <option [ngValue]="2">Tipo 2</option>
         </select>
       </div>
-      <div class="col-md-4 form-group">
+
+      <div class="form-group">
         <label for="status">Status</label>
-        <select
-          id="status"
-          class="form-control"
-          name="status"
-          [(ngModel)]="product.status"
-        >
+        <select id="status" name="status" [(ngModel)]="product.status">
           <option value="active">Ativo</option>
           <option value="inactive">Inativo</option>
         </select>
       </div>
     </div>
 
-    <button
-      type="submit"
-      class="btn btn-primary mt-3"
-      [disabled]="!productForm.form.valid"
-    >
+    <button type="submit" [disabled]="!productForm.form.valid" class="btn-submit">
       Salvar e Adicionar Imagens
     </button>
   </form>

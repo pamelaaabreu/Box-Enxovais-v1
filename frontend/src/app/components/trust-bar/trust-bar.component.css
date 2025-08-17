@@ -1,0 +1,49 @@
+.trust-bar-container {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  flex-wrap: wrap;
+  background-color: transparent;
+  padding: 5px 32px 52px 10px;
+  /* border-bottom: 1px solid #eae2da; */
+  gap: 10px;
+}
+
+.trust-bar-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.trust-bar-item svg {
+  flex-shrink: 0;
+  color: #8b4513;
+  stroke-width: 2.5;
+}
+
+.trust-bar-item span {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #5d5550;
+}
+
+@media (max-width: 992px) {
+  .trust-bar-container {
+    justify-content: flex-start;
+    padding: 16px;
+  }
+  .trust-bar-item {
+    flex-basis: 45%;
+  }
+}
+
+@media (max-width: 576px) {
+  .trust-bar-container {
+    justify-content: center;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .trust-bar-item {
+    flex-basis: 100%;
+  }
+}

@@ -1,0 +1,86 @@
+.form-container {
+  max-width: 800px;
+  margin: 40px auto;
+  background: #ffffff;
+  padding: 32px;
+  border-radius: 16px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+  font-family: "Segoe UI", sans-serif;
+}
+
+.form-container h2 {
+  margin-bottom: 20px;
+  color: #0d1b2a;
+  font-size: 1.8rem;
+  font-weight: 600;
+}
+
+.product-form h4 {
+  color: #5d5550;
+  margin-top: 20px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 16px;
+}
+
+.form-group label {
+  margin-bottom: 6px;
+  font-weight: 500;
+  color: #1a1a1a;
+}
+
+.form-group input,
+.form-group textarea,
+.form-group select {
+  padding: 10px 14px;
+  border: 1px solid #c5b4a8;
+  border-radius: 8px;
+  font-size: 1rem;
+  color: #091322;
+  background: #f2f2f2;
+  transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+.form-group input:focus,
+.form-group textarea:focus,
+.form-group select:focus {
+  border-color: #b5838d;
+  box-shadow: 0 0 0 3px rgba(181, 131, 141, 0.3);
+  outline: none;
+}
+
+.form-row {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.form-row .form-group {
+  flex: 1;
+  min-width: 160px;
+}
+
+.btn-submit {
+  background: #8b4513;
+  color: #ffffff;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 50px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.3s, transform 0.2s;
+}
+
+.btn-submit:hover:not(:disabled) {
+  background: #5d5550;
+  transform: translateY(-2px);
+}
+
+.btn-submit:disabled {
+  background: #c5b4a8;
+  cursor: not-allowed;
+}

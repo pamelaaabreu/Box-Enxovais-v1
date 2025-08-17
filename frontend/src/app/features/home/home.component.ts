@@ -7,6 +7,7 @@ import { CarouselComponent } from '../../components/carousel/carousel.component'
 import { TopWelcomeHeaderComponent } from '../../components/top-welcome-header/top-welcome-header.component';
 import { TopNavbarComponent } from '../../components/top-navbar/top-navbar.component';
 import { FeaturedProductsComponent } from '../featured-products/featured-products.component';
+import { TrustBarComponent } from "../../components/trust-bar/trust-bar.component";
 
 @Component({
   selector: 'app-home',
@@ -20,7 +21,8 @@ import { FeaturedProductsComponent } from '../featured-products/featured-product
     TopWelcomeHeaderComponent,
     TopNavbarComponent,
     FeaturedProductsComponent,
-  ],
+    TrustBarComponent
+],
   styleUrl: './home.component.css',
   encapsulation: ViewEncapsulation.Emulated,
 })
