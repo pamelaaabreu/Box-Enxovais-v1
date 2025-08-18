@@ -1,3 +1,4 @@
+
 <app-top-welcome-header></app-top-welcome-header>
 <app-top-navbar [isScrolled]="isScrolled"></app-top-navbar>
 <app-main-navbar [isHidden]="isScrolled"></app-main-navbar>
@@ -9,6 +10,12 @@
     ngSkipHydration
     [titulo]="'Mais Vendidos'"
   ></app-featured-products>
+  <app-shop-by-category
+    [titulo]="'Navegue por Categorias'"
+  ></app-shop-by-category>
+  <app-testimonials></app-testimonials>
+  <app-promo-grid></app-promo-grid>
+  <app-newsletter></app-newsletter>
 </main>
 
 <app-footer></app-footer>
