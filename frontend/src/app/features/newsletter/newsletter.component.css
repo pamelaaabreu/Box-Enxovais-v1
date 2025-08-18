@@ -1,0 +1,91 @@
+.newsletter-section {
+  background-color: #eae2da; 
+  padding: 40px 0;
+  margin-top: 80px;
+}
+
+.newsletter-container {
+  width: 90%;
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 40px;
+}
+
+.newsletter-icon svg {
+  width: 60px;
+  height: 60px;
+  color: #8b4513; 
+}
+
+.newsletter-content {
+  flex-grow: 1;
+}
+
+.newsletter-content h2 {
+  font-size: 28px;
+  font-weight: bold;
+  color: #0d1b2a; 
+  margin: 0 0 10px 0;
+  letter-spacing: 2px;
+}
+
+.newsletter-content p {
+  font-size: 16px;
+  color: #5d5550; 
+  font-weight: 500;
+  margin: 0;
+  line-height: 1.6;
+}
+
+.newsletter-form form {
+  display: flex;
+  width: 100%;
+  max-width: 450px; /* Largura máxima do formulário */
+}
+
+.newsletter-form input {
+  flex-grow: 1;
+  padding: 15px;
+  font-size: 16px;
+  border: 1px solid #c5b4a8;
+  border-right: none;
+  border-radius: 8px 0 0 8px;
+  outline: none;
+  color: #333;
+}
+
+.newsletter-form input:focus {
+  border-color: #8b4513;
+}
+
+.newsletter-form button {
+  padding: 15px 25px;
+  font-size: 16px;
+  font-weight: bold;
+  background-color: #8b4513;
+  color: #ffffff;
+  border: none;
+  border-radius: 0 8px 8px 0;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.newsletter-form button:hover {
+  background-color: #5d5550;
+}
+
+/* Responsividade */
+@media (max-width: 992px) {
+  .newsletter-container {
+    flex-direction: column;
+    text-align: center;
+    gap: 30px;
+  }
+
+  .newsletter-form form {
+    max-width: 100%;
+  }
+}

@@ -1,5 +1,5 @@
 @import url("https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap");
-@import 'app/shared/css/animations.css';
+@import "app/shared/css/animations.css";
 
 :root {
   --swal2-confirm: #92402d;
@@ -90,7 +90,7 @@ select:focus {
   flex-direction: column !important;
   align-items: center !important;
   overflow: visible !important;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15) !important; 
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15) !important;
 }
 
 .swal2-icon {
@@ -133,7 +133,7 @@ select:focus {
 .swal2-confirm {
   background-color: var(--swal2-confirm) !important;
   padding: 0.75em 2em !important;
-  border-radius: 50px !important; 
+  border-radius: 50px !important;
   font-weight: 500 !important;
   font-size: 1rem !important;
   transition: all 0.2s ease !important;
@@ -160,4 +160,42 @@ app-top-navbar {
   position: sticky !important;
   top: 0;
   z-index: 1000;
+}
+
+.title-container {
+  width: 100%;
+  border-bottom: 1px solid #e0e0e0;
+  padding-left: 50px;
+}
+
+.featured-title {
+  display: inline-block;
+  position: relative;
+  margin: 0 0 -1px 0; /* Essencial para o alinhamento da linha */
+  padding-bottom: 15px; /* Essencial para o espaço da linha */
+  font-size: 1.7rem;
+  font-weight: 700;
+  color: #333;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.featured-title::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 4px;
+  background-color: #333;
+}
+
+.title-spacing-default {
+  margin-top: 20px;
+  margin-bottom: 30px;
+}
+
+.title-spacing-large {
+  margin-top: 60px;
+  margin-bottom: 30px;
 }

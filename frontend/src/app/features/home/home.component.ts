@@ -8,6 +8,10 @@ import { TopWelcomeHeaderComponent } from '../../components/top-welcome-header/t
 import { TopNavbarComponent } from '../../components/top-navbar/top-navbar.component';
 import { FeaturedProductsComponent } from '../featured-products/featured-products.component';
 import { TrustBarComponent } from "../../components/trust-bar/trust-bar.component";
+import { ShopByCategoryComponent } from "../shop-by-category/shop-by-category.component";
+import { TestimonialsComponent } from "../testimonials/testimonials.component";
+import { PromoGridComponent } from "../promo-grid/promo-grid.component";
+import { NewsletterComponent } from "../newsletter/newsletter.component";
 
 @Component({
   selector: 'app-home',
@@ -21,7 +25,11 @@ import { TrustBarComponent } from "../../components/trust-bar/trust-bar.componen
     TopWelcomeHeaderComponent,
     TopNavbarComponent,
     FeaturedProductsComponent,
-    TrustBarComponent
+    TrustBarComponent,
+    ShopByCategoryComponent,
+    TestimonialsComponent,
+    PromoGridComponent,
+    NewsletterComponent
 ],
   styleUrl: './home.component.css',
   encapsulation: ViewEncapsulation.Emulated,
