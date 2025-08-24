@@ -15,5 +15,19 @@ type Product struct {
 	Status           string            `json:"status"`
 	CreatedAt        time.Time         `json:"created_at"`
 	UpdatedAt        time.Time         `json:"updated_at"`
-	ImagePaths       []string          `json:"image_paths,omitempty"` 
+	ImagePaths       []string          `json:"image_paths,omitempty"`
+	PromotionalPrice float64           `json:"promotional_price,omitempty"`
+}
+
+type CreatePromotionRequest struct {
+	Name      string `json:"name"`
+	Status    string `json:"status"`
+	StartDate string `json:"start_date"`
+	EndDate   string `json:"end_date"`
+}
+
+type AddToPromotionRequest struct {
+	ProductID        int     `json:"product_id"`
+	PromotionName    string  `json:"promotion_name"`
+	PromotionalPrice float64 `json:"promotional_price"`
 }

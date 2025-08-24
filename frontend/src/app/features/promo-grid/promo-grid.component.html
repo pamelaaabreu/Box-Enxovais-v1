@@ -1,37 +1,61 @@
 <section class="promo-grid-section">
   <div class="section-header">
-    <h2>Inspire-se na Estação</h2>
-    <p>Descubra coleções e ofertas pensadas para o seu conforto.</p>
+    <h1><span class="snow-icon">❄️</span> Ofertas de Inverno</h1>
+    <p>Aproveite descontos exclusivos em itens selecionados da estação.</p>
   </div>
-  <div class="promo-grid-container">
-    <a href="/link-para-colecao-inverno" class="promo-card">
-      <img src="/NewCollection.svg?v=2" alt="Coleção de Inverno" />
+
+  <div
+    class="promo-grid-container"
+    *ngIf="promotionalProducts && promotionalProducts.length > 0; else noPromos"
+  >
+    <a
+      [routerLink]="['/products', product.id]"
+      class="promo-card product-card"
+      *ngFor="let product of promotionalProducts"
+      [attr.aria-label]="'Comprar ' + product.name + ' em promoção'"
+    >
+      <div class="badge">
+        -{{
+          (1 - product.promotionalPrice / product.price) * 100
+            | number : "1.0-0"
+        }}%
+      </div>
+
+      <img
+        [src]="'http://localhost:8080/' + (product.image_paths?.[0] || 'placeholder.jpg')"
+        [alt]="'Imagem de ' + product.name"
+        loading="lazy"
+      />
+
       <div class="promo-overlay">
         <div class="promo-text">
-          <h3>Aconchego de Inverno</h3>
-          <p>Tecidos quentes para noites frias.</p>
+          <h3>{{ product.name }}</h3>
+          <p>{{ product.description }}</p>
+          <div class="price">
+            <span class="original-price">{{
+              product.price | currency : "BRL"
+            }}</span>
+            <span class="promo-price">{{
+              product.promotionalPrice | currency : "BRL"
+            }}</span>
+          </div>
         </div>
       </div>
     </a>
 
-    <a href="/link-para-banho" class="promo-card">
-      <img src="/NewCollection2.svg?v=3" alt="Toalhas para spa em casa" />
-      <div class="promo-overlay">
-        <div class="promo-text">
-          <h3>Seu Spa em Casa</h3>
-          <p>Toalhas macias para um banho quente.</p>
-        </div>
-      </div>
-    </a>
-
-    <a href="/link-para-plush-flanela" class="promo-card">
-      <img src="/NewCollection3.svg?v=2" alt="Produtos com toque aveludado" />
-      <div class="promo-overlay">
-        <div class="promo-text">
-          <h3>Toque Aveludado</h3>
-          <p>O máximo em conforto para a estação.</p>
-        </div>
-      </div>
-    </a>
+    <div class="promo-card promo-all-button">
+      <a
+        href="/link-para-todas-promocoes"
+        class="promo-button"
+        aria-label="Ver todas as promoções"
+        >Ver todas as promoções</a
+      >
+    </div>
   </div>
+
+  <ng-template #noPromos>
+    <div class="no-promos-message">
+      <p>Nenhuma oferta de inverno disponível no momento.</p>
+    </div>
+  </ng-template>
 </section>

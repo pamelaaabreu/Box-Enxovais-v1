@@ -3,12 +3,12 @@ package handlers
 import (
 	"backend/db"
 	"backend/models"
-	"encoding/json" // Garanta que este import está aqui
+	"database/sql"
+	"encoding/json"
 	"log"
 	"net/http"
-	"database/sql"
 	"strconv"
-	"strings" 
+	"strings"
 )
 
 func CreateProduct(w http.ResponseWriter, r *http.Request) {
@@ -17,36 +17,32 @@ func CreateProduct(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
-    
-    // ✅ INÍCIO DA CORREÇÃO ✅
-    // Converte o mapa de medidas para um []byte (slice de bytes) no formato JSON.
 	measurementsJSON, err := json.Marshal(p.Measurements)
 	if err != nil {
 		http.Error(w, "Erro ao processar as medidas do produto", http.StatusBadRequest)
 		return
 	}
-    // ✅ FIM DA CORREÇÃO ✅
 
 	query := `
         INSERT INTO products 
         (name, description, care_instructions, measurements, price, quantity, brand_id, product_type_id, status) 
         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) 
         RETURNING id`
-	
+
 	var productID int
-	err = db.DB.QueryRow( // A chamada do QueryRow agora usa a variável convertida
+	err = db.DB.QueryRow( 
 		query,
 		p.Name,
 		p.Description,
 		p.CareInstructions,
-		measurementsJSON, // <--- MUDANÇA AQUI
+		measurementsJSON,
 		p.Price,
 		p.Quantity,
 		p.BrandID,
 		p.ProductTypeID,
 		p.Status,
 	).Scan(&productID)
-	
+
 	if err != nil {
 		log.Printf("Erro ao inserir produto: %v", err)
 		http.Error(w, "Erro ao criar produto", http.StatusInternalServerError)
@@ -54,14 +50,13 @@ func CreateProduct(w http.ResponseWriter, r *http.Request) {
 	}
 
 	log.Printf("Produto criado com ID: %d", productID)
-	
+
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated)
 	json.NewEncoder(w).Encode(map[string]int{"id": productID})
 }
 
 func GetProduct(w http.ResponseWriter, r *http.Request) {
-	// Extrai o ID da URL, ex: /products/1 -> "1"
 	idStr := strings.TrimPrefix(r.URL.Path, "/products/")
 	id, err := strconv.Atoi(idStr)
 	if err != nil {

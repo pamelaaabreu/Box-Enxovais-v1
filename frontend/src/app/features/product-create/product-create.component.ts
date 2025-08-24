@@ -15,6 +15,7 @@ export class ProductCreateComponent {
   product: Product = {
     name: '',
     price: 0,
+    promotionalPrice: 0,
     quantity: 0,
     status: 'active',
     measurements: {
