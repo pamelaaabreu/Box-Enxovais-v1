@@ -1,11 +1,14 @@
+// main.go
+
 package main
 
 import (
 	"backend/db"
 	"backend/handlers"
-	"github.com/joho/godotenv"
 	"log"
 	"net/http"
+
+	"github.com/joho/godotenv"
 )
 
 func enableCORS(next http.Handler) http.Handler {
@@ -43,6 +46,11 @@ func main() {
 	mux.HandleFunc("/upload-image", handlers.UploadProductImage)
 	mux.HandleFunc("/products", handlers.CreateProduct)
 	mux.HandleFunc("/products/", handlers.GetProduct)
+	mux.HandleFunc("/api/newsletter/subscribe", handlers.SubscribeNewsletter)
+	mux.HandleFunc("/api/promotions/create", handlers.CreatePromotion)
+	mux.HandleFunc("/api/promotions/add", handlers.AddProductToPromotion)
+	mux.HandleFunc("/api/promotions/", handlers.GetPromotionalProducts)
+	//   mux.HandleFunc("/api/test/images/", handlers.GetProductImagesByID)
 
 	log.Println("🚀 Servidor rodando na porta 8080")
 

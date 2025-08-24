@@ -1,4 +1,3 @@
-
 <app-top-welcome-header></app-top-welcome-header>
 <app-top-navbar [isScrolled]="isScrolled"></app-top-navbar>
 <app-main-navbar [isHidden]="isScrolled"></app-main-navbar>
@@ -14,7 +13,7 @@
     [titulo]="'Navegue por Categorias'"
   ></app-shop-by-category>
   <app-testimonials></app-testimonials>
-  <app-promo-grid></app-promo-grid>
+  <app-promo-grid [promoName]="'Ofertas de Inverno'"></app-promo-grid>
   <app-newsletter></app-newsletter>
 </main>
 

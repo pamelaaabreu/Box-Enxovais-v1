@@ -47,7 +47,7 @@ export const routes: Routes = [
   },
 
   {
-    path: 'image-upload/:id', // <--- CORREÇÃO AQUI
+    path: 'image-upload/:id',
     loadComponent: () =>
       import(
         './features/product-image-upload/product-image-upload.component'
@@ -61,6 +61,21 @@ export const routes: Routes = [
         (m) => m.ProductCreateComponent
       ),
   },
+  {
+    path: 'promotion-register',
+    loadComponent: () =>
+      import('./features/create-promotion/create-promotion.component').then(
+        (m) => m.CreatePromotionComponent
+      ),
+  },
+
+  {
+    path: 'add-to-promotion',
+    loadComponent: () =>
+      import('./features/add-to-promotion/add-to-promotion.component').then(
+        (m) => m.AddToPromotionComponent
+      ),
+  },
 
   {
     path: '404',
@@ -69,5 +84,6 @@ export const routes: Routes = [
         (m) => m.NotFoundComponent
       ),
   },
+
   { path: '**', redirectTo: '404' },
 ];

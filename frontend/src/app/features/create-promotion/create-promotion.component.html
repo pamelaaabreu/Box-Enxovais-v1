@@ -1,0 +1,29 @@
+<div class="promotion-form-container">
+  <h2>Criar Nova Promoção</h2>
+  <form (ngSubmit)="onSubmit()">
+    <div class="form-group">
+      <label for="promo-name">Nome da Promoção:</label>
+      <input type="text" id="promo-name" name="name" [(ngModel)]="promotionData.name" required>
+    </div>
+
+    <div class="form-group">
+      <label for="status">Status:</label>
+      <select id="status" name="status" [(ngModel)]="promotionData.status">
+        <option value="active">Ativa</option>
+        <option value="inactive">Inativa</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label for="start-date">Data de Início:</label>
+      <input type="datetime-local" id="start-date" name="start-date" [(ngModel)]="promotionData.start_date" required>
+    </div>
+
+    <div class="form-group">
+      <label for="end-date">Data de Fim:</label>
+      <input type="datetime-local" id="end-date" name="end-date" [(ngModel)]="promotionData.end_date" required>
+    </div>
+
+    <button type="submit">Criar Promoção</button>
+  </form>
+</div>

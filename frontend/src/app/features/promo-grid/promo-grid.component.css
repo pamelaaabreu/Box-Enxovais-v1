@@ -1,52 +1,82 @@
-.promo-grid-section .section-header {
-  text-align: center;
-  margin-bottom: 40px;
-}
-
-.promo-grid-section .section-header h2 {
-  font-size: 28px;
-  color: #222;
-  margin: 0 0 10px 0;
-  font-weight: 400;
-  letter-spacing: 2px;
-}
-
-.promo-grid-section .section-header p {
-  font-size: 16px;
-  color: #666;
-  font-weight: 500;
-  max-width: 500px;
-  margin: 0 auto;
-}
-
+/* --- Seção --- */
 .promo-grid-section {
   width: 90%;
   max-width: 1200px;
   margin: 60px auto;
+  font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
 }
 
+.promo-grid-section .section-header {
+  text-align: center;
+  margin-bottom: 50px;
+}
+
+.promo-grid-section .section-header h1 {
+  font-size: 40px;
+  background: linear-gradient(90deg, #0d1b2a, #8b4513);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-weight: 800;
+  margin: 0 0 10px 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.promo-grid-section .section-header p {
+  font-size: 18px;
+  color: #5d5550;
+  font-weight: 400;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.snow-icon {
+  font-size: 32px;
+  line-height: 1;
+  color: #b5838d;
+}
+
+/* --- Layout --- */
 .promo-grid-container {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 25px;
+  gap: 30px;
 }
 
+/* --- Cards --- */
 .promo-card {
   position: relative;
   display: block;
   overflow: hidden;
-  border-radius: 30px;
-  aspect-ratio: 1 / 1;
+  border-radius: 20px;
+  aspect-ratio: 16 / 10;
   text-decoration: none;
+  transition: transform 0.4s ease, box-shadow 0.4s ease;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  opacity: 0;
+  animation: fadeInUp 0.8s forwards;
+  border: 2px solid #f2f2f2;
+}
+
+.promo-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 12px 25px rgba(0, 0, 0, 0.2);
 }
 
 .promo-card img {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transition: transform 0.4s ease-in-out;
+  transition: transform 0.5s ease-in-out;
 }
 
+.promo-card:hover img {
+  transform: scale(1.1);
+}
+
+/* --- Overlay --- */
 .promo-overlay {
   position: absolute;
   top: 0;
@@ -55,43 +85,135 @@
   height: 100%;
   background: linear-gradient(
     to top,
-    rgba(0, 0, 0, 0.7) 0%,
-    rgba(0, 0, 0, 0) 50%
+    rgba(13, 27, 42, 0.8) 0%,
+    rgba(234, 226, 218, 0.3) 70%
   );
   display: flex;
   align-items: flex-end;
-  padding: 25px;
-  transition: background 0.4s ease;
-}
-
-.promo-text h3 {
-  color: white;
-  font-size: 22px;
-  font-weight: bold;
-  letter-spacing: 1px;
-  margin: 0 0 5px 0;
-  line-height: 1.2;
-}
-
-.promo-text p {
-  color: #f0f0f0;
-  font-size: 14px;
-  margin: 0;
-}
-
-.promo-card:hover img {
-  transform: scale(1.08); /* Efeito de zoom */
+  padding: 30px;
+  transition: background 0.5s ease;
 }
 
 .promo-card:hover .promo-overlay {
   background: linear-gradient(
     to top,
-    rgba(0, 0, 0, 0.8) 0%,
-    rgba(0, 0, 0, 0.1) 60%
+    rgba(13, 27, 42, 0.9) 0%,
+    rgba(234, 226, 218, 0.4) 60%
   );
 }
 
-/* Responsividade */
+/* --- Texto --- */
+.promo-text {
+  width: 100%;
+}
+
+.promo-text h3 {
+  color: #ffffff;
+  font-size: 24px;
+  font-weight: 700;
+  margin: 0 0 8px 0;
+  line-height: 1.2;
+}
+
+.promo-text p {
+  color: #eae2da;
+  font-size: 15px;
+  margin: 0;
+}
+
+/* --- Badge --- */
+.product-card .badge {
+  position: absolute;
+  top: 15px;
+  left: 15px;
+  background: linear-gradient(135deg, #b5838d, #8b4513);
+  color: #ffffff;
+  font-weight: bold;
+  padding: 8px 14px;
+  border-radius: 20px;
+  font-size: 14px;
+  z-index: 10;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  animation: badgePulse 1.5s infinite;
+}
+
+/* --- Preços --- */
+.product-card .price {
+  margin-top: 10px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.product-card .original-price {
+  text-decoration: line-through;
+  color: #c5b4a8;
+  font-size: 14px;
+}
+
+.product-card .promo-price {
+  color: #b5838d;
+  font-weight: 800;
+  font-size: 22px;
+  text-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+}
+
+/* --- Botão final --- */
+.promo-all-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(45deg, #f3e0d8, #e5d2c7);
+  box-shadow: none;
+  transition: all 0.4s ease;
+}
+
+.promo-all-button:hover {
+  transform: translateY(-8px) scale(1.05);
+  box-shadow: 0 12px 25px rgba(0, 0, 0, 0.2);
+}
+
+.promo-all-button .promo-button {
+  background: linear-gradient(135deg, #0d1b2a, #8b4513);
+  color: #ffffff;
+  font-weight: 600;
+  border-radius: 50px;
+  padding: 16px 40px;
+  border: none;
+  cursor: pointer;
+  font-size: 18px;
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+  transition: all 0.3s ease-in-out;
+  text-decoration: none;
+}
+
+.promo-all-button .promo-button:hover {
+  transform: scale(1.05);
+}
+
+/* --- Animações --- */
+@keyframes badgePulse {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* --- Responsividade --- */
 @media (max-width: 992px) {
   .promo-grid-container {
     grid-template-columns: repeat(2, 1fr);
