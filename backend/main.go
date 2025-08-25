@@ -43,13 +43,13 @@ func main() {
 	mux.HandleFunc("/forgot-password", handlers.ForgotPassword)
 	mux.HandleFunc("/reset-password", handlers.ResetPassword)
 	mux.HandleFunc("/validate-reset-token/", handlers.ValidateResetToken)
-	mux.HandleFunc("/upload-image", handlers.UploadProductImage)
-	mux.HandleFunc("/products", handlers.CreateProduct)
-	mux.HandleFunc("/products/", handlers.GetProduct)
+	mux.HandleFunc("/upload-image", handlers.UploadProductImage) // FUNÇÃO DO ADMIN
+	mux.HandleFunc("/products", handlers.CreateProduct) // FUNÇÃO DO ADMIN
+	mux.HandleFunc("/products/", handlers.GetProduct) 
 	mux.HandleFunc("/api/newsletter/subscribe", handlers.SubscribeNewsletter)
-	mux.HandleFunc("/api/promotions/create", handlers.CreatePromotion)
-	mux.HandleFunc("/api/promotions/add", handlers.AddProductToPromotion)
-	mux.HandleFunc("/api/promotions/", handlers.GetPromotionalProducts)
+	mux.HandleFunc("/api/promotions/create", handlers.CreatePromotion) // FUNÇÃO DO ADMIN
+	mux.HandleFunc("/api/promotions/add", handlers.AddProductToPromotion) // FUNÇÃO DO ADMIN
+	mux.HandleFunc("/api/promotions/", handlers.GetPromotionalProducts) 
 	//   mux.HandleFunc("/api/test/images/", handlers.GetProductImagesByID)
 
 	log.Println("🚀 Servidor rodando na porta 8080")

@@ -1,9 +1,11 @@
-/* --- Seção --- */
 .promo-grid-section {
   width: 90%;
   max-width: 1200px;
   margin: 60px auto;
-  font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  letter-spacing: 1px;
+  background: #f2f2f2;
+  padding: 40px 20px;
+  border-radius: 20px;
 }
 
 .promo-grid-section .section-header {
@@ -13,10 +15,8 @@
 
 .promo-grid-section .section-header h1 {
   font-size: 40px;
-  background: linear-gradient(90deg, #0d1b2a, #8b4513);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  font-weight: 800;
+  color: #0d1b2a;
+  font-weight: 650;
   margin: 0 0 10px 0;
   display: flex;
   align-items: center;
@@ -25,17 +25,18 @@
 }
 
 .promo-grid-section .section-header p {
-  font-size: 18px;
   color: #5d5550;
-  font-weight: 400;
+  font-size: 16px;
+  font-weight: 500;
   max-width: 600px;
-  margin: 0 auto;
+  margin: 10px auto 0;
+  line-height: 1.6;
 }
 
 .snow-icon {
   font-size: 32px;
   line-height: 1;
-  color: #b5838d;
+  color: #0d1b2a;
 }
 
 /* --- Layout --- */
@@ -48,77 +49,27 @@
 /* --- Cards --- */
 .promo-card {
   position: relative;
-  display: block;
+  display: flex;
+  flex-direction: column;
   overflow: hidden;
-  border-radius: 20px;
-  aspect-ratio: 16 / 10;
+  border-radius: 15px;
   text-decoration: none;
-  transition: transform 0.4s ease, box-shadow 0.4s ease;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-  opacity: 0;
-  animation: fadeInUp 0.8s forwards;
-  border: 2px solid #f2f2f2;
+  border: 2px solid #eae2da;
+  background: #ffffff;
 }
 
 .promo-card:hover {
-  transform: translateY(-8px);
-  box-shadow: 0 12px 25px rgba(0, 0, 0, 0.2);
+  transform: translateY(-6px);
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.2);
 }
 
 .promo-card img {
   width: 100%;
-  height: 100%;
+  height: 200px;
   object-fit: cover;
-  transition: transform 0.5s ease-in-out;
-}
-
-.promo-card:hover img {
-  transform: scale(1.1);
-}
-
-/* --- Overlay --- */
-.promo-overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(
-    to top,
-    rgba(13, 27, 42, 0.8) 0%,
-    rgba(234, 226, 218, 0.3) 70%
-  );
-  display: flex;
-  align-items: flex-end;
-  padding: 30px;
-  transition: background 0.5s ease;
-}
-
-.promo-card:hover .promo-overlay {
-  background: linear-gradient(
-    to top,
-    rgba(13, 27, 42, 0.9) 0%,
-    rgba(234, 226, 218, 0.4) 60%
-  );
-}
-
-/* --- Texto --- */
-.promo-text {
-  width: 100%;
-}
-
-.promo-text h3 {
-  color: #ffffff;
-  font-size: 24px;
-  font-weight: 700;
-  margin: 0 0 8px 0;
-  line-height: 1.2;
-}
-
-.promo-text p {
-  color: #eae2da;
-  font-size: 15px;
-  margin: 0;
+  border-bottom: 2px solid #f2f2f2;
 }
 
 /* --- Badge --- */
@@ -126,7 +77,7 @@
   position: absolute;
   top: 15px;
   left: 15px;
-  background: linear-gradient(135deg, #b5838d, #8b4513);
+  background: #b5838d; /* rosa sólido */
   color: #ffffff;
   font-weight: bold;
   padding: 8px 14px;
@@ -134,28 +85,77 @@
   font-size: 14px;
   z-index: 10;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-  animation: badgePulse 1.5s infinite;
+}
+
+/* --- Texto --- */
+.promo-text {
+  padding: 15px;
+  text-align: center;
+}
+
+.promo-text h3 {
+  color: #0d1b2a;
+  font-size: 20px;
+  font-weight: 700;
+  margin: 10px 0;
+  line-height: 1.2;
 }
 
 /* --- Preços --- */
-.product-card .price {
-  margin-top: 10px;
+.price-container {
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 10px;
+  margin-top: 10px;
 }
 
-.product-card .original-price {
+.original-price {
   text-decoration: line-through;
-  color: #c5b4a8;
+  color: #a0a0a0;
   font-size: 14px;
 }
 
-.product-card .promo-price {
-  color: #b5838d;
-  font-weight: 800;
-  font-size: 22px;
-  text-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+.promo-price {
+  color: #b5838d !important;
+  font-weight: 800 !important;
+  font-size: 18px !important;
+  display: inline !important;
+}
+
+.promo-text .actions {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  margin-top: 10px;
+}
+
+.quantity-input {
+  width: 60px;
+  padding: 6px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  text-align: center;
+  font-size: 14px;
+}
+
+/* --- Botão Adicionar --- */
+.add-cart-btn {
+  background: #0d1b2a; /* azul sólido */
+  color: #fff;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 50px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+  transition: all 0.3s ease-in-out;
+  margin-top: 10px;
+}
+
+.add-cart-btn:hover {
+  transform: scale(1.05);
+  background: #091322; /* azul mais escuro */
 }
 
 /* --- Botão final --- */
@@ -163,18 +163,12 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(45deg, #f3e0d8, #e5d2c7);
-  box-shadow: none;
-  transition: all 0.4s ease;
-}
-
-.promo-all-button:hover {
-  transform: translateY(-8px) scale(1.05);
-  box-shadow: 0 12px 25px rgba(0, 0, 0, 0.2);
+  background: #eae2da;
+  transition: all 0.3s ease;
 }
 
 .promo-all-button .promo-button {
-  background: linear-gradient(135deg, #0d1b2a, #8b4513);
+  background: #0d1b2a; /* azul sólido */
   color: #ffffff;
   font-weight: 600;
   border-radius: 50px;
@@ -182,35 +176,14 @@
   border: none;
   cursor: pointer;
   font-size: 18px;
-  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
   transition: all 0.3s ease-in-out;
   text-decoration: none;
 }
 
 .promo-all-button .promo-button:hover {
+  background: #091322;
   transform: scale(1.05);
-}
-
-/* --- Animações --- */
-@keyframes badgePulse {
-  0%,
-  100% {
-    transform: scale(1);
-  }
-  50% {
-    transform: scale(1.1);
-  }
-}
-
-@keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
 }
 
 /* --- Responsividade --- */
@@ -218,10 +191,55 @@
   .promo-grid-container {
     grid-template-columns: repeat(2, 1fr);
   }
+
+  .promo-card img {
+    height: 180px;
+  }
 }
 
 @media (max-width: 768px) {
   .promo-grid-container {
     grid-template-columns: 1fr;
   }
+
+  .promo-card img {
+    height: 160px;
+  }
+}
+
+.promo-text .actions {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  justify-content: center;
+  margin-top: 10px;
+}
+
+.quantity-input {
+  width: 45px;
+  padding: 5px 8px;
+  border: 2px solid #b5838d;
+  border-radius: 15px;
+  text-align: center;
+  font-size: 16px;
+  font-weight: 500;
+  outline: none;
+  transition: all 0.3s ease-in-out;
+  background-color: #fff;
+}
+
+.quantity-input:focus {
+  border-color: #0d1b2a; /* azul escuro ao focar */
+  box-shadow: 0 0 5px rgba(13, 27, 42, 0.5);
+}
+
+.quantity-input::-webkit-inner-spin-button,
+.quantity-input::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0; /* remove os botões padrões do navegador */
+}
+
+.add-cart-btn {
+  margin-top: 0;
+  border-radius: 15px;
 }

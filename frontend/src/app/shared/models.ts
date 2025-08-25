@@ -1,27 +1,27 @@
 export interface Product {
   id?: number;
   name: string;
-  description?: string; // Opcional
-  care_instructions?: string; // Opcional
+  description?: string;
+  care_instructions?: string;
   measurements: { [key: string]: string };
-  price: number; 
-  quantity: number; 
+  price: number;
+  quantity: number;
   brand_id?: number;
   product_type_id?: number;
   status: string;
   image_paths?: string[];
-  promotionalPrice: number;
+  promotional_price: number;
 }
 
 export interface AddToPromotionRequest {
-    product_id?: number;
-    promotion_name: string;
-    promotional_price?: number;
+  product_id?: number;
+  promotion_name: string;
+  promotional_price?: number;
 }
 
 export interface CreatePromotionRequest {
-    name: string;
-    status: string;
-    start_date: string;
-    end_date: string;
+  name: string;
+  status: string;
+  start_date: string;
+  end_date: string;
 }
