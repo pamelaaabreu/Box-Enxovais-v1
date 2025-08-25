@@ -55,7 +55,7 @@ export const routes: Routes = [
   },
 
   {
-    path: 'image-register',
+    path: 'product-register',
     loadComponent: () =>
       import('./features/product-create/product-create.component').then(
         (m) => m.ProductCreateComponent

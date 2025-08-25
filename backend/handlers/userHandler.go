@@ -72,3 +72,4 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 		"message": "Usuário criado com sucesso",
 	})
 }
+

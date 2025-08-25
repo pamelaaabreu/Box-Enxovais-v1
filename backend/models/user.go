@@ -6,16 +6,17 @@ type User struct {
 	ID           int    `json:"id,omitempty"`
 	Name         string `json:"name"`
 	Email        string `json:"email"`
-	BirthDate    string `json:"birthDate"` 
+	BirthDate    string `json:"birthDate"`
 	CPF          string `json:"cpf"`
 	Phone        string `json:"phone"`
 	Street       string `json:"street"`
 	Neighborhood string `json:"neighborhood"`
 	Number       string `json:"number"`
-	ZipCode      string `json:"zipCode"` 
+	ZipCode      string `json:"zipCode"`
 	State        string `json:"state"`
 	City         string `json:"city"`
-	Password     string `json:"password"` 
+	Password     string `json:"password"`
+	Role         string `json:"role"`
 }
 
 type Credentials struct {
@@ -24,6 +25,7 @@ type Credentials struct {
 }
 
 type Claims struct {
-	UserID int `json:"userId"`
+	UserID int    `json:"userId"`
+	Role   string `json:"role"`
 	jwt.RegisteredClaims
 }
