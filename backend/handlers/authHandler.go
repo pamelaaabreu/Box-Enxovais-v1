@@ -4,9 +4,8 @@ import (
 	"backend/db"
 	"backend/models"
 	"encoding/json"
-	"log"
 	"net/http"
-	"os" // pacote os para ler variáveis de ambiente
+	"os"
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
@@ -24,23 +23,17 @@ func LoginUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	log.Printf("Tentando login com email: %s", creds.Email)
-
 	var storedUser models.User
-	query := `SELECT id, name, password FROM users WHERE email = $1`
-	err = db.DB.QueryRow(query, creds.Email).Scan(&storedUser.ID, &storedUser.Name, &storedUser.Password)
+	query := `SELECT id, name, password, role FROM users WHERE email = $1`
+	err = db.DB.QueryRow(query, creds.Email).Scan(&storedUser.ID, &storedUser.Name, &storedUser.Password, &storedUser.Role)
 	if err != nil {
 		w.WriteHeader(http.StatusUnauthorized)
 		json.NewEncoder(w).Encode(map[string]string{"error": "Email ou senha inválidos"})
 		return
 	}
 
-	log.Printf("DEBUG: Comparando senha recebida '[%s]' com hash do BD '[%s]'", creds.Password, storedUser.Password) // <-- ADICIONE ESTA LINHA
-
 	err = bcrypt.CompareHashAndPassword([]byte(storedUser.Password), []byte(creds.Password))
 	if err != nil {
-		log.Printf("Usuário não encontrado: %v", err)
-		// Esta era a linha que faltava corrigir
 		w.WriteHeader(http.StatusUnauthorized)
 		json.NewEncoder(w).Encode(map[string]string{"error": "Email ou senha inválidos"})
 		return
@@ -51,6 +44,7 @@ func LoginUser(w http.ResponseWriter, r *http.Request) {
 	expirationTime := time.Now().Add(24 * time.Hour)
 	claims := &models.Claims{
 		UserID: storedUser.ID,
+		Role:   storedUser.Role,
 		RegisteredClaims: jwt.RegisteredClaims{
 			ExpiresAt: jwt.NewNumericDate(expirationTime),
 		},

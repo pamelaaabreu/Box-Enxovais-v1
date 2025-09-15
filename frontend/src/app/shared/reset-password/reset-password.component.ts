@@ -10,6 +10,7 @@ import { CommonModule } from '@angular/common';
 import { AuthService } from '../../core/services/auth.service';
 import { SweetAlertService } from '../../core/services/sweet-alert.service';
 import { ShowPasswordComponent } from '../css/show-password/show-password.component';
+import { CustomAlertService } from '../../core/services/custom-alert.service';
 
 @Component({
   selector: 'app-reset-password',
@@ -31,7 +32,8 @@ export class ResetPasswordComponent implements OnInit {
     private route: ActivatedRoute,
     private authService: AuthService,
     private router: Router,
-    private alertService: SweetAlertService
+    private CustomAlertService: CustomAlertService,
+    // private alertService: SweetAlertService
   ) {
     this.resetForm = this.fb.group({
       newPassword: [
@@ -50,7 +52,7 @@ export class ResetPasswordComponent implements OnInit {
     const tokenFromUrl = this.route.snapshot.queryParamMap.get('token');
 
     if (!tokenFromUrl) {
-      this.alertService.showError(
+      this.CustomAlertService.error(
         'Token Inválido',
         'Token não encontrado. Por favor, use o link enviado para o seu e-mail.'
       );
@@ -64,7 +66,7 @@ export class ResetPasswordComponent implements OnInit {
         const errorMessage =
           err.error?.message ||
           'O link de redefinição de senha é inválido ou expirou.';
-        this.alertService.showError('Erro de Validação', errorMessage);
+        this.CustomAlertService.error('Erro de Validação', errorMessage);
         this.resetForm.disable();
       },
     });
@@ -79,7 +81,7 @@ export class ResetPasswordComponent implements OnInit {
       newPasswordControl?.errors?.['required'] ||
       confirmPasswordControl?.errors?.['required']
     ) {
-      this.alertService.showError(
+      this.CustomAlertService.error(
         'Campos Obrigatórios',
         'Por favor, preencha a nova senha e a confirmação.'
       );
@@ -87,7 +89,7 @@ export class ResetPasswordComponent implements OnInit {
     }
 
     if (newPasswordControl?.errors?.['minlength']) {
-      this.alertService.showError(
+      this.CustomAlertService.error(
         'Senha Curta',
         'A senha deve ter pelo menos 6 caracteres.'
       );
@@ -95,7 +97,7 @@ export class ResetPasswordComponent implements OnInit {
     }
 
     if (newPasswordControl?.errors?.['pattern']) {
-      this.alertService.showError(
+      this.CustomAlertService.error(
         'Senha Inválida',
         'A senha deve conter um símbolo especial (?@#$%&).'
       );
@@ -105,7 +107,7 @@ export class ResetPasswordComponent implements OnInit {
     const { newPassword, confirmPassword } = this.resetForm.value;
 
     if (newPassword !== confirmPassword) {
-      this.alertService.showError(
+      this.CustomAlertService.error(
         'Senhas não conferem',
         'Por favor, digite as senhas novamente.'
       );
@@ -113,7 +115,7 @@ export class ResetPasswordComponent implements OnInit {
     }
 
     if (!this.token) {
-      this.alertService.showError(
+      this.CustomAlertService.error(
         'Erro de Token',
         'Token não disponível. A sessão pode ter expirado.'
       );
@@ -128,21 +130,18 @@ export class ResetPasswordComponent implements OnInit {
         this.isLoading = false;
         this.resetForm.disable();
 
-        this.alertService
-          .showSuccess(
-            'Sucesso!',
-            'Senha alterada com sucesso! Será redirecionado para a página de login.'
-          )
-          .then(() => {
-            this.router.navigate(['/login']);
-          });
+        this.CustomAlertService.success(
+          'Sucesso!',
+          'Senha alterada com sucesso! Será redirecionado para a página de login.'
+        );
+        this.router.navigate(['/login']);
       },
       error: (err) => {
         this.isLoading = false;
         const errorMessage =
           err.error?.message ||
           'Não foi possível alterar a senha. O token pode ter expirado.';
-        this.alertService.showError('Erro ao Salvar', errorMessage);
+        this.CustomAlertService.error('Erro ao Salvar', errorMessage);
       },
     });
   }

@@ -3,8 +3,9 @@ import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../../core/services/auth.service';
 import { CommonModule } from '@angular/common';
-import { SweetAlertService } from '../../../core/services/sweet-alert.service';
+// import { SweetAlertService } from '../../../core/services/sweet-alert.service';
 import { ShowPasswordComponent } from '../../../shared/css/show-password/show-password.component';
+import { CustomAlertService } from '../../../core/services/custom-alert.service';
 
 @Component({
   selector: 'app-login',
@@ -22,7 +23,7 @@ export class LoginComponent {
   private fb = inject(FormBuilder);
   private authService = inject(AuthService);
   private router = inject(Router);
-  private alertService = inject(SweetAlertService);
+  private CustomAlertService = inject(CustomAlertService);
 
   isPasswordVisible = false;
 
@@ -44,7 +45,7 @@ export class LoginComponent {
         next: () => this.router.navigate(['/home']),
         error: (err) => {
           const errorMessage = err.error?.error || 'Email ou senha inválidos!';
-          this.alertService.showError('Falha no Login', errorMessage);
+          this.CustomAlertService.error('Falha no Login', errorMessage);
         },
       });
     }

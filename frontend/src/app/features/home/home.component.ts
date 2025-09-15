@@ -7,12 +7,11 @@ import { CarouselComponent } from '../../components/carousel/carousel.component'
 import { TopWelcomeHeaderComponent } from '../../components/top-welcome-header/top-welcome-header.component';
 import { TopNavbarComponent } from '../../components/top-navbar/top-navbar.component';
 import { FeaturedProductsComponent } from '../featured-products/featured-products.component';
-import { TrustBarComponent } from "../../components/trust-bar/trust-bar.component";
-import { ShopByCategoryComponent } from "../shop-by-category/shop-by-category.component";
-import { TestimonialsComponent } from "../testimonials/testimonials.component";
-import { PromoGridComponent } from "../promo-grid/promo-grid.component";
-import { NewsletterComponent } from "../newsletter/newsletter.component";
-
+import { TrustBarComponent } from '../../components/trust-bar/trust-bar.component';
+import { ShopByCategoryComponent } from '../shop-by-category/shop-by-category.component';
+import { TestimonialsComponent } from '../testimonials/testimonials.component';
+import { PromoGridComponent } from '../promo-grid/promo-grid.component';
+import { NewsletterComponent } from '../newsletter/newsletter.component';
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',
@@ -29,8 +28,9 @@ import { NewsletterComponent } from "../newsletter/newsletter.component";
     ShopByCategoryComponent,
     TestimonialsComponent,
     PromoGridComponent,
-    NewsletterComponent
-],
+    NewsletterComponent,
+    FooterComponent,
+  ],
   styleUrl: './home.component.css',
   encapsulation: ViewEncapsulation.Emulated,
 })
