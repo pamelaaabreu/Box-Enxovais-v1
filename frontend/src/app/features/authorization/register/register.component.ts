@@ -17,6 +17,7 @@ import { SweetAlertService } from '../../../core/services/sweet-alert.service';
 import { TooltipComponent } from '../../../shared/ui/tooltip/tooltip.component';
 import { AuthService } from '../../../core/services/auth.service';
 import { ShowPasswordComponent } from '../../../shared/css/show-password/show-password.component';
+import { CustomAlertService } from '../../../core/services/custom-alert.service';
 
 export class CepValidators {
   static cepInvalido(): ValidatorFn {
@@ -68,7 +69,8 @@ export class RegisterComponent implements OnInit {
     private fb: FormBuilder,
     private http: HttpClient,
     private router: Router,
-    private alertService: SweetAlertService,
+    // private alertService: SweetAlertService,
+    private CustomAlertService: CustomAlertService,
     private authService: AuthService,
     @Inject('Swal') private swal: typeof Swal
   ) {}
@@ -140,7 +142,7 @@ export class RegisterComponent implements OnInit {
     this.http.get(`https://viacep.com.br/ws/${cep}/json/`).subscribe({
       next: (dados: any) => {
         if (dados.erro) {
-          this.alertService.showWarning(
+          this.CustomAlertService.warning(
             'CEP não encontrado',
             'Verifique o CEP digitado. Se estiver correto, preencha o endereço manualmente.'
           );
@@ -150,7 +152,7 @@ export class RegisterComponent implements OnInit {
         }
       },
       error: () => {
-        this.alertService.showError(
+        this.CustomAlertService.error(
           'Erro na consulta do CEP',
           'Serviço indisponível. Preencha o endereço manualmente.'
         );
@@ -163,7 +165,7 @@ export class RegisterComponent implements OnInit {
     this.userForm.markAllAsTouched();
 
     if (this.userForm.get('zipCode')?.hasError('cepInvalido')) {
-      this.alertService.showError(
+      this.CustomAlertService.error(
         'CEP inválido',
         'O CEP informado não é válido. Por favor, corrija.'
       );
@@ -171,7 +173,7 @@ export class RegisterComponent implements OnInit {
     }
 
     if (this.userForm.get('birthDate')?.hasError('minAge')) {
-      this.alertService.showWarning(
+      this.CustomAlertService.warning(
         'Idade insuficiente',
         'Você deve ter 18 anos ou mais para se cadastrar.'
       );
@@ -179,7 +181,7 @@ export class RegisterComponent implements OnInit {
     }
 
     if (this.userForm.controls['terms'].errors?.['required']) {
-      this.alertService.showWarning(
+      this.CustomAlertService.warning(
         'Termos de Uso',
         'Você precisa aceitar os Termos de Uso para continuar.'
       );
@@ -187,7 +189,7 @@ export class RegisterComponent implements OnInit {
     }
 
     if (!/^(?=.*[?@#$%&]).{6,}$/.test(this.userForm.value.password)) {
-      this.alertService.showWarning(
+      this.CustomAlertService.warning(
         'Senha inválida',
         'A senha deve ter no mínimo 6 caracteres e pelo menos um símbolo especial (?@#$%&).'
       );
@@ -203,12 +205,12 @@ export class RegisterComponent implements OnInit {
   }
 
   private async enviarCadastro() {
-    this.alertService.showLoading('Criando sua conta...');
+    this.CustomAlertService.loading('Criando sua conta...');
 
     this.authService.register(this.userForm.value).subscribe({
       next: async () => {
-        this.alertService.hideLoading();
-        await this.alertService.showSuccess(
+        this.CustomAlertService.hideLoading();
+        await this.CustomAlertService.success(
           'Cadastro concluído!',
           'Sua conta foi criada com sucesso.'
         );
@@ -216,24 +218,24 @@ export class RegisterComponent implements OnInit {
         this.router.navigate(['/login']);
       },
       error: (err) => {
-        this.alertService.hideLoading();
+        this.CustomAlertService.hideLoading();
         const errorMsg = this.getErrorMessage(err);
         const email = this.userForm.get('email')?.value;
         const cpf = this.userForm.get('cpf')?.value;
 
         if (errorMsg === 'email_duplicado') {
-          this.alertService.showEmailDuplicate(email);
+          this.CustomAlertService.showEmailDuplicate(email);
         } else if (errorMsg === 'cpf_duplicado') {
-          this.alertService.showCpfDuplicate(cpf);
+          this.CustomAlertService.showCpfDuplicate(cpf);
         } else {
-          this.alertService.showError('Erro no cadastro', errorMsg);
+          this.CustomAlertService.error('Erro no cadastro', errorMsg);
         }
       },
     });
   }
 
   private showFormErrors() {
-    this.alertService.showFormValidationErrors(
+    this.CustomAlertService.showFormValidationErrors(
       this.userForm,
       this.fieldNamesMap
     );

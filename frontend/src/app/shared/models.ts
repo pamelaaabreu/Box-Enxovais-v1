@@ -25,3 +25,11 @@ export interface CreatePromotionRequest {
   start_date: string;
   end_date: string;
 }
+
+export type AlertType = 'success' | 'error' | 'warning' | 'info' | 'loading';
+
+export interface AlertOptions {
+  duration?: number;
+  showClose?: boolean;
+  showProgress?: boolean;
+}

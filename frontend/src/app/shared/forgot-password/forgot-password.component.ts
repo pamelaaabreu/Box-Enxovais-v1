@@ -5,10 +5,12 @@ import {
   Validators,
   ReactiveFormsModule,
 } from '@angular/forms';
-import { RouterLink } from '@angular/router'; // Importe o RouterLink
+import { RouterLink } from '@angular/router';
 import { AuthService } from '../../core/services/auth.service';
 import { CommonModule } from '@angular/common';
 import { SweetAlertService } from '../../core/services/sweet-alert.service';
+import { CustomAlertComponent } from '../custom-alert/custom-alert.component';
+import { CustomAlertService } from '../../core/services/custom-alert.service';
 
 @Component({
   selector: 'app-forgot-password',
@@ -21,11 +23,12 @@ export class ForgotPasswordComponent {
   forgotForm: FormGroup;
   isLoading = false;
   message = '';
-  isSuccess = false; 
+  isSuccess = false;
 
   constructor(
     private fb: FormBuilder,
     private authService: AuthService,
+    private CustomAlertService: CustomAlertService,
     private alertService: SweetAlertService
   ) {
     this.forgotForm = this.fb.group({
@@ -48,13 +51,13 @@ export class ForgotPasswordComponent {
         next: () => {
           this.isLoading = false;
           this.forgotForm.disable();
-          this.alertService.showSuccess(
+          this.CustomAlertService.success(
             'Link de recuperação enviado para o seu e-mail.'
           );
         },
         error: (error) => {
           this.isSuccess = false;
-          this.alertService.showError(
+          this.CustomAlertService.error(
             'Erro ao solicitar redefinição',
             'Se o email existir em nosso sistema, um link para redefinir sua senha foi enviado.'
           );
