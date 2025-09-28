@@ -1,7 +1,7 @@
 import { Routes } from '@angular/router';
 import { authGuard } from './core/guards/auth.guard';
 import { AdminGuard } from './core/guards/admin.guard';
-import { AdminComponent } from './features/admin/admin.component';
+import { AdminComponent } from './admin/admin/admin.component';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'home', pathMatch: 'full' },
@@ -71,7 +71,12 @@ export const routes: Routes = [
         (m) => m.AddToPromotionComponent
       ),
   },
-
+  {
+    path: 'admin',
+    loadChildren: () =>
+      import('./admin/admin.module').then((m) => m.AdminModule),
+    canLoad: [AdminGuard],
+  },
   {
     path: '404',
     loadComponent: () =>
@@ -79,10 +84,4 @@ export const routes: Routes = [
         (m) => m.NotFoundComponent
       ),
   },
-  {
-    path: 'admin',
-    component: AdminComponent,
-    canActivate: [AdminGuard],
-  },
-  { path: '**', redirectTo: '404' },
 ];

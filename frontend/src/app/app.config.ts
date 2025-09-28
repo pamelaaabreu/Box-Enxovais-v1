@@ -1,4 +1,4 @@
-import { ApplicationConfig, importProvidersFrom } from '@angular/core';
+import { APP_INITIALIZER, ApplicationConfig, importProvidersFrom } from '@angular/core';
 import { provideRouter } from '@angular/router';
 import {
   HTTP_INTERCEPTORS,
@@ -14,14 +14,19 @@ import {
   withEventReplay,
 } from '@angular/platform-browser';
 import { authInterceptor } from './core/auth.interceptor';
-import {
-  LucideAngularModule, 
+import { 
+  LucideAngularModule,
   Check,
   X,
   AlertTriangle,
   Info,
   Loader2,
 } from 'lucide-angular';
+import { AuthService } from './core/services/auth.service';
+
+export function initializeAuth(authService: AuthService) {
+  return () => authService.loadUser();
+}
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -41,5 +46,11 @@ export const appConfig: ApplicationConfig = {
         Loader2,
       })
     ),
+    {
+      provide: APP_INITIALIZER,
+      useFactory: initializeAuth,
+      deps: [AuthService],
+      multi: true,
+    },
   ],
 };

@@ -41,7 +41,7 @@ func LoginUser(w http.ResponseWriter, r *http.Request) {
 
 	var jwtKey = []byte(os.Getenv("JWT_SECRET"))
 
-	expirationTime := time.Now().Add(24 * time.Hour)
+	expirationTime := time.Now().Add(2 * time.Hour)
 	claims := &models.Claims{
 		UserID: storedUser.ID,
 		Role:   storedUser.Role,

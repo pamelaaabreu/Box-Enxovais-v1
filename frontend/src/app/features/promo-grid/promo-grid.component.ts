@@ -21,7 +21,6 @@ export class PromoGridComponent implements OnInit {
     if (this.promoName) {
       this.promoService.getPromotionalProducts(this.promoName).subscribe({
         next: (data) => {
-           console.log('Dados recebidos do backend:', data);
           this.promotionalProducts = data;    
         },
         error: (err) => {

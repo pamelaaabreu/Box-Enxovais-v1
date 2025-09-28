@@ -22,7 +22,6 @@ export class CreatePromotionComponent {
   onSubmit(): void {
     this.promoService.createPromotion(this.promotionData).subscribe({
       next: (response) => {
-        console.log('Promoção criada com sucesso:', response);
         alert('Promoção criada com sucesso!');
         this.resetForm();
       },

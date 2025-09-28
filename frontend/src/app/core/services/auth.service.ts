@@ -2,7 +2,7 @@ import { Injectable, inject, PLATFORM_ID } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
-import { Observable, tap } from 'rxjs';
+import { Observable, Subject, tap } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
@@ -12,8 +12,29 @@ export class AuthService {
   private router = inject(Router);
   private baseUrl = 'http://localhost:8080';
   private platformId = inject(PLATFORM_ID);
+  public isLogged = false;
+  public userName: string | null = null;
+
+  public userChanged = new Subject<void>();
 
   constructor() {}
+
+  loadUser(): Promise<void> {
+    return new Promise((resolve) => {
+      if (isPlatformBrowser(this.platformId)) {
+        const token =
+          localStorage.getItem('authToken') ||
+          sessionStorage.getItem('authToken');
+        const name =
+          localStorage.getItem('userName') ||
+          sessionStorage.getItem('userName');
+
+        this.isLogged = !!token;
+        this.userName = name || null;
+      }
+      resolve();
+    });
+  }
 
   login(credentials: {
     email: string;
@@ -22,12 +43,12 @@ export class AuthService {
   }): Observable<any> {
     return this.http.post<any>(`${this.baseUrl}/login`, credentials).pipe(
       tap((response) => {
-        if (isPlatformBrowser(this.platformId) && response && response.token) {
+        if (isPlatformBrowser(this.platformId) && response?.token) {
           const storage = credentials.remember ? localStorage : sessionStorage;
           storage.setItem('authToken', response.token);
-          if (response.name) {
-            storage.setItem('userName', response.name);
-          }
+          if (response.name) storage.setItem('userName', response.name);
+          if (response.role) storage.setItem('userRole', response.role);
+          this.userChanged.next(); 
         }
       })
     );

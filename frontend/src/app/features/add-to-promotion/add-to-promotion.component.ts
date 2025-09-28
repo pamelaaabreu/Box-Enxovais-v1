@@ -24,7 +24,6 @@ export class AddToPromotionComponent {
     ) {
       this.promoService.addProductToPromotion(this.promotionData).subscribe({
         next: (response) => {
-          console.log('Produto adicionado à promoção com sucesso:', response);
           alert('Produto adicionado à promoção com sucesso!');
           this.resetForm();
         },

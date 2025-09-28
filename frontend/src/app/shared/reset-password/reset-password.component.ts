@@ -32,9 +32,9 @@ export class ResetPasswordComponent implements OnInit {
     private route: ActivatedRoute,
     private authService: AuthService,
     private router: Router,
-    private CustomAlertService: CustomAlertService,
-    // private alertService: SweetAlertService
-  ) {
+    private CustomAlertService: CustomAlertService
+  ) // private alertService: SweetAlertService
+  {
     this.resetForm = this.fb.group({
       newPassword: [
         '',
@@ -134,7 +134,9 @@ export class ResetPasswordComponent implements OnInit {
           'Sucesso!',
           'Senha alterada com sucesso! Será redirecionado para a página de login.'
         );
-        this.router.navigate(['/login']);
+        setTimeout(() => {
+          this.router.navigate(['/login']);
+        }, 4000);
       },
       error: (err) => {
         this.isLoading = false;
