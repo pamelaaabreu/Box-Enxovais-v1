@@ -35,7 +35,6 @@ export class ProductImageUploadComponent {
 
     this.uploadService.uploadImage(formData).subscribe({
       next: (res) => {
-        console.log(res);
         this.uploadResponse = `Sucesso! Arquivo salvo em: ${res.filePath}`;
       },
       error: (err) => {

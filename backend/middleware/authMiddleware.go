@@ -3,6 +3,7 @@ package middlewares
 import (
 	"backend/models"
 	"context"
+	"errors"
 	"fmt"
 	"net/http"
 	"os"
@@ -42,7 +43,12 @@ func AuthMiddleware(next http.Handler) http.Handler {
 			}
 			return []byte(secret), nil
 		})
+		
 		if err != nil {
+			if errors.Is(err, jwt.ErrTokenExpired) {
+				http.Error(w, "Token expirado", http.StatusUnauthorized)
+				return
+			}
 			http.Error(w, "Token inválido", http.StatusUnauthorized)
 			return
 		}

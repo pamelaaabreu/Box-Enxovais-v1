@@ -23,7 +23,6 @@ export class FeaturedProductsComponent implements OnInit {
     this.productService.getProductsByIds(featuredProductIds).subscribe({
       next: (data) => {
         this.products = data;
-        console.log('Produtos em destaque carregados:', this.products);
       },
       error: (err) =>
         console.error('Erro ao buscar produtos em destaque:', err),

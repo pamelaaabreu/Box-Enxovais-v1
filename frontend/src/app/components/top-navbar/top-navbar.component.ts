@@ -13,13 +13,16 @@ import { CommonModule } from '@angular/common';
   selector: 'app-top-navbar',
   imports: [CommonModule, RouterLink],
   templateUrl: './top-navbar.component.html',
-  styleUrl: './top-navbar.component.css',
+  styleUrls: ['./top-navbar.component.css'],
 })
 export class TopNavbarComponent implements OnInit {
   @Input() isScrolled: boolean = false;
+
   isLoggedIn = false;
   isMenuOpen = false;
   userName: string | null = null;
+  isLoading: boolean = true;
+  isAdmin: boolean = false;
 
   constructor(
     private authService: AuthService,
@@ -28,20 +31,29 @@ export class TopNavbarComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    // Carrega usuário do storage e atualiza estado
+    this.authService.loadUser().then(() => {
+      this.updateUserInfo();
+      this.isLoading = false;
+    });
+
+    // Atualiza se houver mudança no usuário
+    this.authService.userChanged.subscribe(() => this.updateUserInfo());
+  }
+
+  updateUserInfo(): void {
     this.isLoggedIn = this.authService.isLoggedIn();
-    // this.isLoggedIn = true;
-    if (this.isLoggedIn) {
-      const fullName = this.authService.getUserName();
-      if (fullName) {
-        this.userName = fullName.split(' ')[0];
-      }
-    }
+    this.userName = this.authService.getUserName()?.split(' ')[0] || null;
+
+    // Verifica se o usuário é admin
+    const role =
+      localStorage.getItem('userRole') || sessionStorage.getItem('userRole');
+    this.isAdmin = role === 'admin';
   }
 
   toggleMenu(event: MouseEvent): void {
     event.stopPropagation();
     this.isMenuOpen = !this.isMenuOpen;
-    console.log('Menu state:', this.isMenuOpen);
   }
 
   logout(): void {
@@ -49,6 +61,7 @@ export class TopNavbarComponent implements OnInit {
     this.authService.logout();
     this.isLoggedIn = false;
     this.userName = null;
+    this.isAdmin = false;
   }
 
   @HostListener('document:click', ['$event'])

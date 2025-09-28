@@ -17,7 +17,7 @@ export class CustomAlertComponent implements OnInit, OnDestroy {
   @Input() title: string = '';
   @Input() message: string = '';
   @Input() type: AlertType = 'info';
-  @Input() duration: number = 4000;
+  @Input() duration: number = 2000;
   @Input() showClose: boolean = true;
   @Input() showProgress: boolean = true;
   
@@ -48,6 +48,6 @@ export class CustomAlertComponent implements OnInit, OnDestroy {
     this.visible = false;
     setTimeout(() => {
       this.closed.emit();
-    }, 300);
+    }, 90);
   }
 }

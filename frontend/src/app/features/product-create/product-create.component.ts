@@ -33,7 +33,6 @@ export class ProductCreateComponent {
   onSubmit(): void {
     this.productService.createProduct(this.product).subscribe({
       next: (response) => {
-        console.log('Produto criado com sucesso!', response);
         alert(`Produto "${this.product.name}" criado com ID: ${response.id}`);
 
         this.router.navigate(['/image-upload', response.id]);
