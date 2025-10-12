@@ -1,6 +1,9 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import {
   CanActivate,
+  CanLoad,
+  Route,
+  UrlSegment,
   Router,
   ActivatedRouteSnapshot,
   RouterStateSnapshot,
@@ -11,15 +14,25 @@ import { jwtDecode } from 'jwt-decode';
 @Injectable({
   providedIn: 'root',
 })
-export class AdminGuard implements CanActivate {
-  constructor(private authService: AuthService, private router: Router) {}
+export class AdminGuard implements CanActivate, CanLoad {
+  private authService = inject(AuthService);
+  private router = inject(Router);
 
+  // Para CanActivate (rotas internas do módulo)
   canActivate(
     next: ActivatedRouteSnapshot,
     state: RouterStateSnapshot
   ): boolean {
-    const token = this.authService.getToken();
+    return this.checkAdmin();
+  }
 
+  // Para CanLoad (lazy-loaded modules)
+  canLoad(route: Route, segments: UrlSegment[]): boolean {
+    return this.checkAdmin();
+  }
+
+  private checkAdmin(): boolean {
+    const token = this.authService.getToken();
     if (token) {
       try {
         const decodedToken: any = jwtDecode(token);
@@ -30,7 +43,6 @@ export class AdminGuard implements CanActivate {
         console.error('Erro ao decodificar o token:', error);
       }
     }
-
     this.router.navigate(['/']);
     return false;
   }
