@@ -1,0 +1,121 @@
+<div class="admin-layout" [class.sidebar-collapsed]="isSidebarCollapsed">
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <button class="menu-toggle" (click)="toggleSidebar()">
+        <i class="fas fa-bars"></i>
+      </button>
+      <div class="logo-wrapper">
+        <img class="logo-text" src="/LOGOTIPO.svg" alt="Logo" />
+      </div>
+    </div>
+
+    <nav class="sidebar-nav">
+      <ul>
+        <li>
+          <a
+            routerLink="dashboard"
+            routerLinkActive="active"
+            [routerLinkActiveOptions]="{ exact: true }"
+          >
+            <i class="fas fa-home"></i>
+            <span class="nav-text">Dashboard</span>
+          </a>
+        </li>
+
+        <li class="dropdown">
+          <a (click)="toggleProductMenu($event)">
+            <i class="fas fa-box"></i>
+            <span class="nav-text">Produtos</span>
+            <i
+              class="fas fa-chevron-down dropdown-icon"
+              [class.open]="isProductMenuOpen"
+            ></i>
+          </a>
+          <ul class="submenu" [class.show]="isProductMenuOpen">
+            <li>
+              <a
+                routerLink="product/create"
+                routerLinkActive="active"
+                [routerLinkActiveOptions]="{ exact: true }"
+              >
+                Cadastro
+              </a>
+            </li>
+            <li>
+              <a
+                routerLink="product/image-upload"
+                routerLinkActive="active"
+                [routerLinkActiveOptions]="{ exact: true }"
+              >
+                Imagens
+              </a>
+            </li>
+          </ul>
+        </li>
+
+        <li class="dropdown">
+          <a (click)="togglePromotionMenu($event)">
+            <i class="fas fa-tags"></i>
+            <span class="nav-text">Promoções</span>
+            <i
+              class="fas fa-chevron-down dropdown-icon"
+              [class.open]="isPromotionMenuOpen"
+            ></i>
+          </a>
+          <ul class="submenu" [class.show]="isPromotionMenuOpen">
+            <li>
+              <a
+                routerLink="/admin/promotion/create"
+                routerLinkActive="active"
+                [routerLinkActiveOptions]="{ exact: true }"
+              >
+                Criar Promoção
+              </a>
+            </li>
+          </ul>
+        </li>
+
+        <li>
+          <a
+            routerLink="report"
+            routerLinkActive="active"
+            [routerLinkActiveOptions]="{ exact: true }"
+          >
+            <i class="fas fa-file-alt"></i>
+            <span class="nav-text">Relatórios</span>
+          </a>
+        </li>
+      </ul>
+    </nav>
+
+    <div class="sidebar-footer">
+      <a routerLink="settings">
+        <i class="fas fa-cog"></i>
+        <span class="nav-text">Configurações</span>
+      </a>
+    </div>
+  </aside>
+
+  <main class="content">
+    <header class="topbar">
+      <div class="topbar-left"></div>
+      <div class="topbar-right">
+        <div class="notification-area">
+          <span class="notification-count">2</span>
+          <i class="fas fa-bell"></i>
+        </div>
+        <div class="user-profile-top">
+          <span class="user-name">Renee McKelvey</span>
+          <span class="user-title">Product Manager</span>
+        </div>
+        <div class="top-avatar">
+          <i class="fas fa-user-circle"></i>
+        </div>
+      </div>
+    </header>
+
+    <section class="content-body">
+      <router-outlet></router-outlet>
+    </section>
+  </main>
+</div>

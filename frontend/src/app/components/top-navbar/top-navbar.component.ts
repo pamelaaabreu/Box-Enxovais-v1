@@ -2,12 +2,14 @@ import {
   Component,
   ElementRef,
   HostListener,
+  Inject,
   Input,
   OnInit,
+  PLATFORM_ID,
 } from '@angular/core';
 import { AuthService } from '../../core/services/auth.service';
 import { Router, RouterLink } from '@angular/router';
-import { CommonModule } from '@angular/common';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
 
 @Component({
   selector: 'app-top-navbar',
@@ -27,21 +29,26 @@ export class TopNavbarComponent implements OnInit {
   constructor(
     private authService: AuthService,
     private router: Router,
-    private elementRef: ElementRef
+    private elementRef: ElementRef,
+    @Inject(PLATFORM_ID) private platformId: Object
   ) {}
 
   ngOnInit(): void {
-    // Carrega usuário do storage e atualiza estado
-    this.authService.loadUser().then(() => {
-      this.updateUserInfo();
-      this.isLoading = false;
-    });
+    if (isPlatformBrowser(this.platformId)) {
+      // Carrega usuário do storage e atualiza estado
+      this.authService.loadUser().then(() => {
+        this.updateUserInfo();
+        this.isLoading = false;
+      });
 
-    // Atualiza se houver mudança no usuário
-    this.authService.userChanged.subscribe(() => this.updateUserInfo());
+      // Atualiza se houver mudança no usuário
+      this.authService.userChanged.subscribe(() => this.updateUserInfo());
+    }
   }
 
   updateUserInfo(): void {
+    if (!isPlatformBrowser(this.platformId)) return;
+
     this.isLoggedIn = this.authService.isLoggedIn();
     this.userName = this.authService.getUserName()?.split(' ')[0] || null;
 
@@ -57,11 +64,13 @@ export class TopNavbarComponent implements OnInit {
   }
 
   logout(): void {
-    this.isMenuOpen = false;
-    this.authService.logout();
-    this.isLoggedIn = false;
-    this.userName = null;
-    this.isAdmin = false;
+    if (isPlatformBrowser(this.platformId)) {
+      this.isMenuOpen = false;
+      this.authService.logout();
+      this.isLoggedIn = false;
+      this.userName = null;
+      this.isAdmin = false;
+    }
   }
 
   @HostListener('document:click', ['$event'])

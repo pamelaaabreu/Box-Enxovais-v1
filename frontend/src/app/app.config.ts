@@ -1,4 +1,8 @@
-import { APP_INITIALIZER, ApplicationConfig, importProvidersFrom } from '@angular/core';
+import {
+  APP_INITIALIZER,
+  ApplicationConfig,
+  importProvidersFrom,
+} from '@angular/core';
 import { provideRouter } from '@angular/router';
 import {
   HTTP_INTERCEPTORS,
@@ -9,12 +13,9 @@ import { provideNgxMask } from 'ngx-mask';
 import Swal from 'sweetalert2';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { routes } from './app.routes';
-import {
-  provideClientHydration,
-  withEventReplay,
-} from '@angular/platform-browser';
+import { withEventReplay } from '@angular/platform-browser';
 import { authInterceptor } from './core/auth.interceptor';
-import { 
+import {
   LucideAngularModule,
   Check,
   X,
@@ -32,7 +33,6 @@ export const appConfig: ApplicationConfig = {
   providers: [
     provideRouter(routes),
     provideHttpClient(withFetch()),
-    provideClientHydration(withEventReplay()),
     provideNgxMask(),
     provideAnimationsAsync(),
     { provide: 'Swal', useValue: Swal },

@@ -14,6 +14,7 @@ export class AuthService {
   private platformId = inject(PLATFORM_ID);
   public isLogged = false;
   public userName: string | null = null;
+  
 
   public userChanged = new Subject<void>();
 

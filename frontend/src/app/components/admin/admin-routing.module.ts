@@ -5,7 +5,9 @@ import { DashboardComponent } from './dashboard/dashboard.component';
 import { ProductComponent } from './product/product.component';
 import { PromotionComponent } from './promotion/promotion.component';
 import { ReportComponent } from './report/report.component';
-import { AdminGuard } from '../core/guards/admin.guard';
+import { AdminGuard } from '../../core/guards/admin.guard';
+import { ProductCreateComponent } from '../../features/product-create/product-create.component';
+import { ProductImageUploadComponent } from '../../features/product-image-upload/product-image-upload.component';
 
 const routes: Routes = [
   {
@@ -14,9 +16,27 @@ const routes: Routes = [
     canActivate: [AdminGuard],
     children: [
       { path: 'dashboard', component: DashboardComponent },
-      { path: 'product', component: ProductComponent },
-      { path: 'promotion', component: PromotionComponent },
+
+      {
+        path: 'product',
+        component: ProductComponent,
+        children: [
+          { path: 'create', component: ProductCreateComponent },
+          { path: 'image-upload', component: ProductImageUploadComponent },
+          { path: '', redirectTo: 'create', pathMatch: 'full' },
+        ],
+      },
+
+      {
+        path: 'promotion',
+        children: [
+          { path: '', component: PromotionComponent },
+          { path: 'create', component: PromotionComponent },
+        ],
+      },
+
       { path: 'report', component: ReportComponent },
+
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
     ],
   },
