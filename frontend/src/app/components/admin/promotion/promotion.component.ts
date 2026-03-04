@@ -1,11 +1,11 @@
 import { Component } from '@angular/core';
+import { RouterOutlet } from '@angular/router';
 
 @Component({
   selector: 'app-promotion',
-  imports: [],
+  standalone: true,
+  imports: [RouterOutlet],
   templateUrl: './promotion.component.html',
-  styleUrl: './promotion.component.css'
+  styleUrl: './promotion.component.css',
 })
-export class PromotionComponent {
-
-}
+export class PromotionComponent {}

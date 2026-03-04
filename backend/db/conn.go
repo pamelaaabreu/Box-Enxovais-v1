@@ -12,7 +12,7 @@ const (
 	DBHOST     = "localhost"
 	DBPORT     = 5432
 	DBUSER     = "postgres"
-	DBPASSWORD = "Apolo2024**!"
+	DBPASSWORD = "Francis2012@"
 	DBNAME     = "bd_box"
 )
 
@@ -34,5 +34,5 @@ func InitDB() {
 		log.Fatal("Erro ao conectar:", err)
 	}
 
-	fmt.Println("✅ Banco conectado com sucesso!")
+	fmt.Println("Banco conectado com sucesso!")
 }

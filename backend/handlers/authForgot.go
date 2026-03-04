@@ -10,6 +10,7 @@ import (
 	"net/http"
 	"net/smtp"
 	"os"
+	"strings"
 	"time"
 )
 
@@ -31,7 +32,8 @@ func ForgotPassword(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var userID int
-	err = db.DB.QueryRow("SELECT id FROM users WHERE email = $1", req.Email).Scan(&userID)
+	email := strings.TrimSpace(strings.ToLower(req.Email))
+	err = db.DB.QueryRow("SELECT id FROM users WHERE LOWER(email) = $1", email).Scan(&userID)
 	if err != nil {
 		w.WriteHeader(http.StatusOK)
 		w.Write([]byte(`{"message":"Se o email existir, você receberá instruções."}`))
@@ -82,7 +84,7 @@ func sendResetEmail(to, resetURL string) error {
 
 	subject := "Recuperação de senha"
 	body := fmt.Sprintf("Para redefinir sua senha, clique no link: %s\n\nSe não solicitou, ignore este email.", resetURL)
-	
+
 	msg := []byte("From: " + from + "\r\n" +
 		"To: " + to + "\r\n" +
 		"Subject: " + subject + "\r\n" +
