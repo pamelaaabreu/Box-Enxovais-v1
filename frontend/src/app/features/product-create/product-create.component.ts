@@ -1,17 +1,21 @@
 import { Component } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
+import { FormsModule } from '@angular/forms';
+
 import { Product } from '../../shared/models';
 import { ProductService } from '../../core/services/product.service';
-import { Router } from '@angular/router';
-import { FormsModule } from '@angular/forms';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-product-create',
   standalone: true,
-  imports: [FormsModule],
+  imports: [FormsModule, CommonModule],
   templateUrl: './product-create.component.html',
   styleUrl: './product-create.component.css',
 })
 export class ProductCreateComponent {
+  loading = false;
+
   product: Product = {
     name: '',
     price: 0,
@@ -28,18 +32,25 @@ export class ProductCreateComponent {
     care_instructions: '',
   };
 
-  constructor(private productService: ProductService, private router: Router) {}
+  constructor(
+    private productService: ProductService,
+    private router: Router,
+    private route: ActivatedRoute
+  ) {}
 
   onSubmit(): void {
+    this.loading = true;
+
     this.productService.createProduct(this.product).subscribe({
       next: (response) => {
-        alert(`Produto "${this.product.name}" criado com ID: ${response.id}`);
+        this.loading = false;
+        this.product.id = response.id;
 
-        this.router.navigate(['/image-upload', response.id]);
+        this.router.navigate([`/admin/product/image-upload/${response.id}`]);
       },
-      error: (err) => {
-        console.error('Erro ao criar produto:', err);
-        alert('Ocorreu um erro ao criar o produto.');
+      error: () => {
+        this.loading = false;
+        alert('Erro ao criar o produto.');
       },
     });
   }

@@ -3,16 +3,23 @@
 
   <div class="form-field">
     <label for="productId" class="form-label">ID do Produto:</label>
-    <input type="text" id="productId" [(ngModel)]="productId" class="form-input">
+    <input type="text" [(ngModel)]="productId" readonly />
   </div>
 
   <div class="form-field">
     <label for="file" class="form-label">Selecione a Imagem:</label>
-    <input type="file" id="file" (change)="onFileSelected($event)" class="form-file">
+    <input
+      type="file"
+      id="file"
+      (change)="onFileSelected($event)"
+      class="form-file"
+    />
   </div>
-  
+
   <div *ngIf="selectedFile" class="file-info">
-    <p>Arquivo selecionado: <strong>{{ selectedFile.name }}</strong></p>
+    <p>
+      Arquivo selecionado: <strong>{{ selectedFile.name }}</strong>
+    </p>
   </div>
 
   <button (click)="onUpload()" class="form-button">Enviar Imagem</button>

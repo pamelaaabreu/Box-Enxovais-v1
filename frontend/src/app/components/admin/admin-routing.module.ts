@@ -22,7 +22,7 @@ const routes: Routes = [
         component: ProductComponent,
         children: [
           { path: 'create', component: ProductCreateComponent },
-          { path: 'image-upload', component: ProductImageUploadComponent },
+          { path: 'image-upload/:id', component: ProductImageUploadComponent }, // ✅ ADD AQUI
           { path: '', redirectTo: 'create', pathMatch: 'full' },
         ],
       },
