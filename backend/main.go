@@ -4,7 +4,7 @@ package main
 
 import (
 	"backend/db"
-	"backend/handlers"
+	"backend/routes"
 	"log"
 	"net/http"
 
@@ -38,18 +38,11 @@ func main() {
 	fs := http.FileServer(http.Dir("./uploads"))
 	mux.Handle("/uploads/", http.StripPrefix("/uploads/", fs))
 
-	mux.HandleFunc("/register", handlers.CreateUser)
-	mux.HandleFunc("/login", handlers.LoginUser)
-	mux.HandleFunc("/forgot-password", handlers.ForgotPassword)
-	mux.HandleFunc("/reset-password", handlers.ResetPassword)
-	mux.HandleFunc("/validate-reset-token/", handlers.ValidateResetToken)
-	mux.HandleFunc("/upload-image", handlers.UploadProductImage) // FUNÇÃO DO ADMIN
-	mux.HandleFunc("/products", handlers.CreateProduct) // FUNÇÃO DO ADMIN
-	mux.HandleFunc("/products/", handlers.GetProduct) 
-	mux.HandleFunc("/api/newsletter/subscribe", handlers.SubscribeNewsletter)
-	mux.HandleFunc("/api/promotions/create", handlers.CreatePromotion) // FUNÇÃO DO ADMIN
-	mux.HandleFunc("/api/promotions/add", handlers.AddProductToPromotion) // FUNÇÃO DO ADMIN
-	mux.HandleFunc("/api/promotions/", handlers.GetPromotionalProducts) 
+	routes.InitRoutesAuth(mux)
+	routes.InitRoutesProducts(mux)
+	routes.InitRoutesNewsletter(mux)
+	routes.InitRoutesPromotions(mux)
+
 	//   mux.HandleFunc("/api/test/images/", handlers.GetProductImagesByID)
 
 	log.Println("🚀 Servidor rodando na porta 8080")
