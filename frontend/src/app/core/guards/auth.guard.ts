@@ -1,14 +1,41 @@
-import { CanActivateFn, Router } from '@angular/router';
 import { inject } from '@angular/core';
-import { AuthService } from '../services/auth.service';
+import { CanActivateFn, Router } from '@angular/router';
+import { jwtDecode } from 'jwt-decode';
 
-export const authGuard: CanActivateFn = (route, state) => {
+import { AuthService } from '../services/auth.service';
+import { AppJwtPayload } from '../interfaces/auth.interface';
+
+
+export const authGuard: CanActivateFn = () => {
   const authService = inject(AuthService);
   const router = inject(Router);
-  if (authService.isLoggedIn()) {
+
+  const token = authService.getToken();
+
+  if (!token) {
+    return router.createUrlTree(['/login']);
+  }
+
+  try {
+    const decodedToken = jwtDecode<AppJwtPayload>(token);
+
+    if (isTokenExpired(decodedToken)) {
+      return router.createUrlTree(['/login']);
+    }
+
     return true;
-  } else {
-    router.navigate(['/login']);
-    return false;
+  } catch (error) {
+    console.error('Erro ao decodificar o token:', error);
+    return router.createUrlTree(['/login']);
   }
 };
+
+function isTokenExpired(token: AppJwtPayload): boolean {
+  if (!token.exp) {
+    return true;
+  }
+
+  const expirationDateInMilliseconds = token.exp * 1000;
+
+  return Date.now() >= expirationDateInMilliseconds;
+}

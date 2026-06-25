@@ -1,49 +1,70 @@
 import { Injectable, inject } from '@angular/core';
 import {
-  CanActivate,
-  CanLoad,
-  Route,
-  UrlSegment,
-  Router,
   ActivatedRouteSnapshot,
+  CanActivate,
+  CanMatch,
+  Route,
+  Router,
   RouterStateSnapshot,
+  UrlSegment,
+  UrlTree,
 } from '@angular/router';
-import { AuthService } from '../services/auth.service';
 import { jwtDecode } from 'jwt-decode';
+import { AuthService } from '../services/auth.service';
+import { AppJwtPayload } from '../interfaces/auth.interface';
 
 @Injectable({
   providedIn: 'root',
 })
-export class AdminGuard implements CanActivate, CanLoad {
+export class AdminGuard implements CanActivate, CanMatch {
   private authService = inject(AuthService);
   private router = inject(Router);
 
-  // Para CanActivate (rotas internas do módulo)
   canActivate(
-    next: ActivatedRouteSnapshot,
-    state: RouterStateSnapshot
-  ): boolean {
+    route: ActivatedRouteSnapshot,
+    state: RouterStateSnapshot,
+  ): boolean | UrlTree {
     return this.checkAdmin();
   }
 
-  // Para CanLoad (lazy-loaded modules)
-  canLoad(route: Route, segments: UrlSegment[]): boolean {
+  canMatch(route: Route, segments: UrlSegment[]): boolean | UrlTree {
     return this.checkAdmin();
   }
 
-  private checkAdmin(): boolean {
+  private checkAdmin(): boolean | UrlTree {
     const token = this.authService.getToken();
-    if (token) {
-      try {
-        const decodedToken: any = jwtDecode(token);
-        if (decodedToken && decodedToken.role === 'admin') {
-          return true;
-        }
-      } catch (error) {
-        console.error('Erro ao decodificar o token:', error);
-      }
+
+    if (!token) {
+      return this.router.createUrlTree(['/login']);
     }
-    this.router.navigate(['/']);
-    return false;
+
+    try {
+      const decodedToken = jwtDecode<AppJwtPayload>(token);
+
+      if (this.isTokenExpired(decodedToken)) {
+        return this.router.createUrlTree(['/login']);
+      }
+
+      const role = decodedToken.role?.trim().toLowerCase();
+
+      if (role === 'admin') {
+        return true;
+      }
+
+      return this.router.createUrlTree(['/home']);
+    } catch (error) {
+      console.error('Erro ao decodificar o token:', error);
+      return this.router.createUrlTree(['/login']);
+    }
+  }
+
+  private isTokenExpired(token: AppJwtPayload): boolean {
+    if (!token.exp) {
+      return true;
+    }
+
+    const expirationDateInMilliseconds = token.exp * 1000;
+
+    return Date.now() >= expirationDateInMilliseconds;
   }
 }

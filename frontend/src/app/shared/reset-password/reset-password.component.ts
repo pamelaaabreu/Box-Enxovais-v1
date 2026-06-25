@@ -32,9 +32,9 @@ export class ResetPasswordComponent implements OnInit {
     private route: ActivatedRoute,
     private authService: AuthService,
     private router: Router,
-    private CustomAlertService: CustomAlertService
-  ) // private alertService: SweetAlertService
-  {
+    private CustomAlertService: CustomAlertService,
+  ) {
+    // private alertService: SweetAlertService
     this.resetForm = this.fb.group({
       newPassword: [
         '',
@@ -54,7 +54,7 @@ export class ResetPasswordComponent implements OnInit {
     if (!tokenFromUrl) {
       this.CustomAlertService.error(
         'Token Inválido',
-        'Token não encontrado. Por favor, use o link enviado para o seu e-mail.'
+        'Token não encontrado. Por favor, use o link enviado para o seu e-mail.',
       );
       this.resetForm.disable();
       return;
@@ -83,7 +83,7 @@ export class ResetPasswordComponent implements OnInit {
     ) {
       this.CustomAlertService.error(
         'Campos Obrigatórios',
-        'Por favor, preencha a nova senha e a confirmação.'
+        'Por favor, preencha a nova senha e a confirmação.',
       );
       return;
     }
@@ -91,7 +91,7 @@ export class ResetPasswordComponent implements OnInit {
     if (newPasswordControl?.errors?.['minlength']) {
       this.CustomAlertService.error(
         'Senha Curta',
-        'A senha deve ter pelo menos 6 caracteres.'
+        'A senha deve ter pelo menos 6 caracteres.',
       );
       return;
     }
@@ -99,7 +99,7 @@ export class ResetPasswordComponent implements OnInit {
     if (newPasswordControl?.errors?.['pattern']) {
       this.CustomAlertService.error(
         'Senha Inválida',
-        'A senha deve conter um símbolo especial (?@#$%&).'
+        'A senha deve conter um símbolo especial (?@#$%&).',
       );
       return;
     }
@@ -109,7 +109,7 @@ export class ResetPasswordComponent implements OnInit {
     if (newPassword !== confirmPassword) {
       this.CustomAlertService.error(
         'Senhas não conferem',
-        'Por favor, digite as senhas novamente.'
+        'Por favor, digite as senhas novamente.',
       );
       return;
     }
@@ -117,7 +117,7 @@ export class ResetPasswordComponent implements OnInit {
     if (!this.token) {
       this.CustomAlertService.error(
         'Erro de Token',
-        'Token não disponível. A sessão pode ter expirado.'
+        'Token não disponível. A sessão pode ter expirado.',
       );
       return;
     }
@@ -125,14 +125,14 @@ export class ResetPasswordComponent implements OnInit {
     // Se todas as validações passarem, envia para a API
     this.isLoading = true;
 
-    this.authService.resetPassword(this.token, newPassword).subscribe({
+    this.authService.resetPassword('', this.token, newPassword).subscribe({
       next: () => {
         this.isLoading = false;
         this.resetForm.disable();
 
         this.CustomAlertService.success(
           'Sucesso!',
-          'Senha alterada com sucesso! Será redirecionado para a página de login.'
+          'Senha alterada com sucesso! Será redirecionado para a página de login.',
         );
         setTimeout(() => {
           this.router.navigate(['/login']);

@@ -5,7 +5,6 @@ import (
 	"backend/services"
 	"context"
 	"errors"
-	"fmt"
 	"net/http"
 	"os"
 	"strings"
@@ -18,94 +17,96 @@ type contextKey string
 const (
 	contextKeyUserID contextKey = "userID"
 	contextKeyRole   contextKey = "role"
+
+	jwtIssuer = "box-enxovais-api"
 )
 
 func AuthMiddleware(next http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		authHeader := r.Header.Get("Authorization")
-		if authHeader == "" {
-			services.Error(w, http.StatusUnauthorized, "Token de autenticação não fornecido", nil, false)
+		tokenString, ok := extractBearerToken(r)
+		if !ok {
+			services.Error(w, http.StatusUnauthorized, "Token de autenticação não fornecido ou inválido", nil, false)
 			return
 		}
 
-		parts := strings.Split(authHeader, " ")
-		if len(parts) != 2 || parts[0] != "Bearer" {
-			services.Error(w, http.StatusUnauthorized, "Formato de token inválido", nil, false)
+		jwtSecret := strings.TrimSpace(os.Getenv("JWT_SECRET"))
+		if jwtSecret == "" {
+			services.Error(w, http.StatusInternalServerError, "Configuração de autenticação inválida", nil, false)
 			return
 		}
 
-		tokenString := parts[1]
+		claims := &models.Claims{}
 
-		secret := os.Getenv("JWT_SECRET")
-
-		token, err := jwt.ParseWithClaims(tokenString, &models.Claims{}, func(token *jwt.Token) (any, error) {
-			if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
-				return nil, fmt.Errorf("método de assinatura inesperado: %v", token.Header["alg"])
-			}
-			return []byte(secret), nil
-		})
+		token, err := jwt.ParseWithClaims(
+			tokenString,
+			claims,
+			func(token *jwt.Token) (any, error) {
+				return []byte(jwtSecret), nil
+			},
+			jwt.WithValidMethods([]string{jwt.SigningMethodHS256.Alg()}),
+			jwt.WithIssuer(jwtIssuer),
+		)
 
 		if err != nil {
-			if errors.Is(err, jwt.ErrTokenExpired) {
-				services.Error(w, http.StatusUnauthorized, "Token expirado", nil, false)
-				return
-			}
-			services.Error(w, http.StatusUnauthorized, "Token inválido", err, false)
+			handleTokenError(w, err)
 			return
 		}
 
-		if claims, ok := token.Claims.(*models.Claims); ok && token.Valid {
-			ctx := context.WithValue(r.Context(), contextKeyUserID, claims.UserID)
-			ctx = context.WithValue(ctx, contextKeyRole, claims.Role)
-			next.ServeHTTP(w, r.WithContext(ctx))
+		if !token.Valid {
+			services.Error(w, http.StatusUnauthorized, "Token inválido", nil, false)
 			return
 		}
 
-		services.Error(w, http.StatusUnauthorized, "Token de autenticação inválido", nil, false)
+		if claims.ExpiresAt == nil {
+			services.Error(w, http.StatusUnauthorized, "Token sem data de expiração", nil, false)
+			return
+		}
+
+		ctx := context.WithValue(r.Context(), contextKeyUserID, claims.UserID)
+		ctx = context.WithValue(ctx, contextKeyRole, claims.Role)
+
+		next.ServeHTTP(w, r.WithContext(ctx))
 	}
 }
 
-// func AuthMiddleware(next http.Handler) http.Handler {
-// 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-// 		authHeader := r.Header.Get("Authorization")
-// 		if authHeader == "" {
-// 			http.Error(w, "Token de autenticação não fornecido", http.StatusUnauthorized)
-// 			return
-// 		}
+func extractBearerToken(r *http.Request) (string, bool) {
+	authHeader := strings.TrimSpace(r.Header.Get("Authorization"))
+	if authHeader == "" {
+		return "", false
+	}
 
-// 		parts := strings.Split(authHeader, " ")
-// 		if len(parts) != 2 || parts[0] != "Bearer" {
-// 			http.Error(w, "Formato de token inválido", http.StatusUnauthorized)
-// 			return
-// 		}
+	parts := strings.Fields(authHeader)
+	if len(parts) != 2 {
+		return "", false
+	}
 
-// 		tokenString := parts[1]
+	if parts[0] != "Bearer" {
+		return "", false
+	}
 
-// 		secret := os.Getenv("JWT_SECRET")
+	tokenString := strings.TrimSpace(parts[1])
+	if tokenString == "" {
+		return "", false
+	}
 
-// 		token, err := jwt.ParseWithClaims(tokenString, &models.Claims{}, func(token *jwt.Token) (interface{}, error) {
-// 			if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
-// 				return nil, fmt.Errorf("método de assinatura inesperado: %v", token.Header["alg"])
-// 			}
-// 			return []byte(secret), nil
-// 		})
+	return tokenString, true
+}
 
-// 		if err != nil {
-// 			if errors.Is(err, jwt.ErrTokenExpired) {
-// 				http.Error(w, "Token expirado", http.StatusUnauthorized)
-// 				return
-// 			}
-// 			http.Error(w, "Token inválido", http.StatusUnauthorized)
-// 			return
-// 		}
+func handleTokenError(w http.ResponseWriter, err error) {
+	if errors.Is(err, jwt.ErrTokenExpired) {
+		services.Error(w, http.StatusUnauthorized, "Token expirado", nil, false)
+		return
+	}
 
-// 		if claims, ok := token.Claims.(*models.Claims); ok && token.Valid {
-// 			ctx := context.WithValue(r.Context(), contextKeyUserID, claims.UserID)
-// 			ctx = context.WithValue(ctx, contextKeyRole, claims.Role)
-// 			next.ServeHTTP(w, r.WithContext(ctx))
-// 			return
-// 		}
+	services.Error(w, http.StatusUnauthorized, "Token inválido", nil, false)
+}
 
-// 		http.Error(w, "Token de autenticação inválido", http.StatusUnauthorized)
-// 	})
-// }
+func GetUserIDFromContext(ctx context.Context) (int, bool) {
+	userID, ok := ctx.Value(contextKeyUserID).(int)
+	return userID, ok
+}
+
+func GetRoleFromContext(ctx context.Context) (string, bool) {
+	role, ok := ctx.Value(contextKeyRole).(string)
+	return role, ok
+}

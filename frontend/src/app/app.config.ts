@@ -5,16 +5,17 @@ import {
 } from '@angular/core';
 import { provideRouter } from '@angular/router';
 import {
-  HTTP_INTERCEPTORS,
   provideHttpClient,
   withFetch,
+  withInterceptors,
 } from '@angular/common/http';
 import { provideNgxMask } from 'ngx-mask';
 import Swal from 'sweetalert2';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
-import { routes } from './app.routes';
 import { withEventReplay } from '@angular/platform-browser';
+import { routes } from './app.routes';
 import { authInterceptor } from './core/auth.interceptor';
+import { AuthService } from './core/services/auth.service';
 import {
   LucideAngularModule,
   Check,
@@ -23,20 +24,20 @@ import {
   Info,
   Loader2,
 } from 'lucide-angular';
-import { AuthService } from './core/services/auth.service';
 
-export function initializeAuth(authService: AuthService) {
-  return () => authService.loadUser();
+export function initializeAuth(authService: AuthService): () => void {
+  return () => {
+    authService.loadUser();
+  };
 }
 
 export const appConfig: ApplicationConfig = {
   providers: [
     provideRouter(routes),
-    provideHttpClient(withFetch()),
+    provideHttpClient(withFetch(), withInterceptors([authInterceptor])),
     provideNgxMask(),
     provideAnimationsAsync(),
     { provide: 'Swal', useValue: Swal },
-    { provide: HTTP_INTERCEPTORS, useValue: authInterceptor, multi: true },
     importProvidersFrom(
       LucideAngularModule.pick({
         Check,
@@ -44,7 +45,7 @@ export const appConfig: ApplicationConfig = {
         AlertTriangle,
         Info,
         Loader2,
-      })
+      }),
     ),
     {
       provide: APP_INITIALIZER,

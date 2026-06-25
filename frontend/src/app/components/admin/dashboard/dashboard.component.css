@@ -26,7 +26,9 @@
   border-radius: 10px;
   padding: 1.5rem;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05); /* Sombra mais moderna */
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
   border: 1px solid var(--color-border);
 }
 
@@ -177,4 +179,30 @@
   .dashboard-grid {
     gap: 1rem;
   }
+}
+
+.empty-state {
+  font-size: 13px;
+  color: #9ca3af;
+}
+
+.chart-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.chart-actions button {
+  border: none;
+  background: #ede7e3;
+  color: #5c4d44;
+  padding: 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 600;
+  transition: 0.2s;
+}
+
+.chart-actions button:hover {
+  background: #d8c4b6;
 }

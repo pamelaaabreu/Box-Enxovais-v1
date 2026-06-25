@@ -1,43 +1,74 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
+
 import { AdminComponent } from './admin/admin.component';
+
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { ProductComponent } from './product/product.component';
 import { PromotionComponent } from './promotion/promotion.component';
 import { ReportComponent } from './report/report.component';
+
 import { AdminGuard } from '../../core/guards/admin.guard';
-import { ProductCreateComponent } from '../../features/product-create/product-create.component';
-import { ProductImageUploadComponent } from '../../features/product-image-upload/product-image-upload.component';
+
+import { ProductManageComponent } from '../../features/product-manage/product-manage.component';
+import { CreatePromotionComponent } from '../../features/create-promotion/create-promotion.component';
+import { AddToPromotionComponent } from '../../features/add-to-promotion/add-to-promotion.component';
 
 const routes: Routes = [
   {
     path: '',
     component: AdminComponent,
     canActivate: [AdminGuard],
+
     children: [
-      { path: 'dashboard', component: DashboardComponent },
-
       {
-        path: 'product',
-        component: ProductComponent,
+        path: '',
+        redirectTo: 'dashboard',
+        pathMatch: 'full',
+      },
+
+      // DASHBOARD
+      {
+        path: 'dashboard',
+        component: DashboardComponent,
+      },
+
+      // PRODUTOS
+      {
+        path: 'products',
         children: [
-          { path: 'create', component: ProductCreateComponent },
-          { path: 'image-upload/:id', component: ProductImageUploadComponent }, // ✅ ADD AQUI
-          { path: '', redirectTo: 'create', pathMatch: 'full' },
+          {
+            path: '',
+            component: ProductComponent,
+          },
+
+          {
+            path: 'manage',
+            component: ProductManageComponent,
+          },
         ],
       },
 
+      // PROMOÇÕES
       {
-        path: 'promotion',
+        path: 'promotions',
         children: [
-          { path: '', component: PromotionComponent },
-          { path: 'create', component: PromotionComponent },
+          {
+            path: 'create',
+            component: CreatePromotionComponent,
+          },
+
+          {
+            path: 'add-product',
+            component: AddToPromotionComponent,
+          },
         ],
       },
-
-      { path: 'report', component: ReportComponent },
-
-      { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
+      // RELATÓRIOS
+      {
+        path: 'reports',
+        component: ReportComponent,
+      },
     ],
   },
 ];

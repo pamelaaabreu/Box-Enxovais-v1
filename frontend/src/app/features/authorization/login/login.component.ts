@@ -3,7 +3,6 @@ import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../../core/services/auth.service';
 import { CommonModule } from '@angular/common';
-// import { SweetAlertService } from '../../../core/services/sweet-alert.service';
 import { ShowPasswordComponent } from '../../../shared/css/show-password/show-password.component';
 import { CustomAlertService } from '../../../core/services/custom-alert.service';
 
@@ -42,9 +41,22 @@ export class LoginComponent {
       };
 
       this.authService.login(credentials).subscribe({
-        next: () => this.router.navigate(['/home']),
+        next: (response) => {
+          console.log('LOGIN RESPONSE:', response);
+
+          if (response.role === 'admin') {
+            this.router.navigate(['/admin/dashboard']);
+            return;
+          }
+
+          this.router.navigate(['/home']);
+        },
+
         error: (err) => {
+          console.error(err);
+
           const errorMessage = err.error?.error || 'Email ou senha inválidos!';
+
           this.CustomAlertService.error('Falha no Login', errorMessage);
         },
       });

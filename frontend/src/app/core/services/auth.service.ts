@@ -1,8 +1,13 @@
-import { Injectable, inject, PLATFORM_ID } from '@angular/core';
+import { Injectable, PLATFORM_ID, inject } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { Observable, Subject, tap } from 'rxjs';
+import {
+  LoginCredentials,
+  LoginResponse,
+  RegisterPayload,
+} from '../interfaces/auth.interface';
 
 @Injectable({
   providedIn: 'root',
@@ -10,58 +15,63 @@ import { Observable, Subject, tap } from 'rxjs';
 export class AuthService {
   private http = inject(HttpClient);
   private router = inject(Router);
-  private baseUrl = 'http://localhost:8080';
   private platformId = inject(PLATFORM_ID);
+
+  private baseUrl = 'http://localhost:8080';
+
   public isLogged = false;
   public userName: string | null = null;
-  
-
   public userChanged = new Subject<void>();
 
-  constructor() {}
+  loadUser(): void {
+    if (!this.isBrowser()) {
+      return;
+    }
 
-  loadUser(): Promise<void> {
-    return new Promise((resolve) => {
-      if (isPlatformBrowser(this.platformId)) {
-        const token =
-          localStorage.getItem('authToken') ||
-          sessionStorage.getItem('authToken');
-        const name =
-          localStorage.getItem('userName') ||
-          sessionStorage.getItem('userName');
+    const token = sessionStorage.getItem('authToken');
+    const name = sessionStorage.getItem('userName');
 
-        this.isLogged = !!token;
-        this.userName = name || null;
-      }
-      resolve();
-    });
+    this.isLogged = !!token;
+    this.userName = name || null;
   }
 
-  login(credentials: {
-    email: string;
-    password: string;
-    remember?: boolean;
-  }): Observable<any> {
-    return this.http.post<any>(`${this.baseUrl}/login`, credentials).pipe(
+  login(credentials: LoginCredentials): Observable<LoginResponse> {
+    const payload: LoginCredentials = {
+      email: credentials.email,
+      password: credentials.password,
+    };
+
+    return this.http.post<LoginResponse>(`${this.baseUrl}/login`, payload).pipe(
       tap((response) => {
-        if (isPlatformBrowser(this.platformId) && response?.token) {
-          const storage = credentials.remember ? localStorage : sessionStorage;
-          storage.setItem('authToken', response.token);
-          if (response.name) storage.setItem('userName', response.name);
-          if (response.role) storage.setItem('userRole', response.role);
-          this.userChanged.next(); 
+        if (!this.isBrowser() || !response?.token) {
+          return;
         }
-      })
+
+        this.saveAuthData(response);
+
+        this.isLogged = true;
+        this.userName = response.name || null;
+        this.userChanged.next();
+      }),
     );
   }
 
-  requestPasswordReset(email: string): Observable<any> {
-    return this.http.post(`${this.baseUrl}/forgot-password`, { email });
+  register(userData: RegisterPayload): Observable<any> {
+    return this.http.post(`${this.baseUrl}/register`, userData);
   }
 
-  resetPassword(token: string, newPassword: string): Observable<any> {
+  requestPasswordReset(email: string): Observable<any> {
+    return this.http.post(`${this.baseUrl}/send-reset-token`, { email });
+  }
+
+  resetPassword(
+    email: string,
+    code: string,
+    newPassword: string,
+  ): Observable<any> {
     return this.http.post(`${this.baseUrl}/reset-password`, {
-      token,
+      email,
+      code,
       newPassword,
     });
   }
@@ -70,44 +80,93 @@ export class AuthService {
     return this.http.get(`${this.baseUrl}/validate-reset-token/${token}`);
   }
 
-  register(userData: any): Observable<any> {
-    return this.http.post(`${this.baseUrl}/register`, userData);
-  }
-
   logout(): void {
-    if (isPlatformBrowser(this.platformId)) {
-      localStorage.removeItem('authToken');
-      sessionStorage.removeItem('authToken');
-      localStorage.removeItem('userName');
-      sessionStorage.removeItem('userName');
-      this.router.navigate(['/login']);
+    if (this.isBrowser()) {
+      this.clearAuthData();
     }
+
+    this.isLogged = false;
+    this.userName = null;
+    this.userChanged.next();
+
+    this.router.navigate(['/login']);
   }
 
   isLoggedIn(): boolean {
-    if (isPlatformBrowser(this.platformId)) {
-      return !!(
-        localStorage.getItem('authToken') || sessionStorage.getItem('authToken')
-      );
+    if (!this.isBrowser()) {
+      return false;
     }
-    return false;
+
+    return !!sessionStorage.getItem('authToken');
   }
 
   getUserName(): string | null {
-    if (isPlatformBrowser(this.platformId)) {
-      return (
-        localStorage.getItem('userName') || sessionStorage.getItem('userName')
-      );
+    if (!this.isBrowser()) {
+      return null;
     }
-    return null;
+
+    return sessionStorage.getItem('userName');
+  }
+
+  getUserEmail(): string | null {
+    if (!this.isBrowser()) {
+      return null;
+    }
+
+    return sessionStorage.getItem('userEmail');
+  }
+
+  getUserRole(): string | null {
+    if (!this.isBrowser()) {
+      return null;
+    }
+
+    return sessionStorage.getItem('userRole');
   }
 
   getToken(): string | null {
-    if (isPlatformBrowser(this.platformId)) {
-      return (
-        localStorage.getItem('authToken') || sessionStorage.getItem('authToken')
-      );
+    if (!this.isBrowser()) {
+      return null;
     }
-    return null;
+
+    return sessionStorage.getItem('authToken');
+  }
+
+  private saveAuthData(response: LoginResponse): void {
+    sessionStorage.setItem('authToken', response.token);
+
+    if (response.name) {
+      sessionStorage.setItem('userName', response.name);
+    }
+
+    if (response.email) {
+      sessionStorage.setItem('userEmail', response.email);
+    }
+
+    if (response.role) {
+      sessionStorage.setItem('userRole', response.role);
+    }
+
+    this.removeOldLocalStorageAuthData();
+  }
+
+  private clearAuthData(): void {
+    sessionStorage.removeItem('authToken');
+    sessionStorage.removeItem('userName');
+    sessionStorage.removeItem('userEmail');
+    sessionStorage.removeItem('userRole');
+
+    this.removeOldLocalStorageAuthData();
+  }
+
+  private removeOldLocalStorageAuthData(): void {
+    localStorage.removeItem('authToken');
+    localStorage.removeItem('userName');
+    localStorage.removeItem('userEmail');
+    localStorage.removeItem('userRole');
+  }
+
+  private isBrowser(): boolean {
+    return isPlatformBrowser(this.platformId);
   }
 }

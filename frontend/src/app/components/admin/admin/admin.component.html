@@ -2,6 +2,7 @@
   <aside class="sidebar">
     <div class="sidebar-header">
       <img src="/LOGOTIPO.svg" alt="Box Enxovais" class="logo" />
+
       <button class="menu-toggle" (click)="toggleSidebar()">
         <i class="fas fa-bars"></i>
       </button>
@@ -11,7 +12,7 @@
       <ul>
         <li [class.active]="router.url.includes('/admin/dashboard')">
           <a
-            routerLink="dashboard"
+            routerLink="/admin/dashboard"
             routerLinkActive="active"
             (click)="collapseAllMenus()"
           >
@@ -32,6 +33,7 @@
               <rect width="7" height="7" x="14" y="14" rx="1" />
               <rect width="7" height="7" x="3" y="14" rx="1" />
             </svg>
+
             <span class="nav-text">Dashboard</span>
           </a>
         </li>
@@ -42,7 +44,6 @@
             class="dropdown-toggle"
             (click)="toggleProductMenu($event)"
           >
-            <!-- <i class="fas fa-box"></i> -->
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="24"
@@ -61,22 +62,26 @@
               <path d="m3.3 7 8.7 5 8.7-5" />
               <path d="M12 22V12" />
             </svg>
+
             <span class="nav-text">Produtos</span>
+
             <i
               class="fas fa-chevron-down arrow"
               [class.open]="isProductMenuOpen"
             ></i>
           </button>
+
           <ul class="submenu" [class.show]="isProductMenuOpen">
             <li>
-              <a routerLink="/admin/product/create" routerLinkActive="active"
-                >Cadastro</a
-              >
+              <a routerLink="/admin/products" routerLinkActive="active">
+                Listagem
+              </a>
             </li>
+
             <li>
-              <a routerLink="product/image-upload" routerLinkActive="active"
-                >Imagens</a
-              >
+              <a routerLink="/admin/products/manage" routerLinkActive="active">
+                Cadastro
+              </a>
             </li>
           </ul>
         </li>
@@ -87,7 +92,6 @@
             class="dropdown-toggle"
             (click)="togglePromotionMenu($event)"
           >
-            <!-- <i class="fas fa-tags"></i> -->
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="24"
@@ -108,28 +112,43 @@
               />
               <circle cx="10.5" cy="6.5" r=".5" fill="currentColor" />
             </svg>
+
             <span class="nav-text">Promoções</span>
+
             <i
               class="fas fa-chevron-down arrow"
               [class.open]="isPromotionMenuOpen"
             ></i>
           </button>
+
           <ul class="submenu" [class.show]="isPromotionMenuOpen">
             <li>
-              <a routerLink="/admin/promotion/create" routerLinkActive="active"
-                >Criar / Ver</a
+              <a
+                routerLink="/admin/promotions/create"
+                routerLinkActive="active"
               >
+                Criar Promoção
+              </a>
+            </li>
+
+            <li>
+              <a
+                routerLink="/admin/promotions/add-product"
+                routerLinkActive="active"
+              >
+                Adicionar Produto
+              </a>
             </li>
           </ul>
         </li>
 
-        <li [class.active]="router.url.includes('/admin/report')">
+        <!-- RELATÓRIOS -->
+        <li [class.active]="router.url.includes('/admin/reports')">
           <a
-            routerLink="report"
+            routerLink="/admin/reports"
             routerLinkActive="active"
             (click)="collapseAllMenus()"
           >
-            <!-- <i class="fas fa-file-alt"></i> -->
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="24"
@@ -151,49 +170,61 @@
               />
               <circle cx="10" cy="20" r="2" />
             </svg>
+
             <span class="nav-text">Relatórios</span>
           </a>
         </li>
       </ul>
     </nav>
 
-    <!-- Footer -->
+    <!-- FOOTER -->
     <div class="sidebar-footer">
-      <button class="logout-btn">
-        <i class="fas fa-sign-out-alt"></i>
-        <span class="nav-text">Sair</span>
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="16"
-          height="16"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="2"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          class="lucide lucide-log-out-icon lucide-log-out"
-        >
-          <path d="m16 17 5-5-5-5" />
-          <path d="M21 12H9" />
-          <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
-        </svg>
+      <button class="logout-btn" (click)="logout()">
+        <div class="logout-content">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="18"
+            height="18"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            class="lucide lucide-log-out"
+          >
+            <path d="m16 17 5-5-5-5" />
+            <path d="M21 12H9" />
+            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+          </svg>
+
+          <span class="nav-text">Sair</span>
+        </div>
       </button>
     </div>
   </aside>
 
-  <!-- Conteúdo -->
+  <!-- CONTEÚDO -->
   <main class="content">
     <header class="topbar">
       <div class="user-profile">
-        <i class="fas fa-user-circle"></i>
+        <div class="avatar">
+          <img src="https://api.dicebear.com/7.x/adventurer/svg?seed=admin" />
+        </div>
+
         <div class="info">
-          <span class="user-name">Renee McKelvey</span>
-          <span class="user-title">Product Manager</span>
+          <span class="user-name">
+            {{ userName || "Administrador" }}
+          </span>
+
+          <span class="user-email">
+            {{ userEmail  }}
+          </span>
         </div>
       </div>
     </header>
 
+    <!-- BODY -->
     <section class="content-body">
       <router-outlet></router-outlet>
     </section>

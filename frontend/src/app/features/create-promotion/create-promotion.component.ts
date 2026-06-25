@@ -2,12 +2,14 @@ import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CreatePromotionRequest } from '../../shared/models';
 import { PromoService } from '../../core/services/promo.service';
+import { MatIconModule } from '@angular/material/icon';
 
 @Component({
   selector: 'app-create-promotion',
   templateUrl: './create-promotion.component.html',
+  styleUrl: './create-promotion.component.css',
   standalone: true,
-  imports: [FormsModule]
+  imports: [FormsModule, MatIconModule]
 })
 export class CreatePromotionComponent {
   promotionData: CreatePromotionRequest = {

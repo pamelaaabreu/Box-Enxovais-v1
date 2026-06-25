@@ -29,3 +29,14 @@ type Claims struct {
 	Role   string `json:"role"`
 	jwt.RegisteredClaims
 }
+
+type LoginResponse struct {
+	Token string `json:"token"`
+	Name  string `json:"name"`
+	Email string `json:"email"`
+	Role  string `json:"role"`
+}
+
+type ErrorResponse struct {
+	Error string `json:"error"`
+}

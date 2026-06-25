@@ -19,3 +19,4 @@ import { AdminComponent } from './admin/admin.component';
   ],
 })
 export class AdminModule {}
+

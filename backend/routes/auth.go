@@ -7,33 +7,15 @@ import (
 )
 
 func InitRoutesAuth(mux *http.ServeMux) {
-	mux.HandleFunc(
-		"/register",
-		middlewares.Method("POST", handlers.CreateUser),
-	)
+	publicPost(mux, "/register", handlers.CreateUser)
+	publicPost(mux, "/login", handlers.LoginUser)
+	publicPost(mux, "/send-reset-token", handlers.SendVerificationCode)
+	publicPost(mux, "/reset-password", handlers.ResetPassword)
+}
 
+func publicPost(mux *http.ServeMux, path string, handler http.HandlerFunc) {
 	mux.HandleFunc(
-		"/login",
-		middlewares.Method("POST", handlers.LoginUser),
+		path,
+		middlewares.Method(http.MethodPost, handler),
 	)
-
-	mux.HandleFunc(
-		"/send-reset-token",
-		middlewares.Method("POST", handlers.SendVerificationCode),
-	)
-
-	mux.HandleFunc(
-		"/reset-password",
-		middlewares.Method("POST", handlers.ResetPassword),
-	)
-
-	//Exemplo com varios middlewares
-	// mux.HandleFunc(
-	// 	"/profile",
-	// 	middlewares.AuthMiddleware(
-	// 		middlewares.Method("GET", handlers.Profile),
-	// 	),
-	// )
-	// mux.HandleFunc("/forgot-password", handlers.ForgotPassword)
-	// mux.HandleFunc("/validate-reset-token/", handlers.ValidateResetToken)
 }
