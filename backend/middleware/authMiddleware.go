@@ -17,8 +17,7 @@ type contextKey string
 const (
 	contextKeyUserID contextKey = "userID"
 	contextKeyRole   contextKey = "role"
-
-	jwtIssuer = "box-enxovais-api"
+	jwtIssuer                   = "box-enxovais-api"
 )
 
 func AuthMiddleware(next http.HandlerFunc) http.HandlerFunc {
@@ -62,6 +61,11 @@ func AuthMiddleware(next http.HandlerFunc) http.HandlerFunc {
 			return
 		}
 
+		if claims.UserID <= 0 || strings.TrimSpace(claims.Role) == "" {
+			services.Error(w, http.StatusUnauthorized, "Token sem identificação de usuário válida", nil, false)
+			return
+		}
+
 		ctx := context.WithValue(r.Context(), contextKeyUserID, claims.UserID)
 		ctx = context.WithValue(ctx, contextKeyRole, claims.Role)
 
@@ -80,7 +84,7 @@ func extractBearerToken(r *http.Request) (string, bool) {
 		return "", false
 	}
 
-	if parts[0] != "Bearer" {
+	if !strings.EqualFold(parts[0], "Bearer") {
 		return "", false
 	}
 

@@ -5,28 +5,20 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
+	"net/mail"
 	"strings"
 
 	"github.com/lib/pq"
 	"golang.org/x/crypto/bcrypt"
 )
 
-const minPasswordLength = 6
+const minPasswordLength = 8
 
 type createUserRequest struct {
-	Name         string `json:"name"`
-	Email        string `json:"email"`
-	BirthDate    string `json:"birthDate"`
-	CPF          string `json:"cpf"`
-	Phone        string `json:"phone"`
-	Street       string `json:"street"`
-	Neighborhood string `json:"neighborhood"`
-	Number       string `json:"number"`
-	ZipCode      string `json:"zipCode"`
-	State        string `json:"state"`
-	City         string `json:"city"`
-	Password     string `json:"password"`
-	Terms        bool   `json:"terms"`
+	Name     string `json:"name"`
+	Email    string `json:"email"`
+	Password string `json:"password"`
+	Terms    bool   `json:"terms"`
 }
 
 func CreateUser(w http.ResponseWriter, r *http.Request) {
@@ -60,33 +52,15 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 		INSERT INTO users (
 			full_name,
 			email,
-			birth_date,
-			national_id,
-			phone,
-			street,
-			neighborhood,
-			number,
-			zip_code,
-			state,
-			city,
 			password
 		)
-		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
+		VALUES ($1, $2, $3)
 	`
 
 	_, err = db.DB.Exec(
 		query,
 		user.Name,
 		user.Email,
-		user.BirthDate,
-		user.CPF,
-		user.Phone,
-		user.Street,
-		user.Neighborhood,
-		user.Number,
-		user.ZipCode,
-		user.State,
-		user.City,
 		string(hashedPassword),
 	)
 
@@ -103,20 +77,15 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 func normalizeCreateUserData(user *createUserRequest) {
 	user.Name = strings.TrimSpace(user.Name)
 	user.Email = strings.ToLower(strings.TrimSpace(user.Email))
-	user.BirthDate = strings.TrimSpace(user.BirthDate)
-	user.CPF = onlyNumbers(user.CPF)
-	user.Phone = onlyNumbers(user.Phone)
-	user.Street = strings.TrimSpace(user.Street)
-	user.Neighborhood = strings.TrimSpace(user.Neighborhood)
-	user.Number = strings.TrimSpace(user.Number)
-	user.ZipCode = onlyNumbers(user.ZipCode)
-	user.State = strings.ToUpper(strings.TrimSpace(user.State))
-	user.City = strings.TrimSpace(user.City)
 }
 
 func validateCreateUser(user createUserRequest) string {
 	if user.Name == "" {
 		return "Nome é obrigatório"
+	}
+
+	if !isValidFullName(user.Name) {
+		return "Informe seu nome e sobrenome"
 	}
 
 	if user.Email == "" {
@@ -131,52 +100,8 @@ func validateCreateUser(user createUserRequest) string {
 		return "Senha é obrigatória"
 	}
 
-	if len(user.Password) < minPasswordLength {
-		return "A senha deve ter pelo menos 6 caracteres"
-	}
-
-	if user.BirthDate == "" {
-		return "Data de nascimento é obrigatória"
-	}
-
-	if user.CPF == "" {
-		return "CPF é obrigatório"
-	}
-
-	if len(user.CPF) != 11 {
-		return "CPF inválido"
-	}
-
-	if user.Phone == "" {
-		return "Telefone é obrigatório"
-	}
-
-	if user.ZipCode == "" {
-		return "CEP é obrigatório"
-	}
-
-	if len(user.ZipCode) != 8 {
-		return "CEP inválido"
-	}
-
-	if user.Street == "" {
-		return "Rua é obrigatória"
-	}
-
-	if user.Neighborhood == "" {
-		return "Bairro é obrigatório"
-	}
-
-	if user.Number == "" {
-		return "Número é obrigatório"
-	}
-
-	if user.State == "" {
-		return "Estado é obrigatório"
-	}
-
-	if user.City == "" {
-		return "Cidade é obrigatória"
+	if !isStrongPassword(user.Password) {
+		return "A senha deve ter pelo menos 8 caracteres, incluindo letra maiúscula, minúscula, número e símbolo especial"
 	}
 
 	if !user.Terms {
@@ -201,10 +126,6 @@ func handleCreateUserDatabaseError(w http.ResponseWriter, err error) {
 			writeJSONError(w, http.StatusConflict, "email_duplicado")
 			return
 
-		case "users_cpf_key", "users_national_id_key":
-			writeJSONError(w, http.StatusConflict, "cpf_duplicado")
-			return
-
 		default:
 			writeJSONError(w, http.StatusConflict, "dados_duplicados")
 			return
@@ -215,17 +136,43 @@ func handleCreateUserDatabaseError(w http.ResponseWriter, err error) {
 }
 
 func isValidEmail(email string) bool {
-	return strings.Contains(email, "@") && strings.Contains(email, ".")
+	address, err := mail.ParseAddress(email)
+	return err == nil && address.Address == email
 }
 
-func onlyNumbers(value string) string {
-	var result strings.Builder
+func isValidFullName(name string) bool {
+	parts := strings.Fields(name)
+	if len(parts) < 2 {
+		return false
+	}
 
-	for _, char := range value {
-		if char >= '0' && char <= '9' {
-			result.WriteRune(char)
+	for _, part := range parts {
+		if len([]rune(part)) < 2 {
+			return false
 		}
 	}
 
-	return result.String()
+	return true
+}
+
+func isStrongPassword(password string) bool {
+	if len(password) < minPasswordLength {
+		return false
+	}
+
+	var hasUppercase, hasLowercase, hasNumber, hasSpecial bool
+	for _, char := range password {
+		switch {
+		case char >= 'A' && char <= 'Z':
+			hasUppercase = true
+		case char >= 'a' && char <= 'z':
+			hasLowercase = true
+		case char >= '0' && char <= '9':
+			hasNumber = true
+		case strings.ContainsRune("?@#$%&", char):
+			hasSpecial = true
+		}
+	}
+
+	return hasUppercase && hasLowercase && hasNumber && hasSpecial
 }

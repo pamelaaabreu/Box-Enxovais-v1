@@ -13,15 +13,6 @@ export interface LoginResponse {
 export interface RegisterPayload {
   name: string;
   email: string;
-  birthDate: string;
-  cpf: string;
-  phone: string;
-  street: string;
-  neighborhood: string;
-  number: string;
-  zipCode: string;
-  state: string;
-  city: string;
   password: string;
   terms: boolean;
 }

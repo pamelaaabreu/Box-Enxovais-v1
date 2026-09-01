@@ -16,17 +16,19 @@ export const routes: Routes = [
 
   {
     path: 'register',
+    data: { selectedTab: 1 },
     loadComponent: () =>
       import('./features/authorization/register/register.component').then(
-        (m) => m.RegisterComponent,
+        (m) => m.AuthComponent,
       ),
   },
 
   {
     path: 'login',
+    data: { selectedTab: 0 },
     loadComponent: () =>
-      import('./features/authorization/login/login.component').then(
-        (m) => m.LoginComponent,
+      import('./features/authorization/register/register.component').then(
+        (m) => m.AuthComponent,
       ),
   },
 

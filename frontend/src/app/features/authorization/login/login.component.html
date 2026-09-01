@@ -43,28 +43,17 @@
           </div>
 
           <div class="form-options">
-            <div class="remember-me">
-              <input
-                type="checkbox"
-                id="remember"
-                formControlName="remember"
-                class="custom-checkbox"
-              />
-              <label for="remember" class="checkbox-label"></label>
-              <label for="remember" class="terms-label-text"
-                >Lembrar de mim</label
-              >
-            </div>
             <a routerLink="/forgot-password" class="forgot-password-link">
               Esqueci minha senha!
             </a>
           </div>
+
           <button
             type="submit"
             class="submit-button"
-            [disabled]="loginForm.invalid"
+            [disabled]="loginForm.invalid || isLoading"
           >
-            ENTRAR
+            {{ isLoading ? "ENTRANDO..." : "ENTRAR" }}
           </button>
 
           <p class="register-link">

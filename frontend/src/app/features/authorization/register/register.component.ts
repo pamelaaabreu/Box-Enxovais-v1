@@ -1,270 +1,337 @@
-import { Component, Inject, OnInit, ViewEncapsulation } from '@angular/core';
-import {
-  FormBuilder,
-  FormGroup,
-  Validators,
-  ReactiveFormsModule,
-  AbstractControl,
-  ValidationErrors,
-  ValidatorFn,
-} from '@angular/forms';
-import { HttpClient } from '@angular/common/http';
-import { CommonModule } from '@angular/common';
-import { Router, RouterLink } from '@angular/router';
-import { NgxMaskDirective } from 'ngx-mask';
-import Swal from 'sweetalert2';
-import { SweetAlertService } from '../../../core/services/sweet-alert.service';
-import { TooltipComponent } from '../../../shared/ui/tooltip/tooltip.component';
-import { AuthService } from '../../../core/services/auth.service';
-import { ShowPasswordComponent } from '../../../shared/css/show-password/show-password.component';
-import { CustomAlertService } from '../../../core/services/custom-alert.service';
+import { HttpErrorResponse } from '@angular/common/http';
+import { Component, inject } from '@angular/core';
+import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatTabsModule } from '@angular/material/tabs';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { finalize } from 'rxjs';
 
-export class CepValidators {
-  static cepInvalido(): ValidatorFn {
-    return (control: AbstractControl): ValidationErrors | null => {
-      const cep = control.value?.replace(/\D/g, '');
-      if (cep && /^(\d)\1{7}$/.test(cep)) {
-        return { cepInvalido: true };
-      }
-      return null;
-    };
-  }
-}
+import {
+  LoginCredentials,
+  RegisterPayload,
+} from '../../../core/interfaces/auth.interface';
+import { AuthService } from '../../../core/services/auth.service';
+import { CustomAlertService } from '../../../core/services/custom-alert.service';
+import { RegisterValidators } from '../../../core/validators/register.validators';
+import { ShowPasswordComponent } from '../../../shared/css/show-password/show-password.component';
+
+type PasswordRequirement =
+  | 'length'
+  | 'uppercase'
+  | 'lowercase'
+  | 'number'
+  | 'symbol';
+
+type ValidatableField = 'name' | 'email' | 'password' | 'confirmPassword';
 
 @Component({
-  selector: 'app-register',
+  selector: 'app-auth',
   standalone: true,
   imports: [
-    CommonModule,
     ReactiveFormsModule,
-    NgxMaskDirective,
-    TooltipComponent,
     RouterLink,
+    MatFormFieldModule,
+    MatInputModule,
+    MatTabsModule,
     ShowPasswordComponent,
   ],
   templateUrl: './register.component.html',
-  styleUrl: './register.component.css',
-  encapsulation: ViewEncapsulation.None,
+  styleUrl: './register.component.scss',
 })
-export class RegisterComponent implements OnInit {
+export class AuthComponent {
+  private readonly fb = inject(FormBuilder);
+  private readonly router = inject(Router);
+  private readonly authService = inject(AuthService);
+  private readonly customAlertService = inject(CustomAlertService);
+  private readonly route = inject(ActivatedRoute);
+
   isPasswordVisible = false;
-  userForm!: FormGroup;
-  private ultimoCepValidado: string = '';
-  private fieldNamesMap: Record<string, string> = {
-    name: 'Nome completo',
-    email: 'E-mail',
-    birthDate: 'Data de nascimento',
-    cpf: 'CPF',
-    phone: 'Telefone',
-    street: 'Logradouro',
-    neighborhood: 'Bairro',
-    number: 'Número',
-    zipCode: 'CEP',
-    state: 'Estado',
-    city: 'Cidade',
-    password: 'Senha',
-  };
+  isConfirmPasswordVisible = false;
+  isLoginPasswordVisible = false;
+  isLoading = false;
+  selectedTab = 0;
 
-  constructor(
-    private fb: FormBuilder,
-    private http: HttpClient,
-    private router: Router,
-    // private alertService: SweetAlertService,
-    private CustomAlertService: CustomAlertService,
-    private authService: AuthService,
-    @Inject('Swal') private swal: typeof Swal
-  ) {}
-
-  ngOnInit() {
-    this.userForm = this.fb.group({
-      name: ['', Validators.required],
+  readonly userForm = this.fb.nonNullable.group(
+    {
+      name: ['', [Validators.required, RegisterValidators.fullName()]],
       email: ['', [Validators.required, Validators.email]],
-      birthDate: ['', [Validators.required, AgeValidator.minimumAge(18)]],
-      cpf: ['', Validators.required],
-      phone: ['', Validators.required],
-      street: ['', Validators.required],
-      neighborhood: ['', Validators.required],
-      number: ['', Validators.required],
-      zipCode: ['', [Validators.required, CepValidators.cepInvalido()]],
-      state: ['', Validators.required],
-      city: ['', Validators.required],
       password: [
         '',
         [
           Validators.required,
-          Validators.minLength(6),
-          Validators.pattern(/^(?=.*[?@#$%&]).{6,}$/),
+          Validators.minLength(8),
+          RegisterValidators.strongPassword(),
         ],
       ],
+      confirmPassword: ['', Validators.required],
       terms: [false, Validators.requiredTrue],
+    },
+    {
+      validators: RegisterValidators.passwordsMatch(),
+    },
+  );
+
+  readonly registerForm = this.userForm;
+
+  readonly loginForm = this.fb.nonNullable.group({
+    email: ['', [Validators.required, Validators.email]],
+    password: ['', Validators.required],
+  });
+
+  constructor() {
+    this.route.data.subscribe((data) => {
+      this.selectedTab = data['selectedTab'] === 1 ? 1 : 0;
     });
   }
 
-  onCepBlur() {
-    this.validateCepOnBlur();
+  get isRegisterTab(): boolean {
+    return this.selectedTab === 1;
   }
 
-  private patchEndereco(dados: any) {
-    this.userForm.patchValue({
-      street: dados.logradouro,
-      neighborhood: dados.bairro,
-      city: dados.localidade,
-      state: dados.uf,
-    });
+  onAuthTabChange(index: number): void {
+    this.selectedTab = index;
+    const destination = index === 1 ? '/register' : '/login';
+    void this.router.navigate([destination]);
   }
 
-  private resetEndereco() {
-    this.userForm.patchValue({
-      street: '',
-      neighborhood: '',
-      city: '',
-      state: '',
-    });
-  }
-
-  private validateCepOnBlur(): void {
-    const cepControl = this.userForm.get('zipCode');
-    const cep = cepControl?.value?.replace(/\D/g, '');
-
-    if (cep === this.ultimoCepValidado) {
+  onSubmit(): void {
+    if (this.selectedTab === 1) {
+      this.submitRegister();
       return;
     }
 
-    this.ultimoCepValidado = cep;
-    if (cepControl?.invalid) {
-      return;
-    }
-
-    if (!cep || cep.length !== 8) {
-      return;
-    }
-
-    this.http.get(`https://viacep.com.br/ws/${cep}/json/`).subscribe({
-      next: (dados: any) => {
-        if (dados.erro) {
-          this.CustomAlertService.warning(
-            'CEP não encontrado',
-            'Verifique o CEP digitado. Se estiver correto, preencha o endereço manualmente.'
-          );
-          this.resetEndereco();
-        } else {
-          this.patchEndereco(dados);
-        }
-      },
-      error: () => {
-        this.CustomAlertService.error(
-          'Erro na consulta do CEP',
-          'Serviço indisponível. Preencha o endereço manualmente.'
-        );
-        this.resetEndereco();
-      },
-    });
+    this.submitLogin();
   }
 
-  async onSubmit() {
+  submitRegister(): void {
+    if (this.isLoading) {
+      return;
+    }
+
     this.userForm.markAllAsTouched();
-
-    if (this.userForm.get('zipCode')?.hasError('cepInvalido')) {
-      this.CustomAlertService.error(
-        'CEP inválido',
-        'O CEP informado não é válido. Por favor, corrija.'
-      );
-      return;
-    }
-
-    if (this.userForm.get('birthDate')?.hasError('minAge')) {
-      this.CustomAlertService.warning(
-        'Idade insuficiente',
-        'Você deve ter 18 anos ou mais para se cadastrar.'
-      );
-      return;
-    }
-
-    if (this.userForm.controls['terms'].errors?.['required']) {
-      this.CustomAlertService.warning(
-        'Termos de Uso',
-        'Você precisa aceitar os Termos de Uso para continuar.'
-      );
-      return;
-    }
-
-    if (!/^(?=.*[?@#$%&]).{6,}$/.test(this.userForm.value.password)) {
-      this.CustomAlertService.warning(
-        'Senha inválida',
-        'A senha deve ter no mínimo 6 caracteres e pelo menos um símbolo especial (?@#$%&).'
-      );
-      return;
-    }
+    this.userForm.updateValueAndValidity();
 
     if (this.userForm.invalid) {
-      this.showFormErrors();
+      this.showValidationAlert();
       return;
     }
 
-    this.enviarCadastro();
+    const { confirmPassword: _confirmPassword, ...formValue } =
+      this.userForm.getRawValue();
+
+    const payload: RegisterPayload = formValue;
+
+    this.isLoading = true;
+    this.customAlertService.loading('Criando sua conta...');
+
+    this.authService
+      .register(payload)
+      .pipe(
+        finalize(() => {
+          this.isLoading = false;
+          this.customAlertService.hideLoading();
+        }),
+      )
+      .subscribe({
+        next: async () => {
+          await this.customAlertService.success(
+            'Cadastro concluído!',
+            'Sua conta foi criada com sucesso.',
+          );
+
+          await this.router.navigate(['/login']);
+        },
+        error: (error: HttpErrorResponse) => {
+          const errorMessage = this.getErrorMessage(error);
+
+          if (errorMessage === 'email_duplicado') {
+            this.customAlertService.showEmailDuplicate(
+              this.userForm.controls.email.value,
+            );
+            return;
+          }
+
+          this.customAlertService.error('Erro no cadastro', errorMessage);
+        },
+      });
   }
 
-  private async enviarCadastro() {
-    this.CustomAlertService.loading('Criando sua conta...');
+  submitLogin(): void {
+    if (this.isLoading) {
+      return;
+    }
 
-    this.authService.register(this.userForm.value).subscribe({
-      next: async () => {
-        this.CustomAlertService.hideLoading();
-        await this.CustomAlertService.success(
-          'Cadastro concluído!',
-          'Sua conta foi criada com sucesso.'
-        );
-        // Redireciona para o login para que o usuário possa entrar
-        this.router.navigate(['/login']);
-      },
-      error: (err) => {
-        this.CustomAlertService.hideLoading();
-        const errorMsg = this.getErrorMessage(err);
-        const email = this.userForm.get('email')?.value;
-        const cpf = this.userForm.get('cpf')?.value;
+    this.loginForm.markAllAsTouched();
 
-        if (errorMsg === 'email_duplicado') {
-          this.CustomAlertService.showEmailDuplicate(email);
-        } else if (errorMsg === 'cpf_duplicado') {
-          this.CustomAlertService.showCpfDuplicate(cpf);
-        } else {
-          this.CustomAlertService.error('Erro no cadastro', errorMsg);
-        }
-      },
-    });
+    if (this.loginForm.invalid) {
+      return;
+    }
+
+    const credentials: LoginCredentials = this.loginForm.getRawValue();
+    this.isLoading = true;
+
+    this.authService
+      .login(credentials)
+      .pipe(finalize(() => (this.isLoading = false)))
+      .subscribe({
+        next: (response) => {
+          const destination =
+            response.role === 'admin' ? '/admin/dashboard' : '/home';
+          void this.router.navigate([destination]);
+        },
+        error: (error: HttpErrorResponse) => {
+          const message = error.error?.error || 'E-mail ou senha inválidos!';
+          this.customAlertService.error('Falha no login', message);
+        },
+      });
   }
 
-  private showFormErrors() {
-    this.CustomAlertService.showFormValidationErrors(
-      this.userForm,
-      this.fieldNamesMap
+  showError(
+    formName: 'register' | 'login',
+    controlName:
+      | keyof typeof this.registerForm.controls
+      | keyof typeof this.loginForm.controls,
+  ): boolean {
+    const control =
+      formName === 'register'
+        ? this.registerForm.controls[
+            controlName as keyof typeof this.registerForm.controls
+          ]
+        : this.loginForm.controls[
+            controlName as keyof typeof this.loginForm.controls
+          ];
+
+    return control.invalid && control.touched;
+  }
+
+  passwordsMismatch(): boolean {
+    const confirmPasswordControl = this.userForm.controls.confirmPassword;
+
+    return (
+      this.userForm.hasError('passwordsMismatch') &&
+      confirmPasswordControl.touched &&
+      confirmPasswordControl.value.length > 0
     );
   }
 
-  private getErrorMessage(err: any): string {
-    if (err.error?.error === 'email_duplicado') return 'email_duplicado';
-    if (err.error?.error === 'cpf_duplicado') return 'cpf_duplicado';
-    if (err.status === 409) return 'Conflito: Dado duplicado.';
-    if (err.status === 400) return 'Dados inválidos. Verifique as informações.';
-    if (err.status === 0) return 'Erro de conexão com o servidor.';
-    return 'Ocorreu um erro inesperado. Tente novamente mais tarde.';
-  }
-}
+  passwordRequirementMet(requirement: PasswordRequirement): boolean {
+    const password = this.userForm.controls.password.value;
 
-export class AgeValidator {
-  static minimumAge(minAge: number) {
-    return (control: AbstractControl): ValidationErrors | null => {
-      if (!control.value) return null;
-      const birthDate = new Date(control.value);
-      const today = new Date();
-      let age = today.getFullYear() - birthDate.getFullYear();
-      const m = today.getMonth() - birthDate.getMonth();
-      if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
-        age--;
-      }
-      return age >= minAge
-        ? null
-        : { minAge: { requiredAge: minAge, actualAge: age } };
+    const requirements: Record<PasswordRequirement, boolean> = {
+      length: password.length >= 8,
+      uppercase: /[A-Z]/.test(password),
+      lowercase: /[a-z]/.test(password),
+      number: /\d/.test(password),
+      symbol: /[?@#$%&]/.test(password),
     };
+
+    return requirements[requirement];
+  }
+
+  fieldIsValid(controlName: ValidatableField): boolean {
+    const control = this.userForm.controls[controlName];
+
+    if (!control.value || control.invalid) {
+      return false;
+    }
+
+    if (controlName === 'confirmPassword') {
+      return control.value === this.userForm.controls.password.value;
+    }
+
+    return true;
+  }
+
+  private showValidationAlert(): void {
+    if (this.userForm.controls.name.invalid) {
+      this.customAlertService.warning(
+        'Nome inválido',
+        'Informe seu nome e sobrenome.',
+      );
+      return;
+    }
+
+    if (this.userForm.controls.email.invalid) {
+      this.customAlertService.warning(
+        'E-mail inválido',
+        'Informe um endereço de e-mail válido.',
+      );
+      return;
+    }
+
+    if (this.userForm.controls.password.hasError('required')) {
+      this.customAlertService.warning(
+        'Senha obrigatória',
+        'Informe uma senha para criar sua conta.',
+      );
+      return;
+    }
+
+    if (
+      this.userForm.controls.password.hasError('weakPassword') ||
+      this.userForm.controls.password.hasError('minlength')
+    ) {
+      this.customAlertService.warning(
+        'Senha inválida',
+        'Use ao menos 8 caracteres, incluindo letra maiúscula, letra minúscula, número e símbolo (?@#$%&).',
+      );
+      return;
+    }
+
+    if (this.userForm.controls.confirmPassword.hasError('required')) {
+      this.customAlertService.warning(
+        'Confirme sua senha',
+        'Digite novamente a senha informada.',
+      );
+      return;
+    }
+
+    if (this.userForm.hasError('passwordsMismatch')) {
+      this.customAlertService.warning(
+        'Senhas diferentes',
+        'A confirmação precisa ser igual à senha informada.',
+      );
+      return;
+    }
+
+    if (this.userForm.controls.terms.hasError('required')) {
+      this.customAlertService.warning(
+        'Termos de Uso',
+        'Você precisa aceitar os Termos de Uso para continuar.',
+      );
+      return;
+    }
+
+    this.customAlertService.warning(
+      'Revise seus dados',
+      'Preencha corretamente os campos destacados.',
+    );
+  }
+
+  private getErrorMessage(error: HttpErrorResponse): string {
+    const apiError = error.error?.error;
+
+    if (apiError === 'email_duplicado') {
+      return 'email_duplicado';
+    }
+
+    if (typeof apiError === 'string' && apiError.trim().length > 0) {
+      return apiError;
+    }
+
+    if (error.status === 0) {
+      return 'Não foi possível conectar ao servidor.';
+    }
+
+    if (error.status === 400) {
+      return 'Dados inválidos. Revise as informações e tente novamente.';
+    }
+
+    if (error.status === 409) {
+      return 'email_duplicado';
+    }
+
+    return 'Ocorreu um erro inesperado. Tente novamente mais tarde.';
   }
 }

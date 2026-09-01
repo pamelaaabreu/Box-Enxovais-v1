@@ -76,11 +76,13 @@
   width: 100%;
   border: none;
   border-bottom: 2px solid #ccc;
-  padding: 0.75rem 0;
+  padding: 0.75rem 40px 0.75rem 0;
   font-size: 1rem;
   background: transparent;
   outline: none;
-  transition: border-color 0.4s ease, box-shadow 0.4s ease;
+  transition:
+    border-color 0.4s ease,
+    box-shadow 0.4s ease;
   border-radius: 4px 4px 0 0;
   font-family: inherit;
   color: #333;
@@ -138,71 +140,19 @@
 
 .form-options {
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-end;
   align-items: center;
   margin-bottom: 1rem;
-  flex-wrap: wrap;
-  gap: 0.5rem;
 }
 
-.remember-me {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-.custom-checkbox {
-  opacity: 0;
-  width: 0;
-  height: 0;
-  position: absolute;
-}
-
-.checkbox-label {
-  display: inline-block;
-  width: 38px;
-  height: 22px;
-  background-color: #bdbdbd;
-  border-radius: 11px;
-  position: relative;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
-
-.checkbox-label::after {
-  content: "";
-  position: absolute;
-  top: 3px;
-  left: 3px;
-  width: 16px;
-  height: 16px;
-  background-color: #ffffff;
-  border-radius: 50%;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
-  transition: transform 0.3s ease;
-}
-
-.custom-checkbox:checked + .checkbox-label {
-  background-color: #92402d;
-}
-
-.custom-checkbox:checked + .checkbox-label::after {
-  transform: translateX(16px);
-}
-
-.terms-label-text {
-  cursor: pointer;
-  user-select: none;
-  font-size: 0.85rem;
-  color: #666;
-}
-
-.forgot-password-link a {
-  font-size: 0.2rem !important;
-  color: #92402d !important;
-  font-weight: 400;
+.forgot-password-link {
+  font-size: 0.9rem;
+  color: #92402d;
+  font-weight: 700;
   text-decoration: none;
-  transition: color 0.2s ease, text-decoration 0.2s ease;
+  transition:
+    color 0.2s ease,
+    text-decoration 0.2s ease;
 }
 
 .forgot-password-link:hover,
@@ -221,7 +171,9 @@
   border-radius: 25px;
   font-size: 1rem;
   cursor: pointer;
-  transition: background-color 0.3s ease, box-shadow 0.3s ease,
+  transition:
+    background-color 0.3s ease,
+    box-shadow 0.3s ease,
     transform 0.3s ease;
   box-shadow: 0 4px 8px rgba(146, 64, 45, 0.2);
   font-family: inherit;
@@ -275,6 +227,22 @@
   outline: none;
 }
 
+.input-container app-show-password {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 2;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease-in-out;
+}
+
+.input-container:focus-within app-show-password {
+  opacity: 1;
+  pointer-events: auto;
+}
+
 @media (max-width: 768px) {
   .form-container {
     flex-direction: column;
@@ -302,31 +270,10 @@
   }
 
   .form-options {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 0.5rem;
+    justify-content: flex-start;
   }
 
   .forgot-password-link {
-    align-self: flex-end;
+    align-self: flex-start;
   }
-}
-
-.input-container app-show-password {
-  position: absolute;
-  right: 10px;
-  top: 50%;
-  transform: translateY(-50%); 
-  z-index: 2;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.2s ease-in-out;
-}
-
-.input-container:focus-within app-show-password {
-  opacity: 1;
-  pointer-events: auto;
-}
-.input-container .form-control {
-  padding-right: 40px; 
 }

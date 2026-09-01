@@ -6,7 +6,7 @@ import (
 )
 
 func InitRoutesProducts(mux *http.ServeMux) {
-	mux.HandleFunc("/upload-image", handlers.UploadProductImage) // FUNÇÃO DO ADMIN
-	mux.HandleFunc("/products", handlers.CreateProduct)          // FUNÇÃO DO ADMIN
-	mux.HandleFunc("/products/", handlers.GetProduct)
+	adminRoute(mux, http.MethodPost, "/upload-image", handlers.UploadProductImage)
+	adminRoute(mux, http.MethodPost, "/products", handlers.CreateProduct)
+	publicRoute(mux, http.MethodGet, "/products/", handlers.GetProduct)
 }

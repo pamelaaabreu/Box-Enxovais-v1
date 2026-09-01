@@ -6,7 +6,7 @@ import (
 )
 
 func InitRoutesPromotions(mux *http.ServeMux) {
-	mux.HandleFunc("/api/promotions/create", handlers.CreatePromotion)    // FUNÇÃO DO ADMIN
-	mux.HandleFunc("/api/promotions/add", handlers.AddProductToPromotion) // FUNÇÃO DO ADMIN
-	mux.HandleFunc("/api/promotions/", handlers.GetPromotionalProducts)
+	adminRoute(mux, http.MethodPost, "/api/promotions/create", handlers.CreatePromotion)
+	adminRoute(mux, http.MethodPost, "/api/promotions/add", handlers.AddProductToPromotion)
+	publicRoute(mux, http.MethodGet, "/api/promotions/", handlers.GetPromotionalProducts)
 }
