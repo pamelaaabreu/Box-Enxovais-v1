@@ -12,7 +12,7 @@
 .header-icon {
   width: 40px;
   height: 40px;
-  color: #8b4513;
+  color: #667255;
   margin-bottom: 15px;
 }
 
@@ -86,7 +86,7 @@
 }
 
 .card-rating {
-  color: #8b4513;
+  color: #667255;
   font-size: 16px;
 }
 
@@ -104,7 +104,7 @@
   font-size: 38px;
   font-weight: bold;
   stroke-width: 1px;
-  color: #8b4513;
+  color: #667255;
   line-height: 1;
 }
 

@@ -6,8 +6,10 @@ export interface Product {
   measurements: { [key: string]: string };
   price: number;
   quantity: number;
+  stock?: number;
   brand_id?: number;
   product_type_id?: number;
+  category_name?: string;
   status: string;
   image_paths?: string[];
   promotional_price: number;

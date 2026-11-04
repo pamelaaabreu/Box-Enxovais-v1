@@ -1,25 +1,50 @@
 <main class="auth-page">
-  <section class="auth-card" aria-labelledby="auth-title">
+  <section class="auth-card auth-card--photo" aria-labelledby="auth-title">
     <aside class="welcome-panel" aria-label="Apresentação Box Enxovais">
       <div class="welcome-copy">
         <span class="welcome-eyebrow">Box Enxovais</span>
         <h2>Detalhes que acolhem.</h2>
         <p>Escolhas delicadas para tornar a casa ainda mais sua.</p>
-        <div class="category-badges" aria-label="Categorias">
-          <span class="category-badge">Cama</span>
-          <span class="category-badge">Mesa</span>
-          <span class="category-badge">Banho</span>
-        </div>
       </div>
 
       <div class="welcome-illustration" aria-hidden="true">
-        <img class="welcome-image" src="/form-pic.png" alt="" />
+        <img
+          class="welcome-image"
+          src="/login-form.png"
+          alt=""
+          width="1024"
+          height="1536"
+        />
+        <video
+          #welcomeVideo
+          class="welcome-image welcome-video"
+          [attr.src]="videoEnabled() ? '/animations/animated-login.mp4' : null"
+          poster="/login-form.png"
+          autoplay
+          muted
+          loop
+          playsinline
+          [muted]="true"
+          preload="metadata"
+          [style.visibility]="
+            !videoEnabled() || videoFailed() ? 'hidden' : 'visible'
+          "
+          (error)="videoFailed.set(true)"
+          tabindex="-1"
+        ></video>
       </div>
     </aside>
 
-    <section class="auth-form-panel">
+    <section
+      class="auth-form-panel"
+      [attr.aria-busy]="!isRegisterTab && isInitialLoading()"
+    >
       <div class="auth-content">
-        <span class="auth-brand-mobile">Box Enxovais</span>
+        <div class="auth-brand-mobile">
+          <span>BOX ENXOVAIS</span>
+          <span>Detalhes que acolhem.</span>
+          <img src="/login-form.png" alt="" width="1024" height="1536" />
+        </div>
 
         <mat-tab-group
           class="auth-tabs"
@@ -32,20 +57,36 @@
           <mat-tab label="Cadastro"></mat-tab>
         </mat-tab-group>
 
-        <header class="form-heading">
-          <h1 id="auth-title">
-            {{ isRegisterTab ? "Crie sua conta" : "Acesse sua conta" }}
-          </h1>
-          <p>
-            {{
-              isRegisterTab
-                ? "Preencha seus dados para começar."
-                : "Entre para continuar suas compras."
-            }}
-          </p>
-        </header>
+        @if (!isRegisterTab && isInitialLoading()) {
+          <span class="auth-loading-status" role="status"
+            >Carregando formulário de login...</span
+          >
+        }
+        <div
+          class="auth-form-shell"
+          [class.is-login]="!isRegisterTab"
+          [class.is-skeleton]="!isRegisterTab && isInitialLoading()"
+          [attr.inert]="!isRegisterTab && isInitialLoading() ? '' : null"
+          [attr.aria-hidden]="
+            !isRegisterTab && isInitialLoading() ? 'true' : null
+          "
+        >
+          <header class="form-heading">
+            <h1 id="auth-title">
+              <span>{{
+                isRegisterTab ? "Crie sua conta" : "Bem-vindo de volta"
+              }}</span>
+            </h1>
 
-        <div class="auth-form-stage">
+            <p>
+              {{
+                isRegisterTab
+                  ? "Preencha seus dados para começar."
+                  : "Que bom ter você por aqui. Entre para continuar."
+              }}
+            </p>
+          </header>
+
           @if (isRegisterTab) {
             <form
               class="auth-form auth-form--register"
@@ -58,15 +99,19 @@
                   class="field-group field-group--full"
                   appearance="fill"
                   floatLabel="auto"
-                  subscriptSizing="fixed"
+                  subscriptSizing="dynamic"
                 >
                   <mat-label>Nome completo</mat-label>
+                  <mat-icon matPrefix class="field-icon" aria-hidden="true"
+                    >person_outline</mat-icon
+                  >
                   <input
                     matInput
                     type="text"
                     formControlName="name"
                     autocomplete="name"
                   />
+
                   @if (showError("register", "name")) {
                     <mat-error>Informe seu nome e sobrenome.</mat-error>
                   }
@@ -76,9 +121,12 @@
                   class="field-group field-group--full"
                   appearance="fill"
                   floatLabel="auto"
-                  subscriptSizing="fixed"
+                  subscriptSizing="dynamic"
                 >
                   <mat-label>E-mail</mat-label>
+                  <mat-icon matPrefix class="field-icon" aria-hidden="true"
+                    >mail_outline</mat-icon
+                  >
                   <input
                     matInput
                     type="email"
@@ -86,6 +134,7 @@
                     autocomplete="email"
                     inputmode="email"
                   />
+
                   @if (showError("register", "email")) {
                     <mat-error>
                       {{
@@ -101,9 +150,12 @@
                   class="field-group"
                   appearance="fill"
                   floatLabel="auto"
-                  subscriptSizing="fixed"
+                  subscriptSizing="dynamic"
                 >
                   <mat-label>Senha</mat-label>
+                  <mat-icon matPrefix class="field-icon" aria-hidden="true"
+                    >lock_outline</mat-icon
+                  >
                   <input
                     matInput
                     [type]="isPasswordVisible ? 'text' : 'password'"
@@ -111,11 +163,13 @@
                     autocomplete="new-password"
                     aria-describedby="password-requirements"
                   />
+
                   <span class="password-toggle" matSuffix>
                     <app-show-password
                       (visibilityChange)="isPasswordVisible = $event"
                     ></app-show-password>
                   </span>
+
                   @if (showError("register", "password")) {
                     <mat-error>A senha não atende aos requisitos.</mat-error>
                   }
@@ -125,33 +179,32 @@
                   class="field-group"
                   appearance="fill"
                   floatLabel="auto"
-                  subscriptSizing="fixed"
+                  subscriptSizing="dynamic"
                 >
                   <mat-label>Confirmar senha</mat-label>
+                  <mat-icon matPrefix class="field-icon" aria-hidden="true"
+                    >lock_outline</mat-icon
+                  >
                   <input
                     matInput
                     [type]="isConfirmPasswordVisible ? 'text' : 'password'"
                     formControlName="confirmPassword"
+                    [errorStateMatcher]="confirmPasswordErrorMatcher"
                     autocomplete="new-password"
                   />
+
                   <span class="password-toggle" matSuffix>
                     <app-show-password
                       (visibilityChange)="isConfirmPasswordVisible = $event"
                     ></app-show-password>
                   </span>
+
                   @if (
-                    showError("register", "confirmPassword") ||
-                    passwordsMismatch()
+                    registerForm.controls.confirmPassword.hasError("required")
                   ) {
-                    <mat-error>
-                      {{
-                        registerForm.controls.confirmPassword.hasError(
-                          "required"
-                        )
-                          ? "Confirme sua senha."
-                          : "As senhas não coincidem."
-                      }}
-                    </mat-error>
+                    <mat-error>Confirme sua senha.</mat-error>
+                  } @else if (registerForm.hasError("passwordsMismatch")) {
+                    <mat-error>As senhas não coincidem.</mat-error>
                   }
                 </mat-form-field>
               </div>
@@ -162,21 +215,31 @@
                 aria-label="Requisitos da senha"
               >
                 <p>Sua senha deve conter:</p>
+
                 <ul class="password-requirements">
                   <li [class.met]="passwordRequirementMet('length')">
-                    <span aria-hidden="true">✓</span>8 caracteres
+                    <span aria-hidden="true">✓</span>
+                    8 caracteres
                   </li>
+
                   <li [class.met]="passwordRequirementMet('uppercase')">
-                    <span aria-hidden="true">✓</span>Letra maiúscula
+                    <span aria-hidden="true">✓</span>
+                    Letra maiúscula
                   </li>
+
                   <li [class.met]="passwordRequirementMet('lowercase')">
-                    <span aria-hidden="true">✓</span>Letra minúscula
+                    <span aria-hidden="true">✓</span>
+                    Letra minúscula
                   </li>
+
                   <li [class.met]="passwordRequirementMet('number')">
-                    <span aria-hidden="true">✓</span>Número
+                    <span aria-hidden="true">✓</span>
+                    Número
                   </li>
+
                   <li [class.met]="passwordRequirementMet('symbol')">
-                    <span aria-hidden="true">✓</span>Símbolo (?&#64;#$%&amp;)
+                    <span aria-hidden="true">✓</span>
+                    Símbolo (?&#64;#$%&amp;)
                   </li>
                 </ul>
               </section>
@@ -190,16 +253,15 @@
                     showError('register', 'terms') ? 'terms-error' : null
                   "
                 />
-                <span>Li e concordo com os <strong>Termos de Uso</strong>.</span>
+
+                <span>
+                  Li e concordo com os <strong>Termos de Uso</strong>.
+                </span>
               </label>
 
               <div class="terms-message">
                 @if (showError("register", "terms")) {
-                  <p
-                    class="field-error"
-                    id="terms-error"
-                    aria-live="polite"
-                  >
+                  <p class="field-error" id="terms-error" aria-live="polite">
                     Aceite os Termos de Uso para continuar.
                   </p>
                 }
@@ -226,9 +288,12 @@
                   class="field-group field-group--full"
                   appearance="fill"
                   floatLabel="auto"
-                  subscriptSizing="fixed"
+                  subscriptSizing="dynamic"
                 >
                   <mat-label>E-mail</mat-label>
+                  <mat-icon matPrefix class="field-icon" aria-hidden="true"
+                    >mail_outline</mat-icon
+                  >
                   <input
                     matInput
                     type="email"
@@ -236,6 +301,7 @@
                     autocomplete="email"
                     inputmode="email"
                   />
+
                   @if (showError("login", "email")) {
                     <mat-error>
                       {{
@@ -251,20 +317,25 @@
                   class="field-group field-group--full"
                   appearance="fill"
                   floatLabel="auto"
-                  subscriptSizing="fixed"
+                  subscriptSizing="dynamic"
                 >
                   <mat-label>Senha</mat-label>
+                  <mat-icon matPrefix class="field-icon" aria-hidden="true"
+                    >lock_outline</mat-icon
+                  >
                   <input
                     matInput
                     [type]="isLoginPasswordVisible ? 'text' : 'password'"
                     formControlName="password"
                     autocomplete="current-password"
                   />
+
                   <span class="password-toggle" matSuffix>
                     <app-show-password
                       (visibilityChange)="isLoginPasswordVisible = $event"
                     ></app-show-password>
                   </span>
+
                   @if (showError("login", "password")) {
                     <mat-error>Informe sua senha.</mat-error>
                   }
@@ -272,7 +343,10 @@
               </div>
 
               <p class="forgot-password">
-                <a routerLink="/forgot-password">Esqueci minha senha?</a>
+                <a class="auth-secondary-action" routerLink="/forgot-password">
+                  <mat-icon aria-hidden="true">key</mat-icon>
+                  Esqueceu a senha?
+                </a>
               </p>
 
               <button
@@ -281,7 +355,14 @@
                 [disabled]="isLoading"
                 [attr.aria-busy]="isLoading"
               >
-                {{ isLoading ? "Entrando..." : "Entrar" }}
+                @if (isLoading) {
+                  <span class="auth-spin" aria-hidden="true"></span>
+                } @else {
+                  <mat-icon aria-hidden="true">login</mat-icon>
+                }
+                <span aria-live="polite">{{
+                  isLoading ? "Entrando..." : "Entrar"
+                }}</span>
               </button>
             </form>
           }

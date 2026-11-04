@@ -5,7 +5,7 @@
 
     <button
       class="btn-save"
-      [disabled]="!productForm.form.valid || loading"
+      [disabled]="!productForm.form.valid || !validQuantity() || loading"
       type="submit"
       form="productForm"
     >
@@ -25,7 +25,7 @@
     <div class="card form-card">
       <form
         id="productForm"
-        (ngSubmit)="onSubmit()"
+        (ngSubmit)="onSubmit(productForm)"
         #productForm="ngForm"
         class="product-form"
       >
@@ -82,6 +82,7 @@
             <label for="price">Preço (R$)</label>
           </div>
 
+          <div>
           <div class="floating-group with-icon">
             <span class="input-icon material-icons">inventory_2</span>
             <input
@@ -90,9 +91,20 @@
               name="quantity"
               placeholder=""
               [(ngModel)]="product.quantity"
+              (ngModelChange)="quantityError = ''"
+              #quantityField="ngModel"
+              min="0"
+              max="2147483647"
+              step="1"
+              pattern="[0-9]+"
+              aria-describedby="quantity-error"
               required
             />
             <label for="quantity">Quantidade em Estoque</label>
+          </div>
+            <small id="quantity-error" role="alert" *ngIf="quantityError || (quantityField.invalid && (quantityField.dirty || quantityField.touched))">
+              Informe uma quantidade inteira entre 0 e 2147483647.
+            </small>
           </div>
 
           <div class="floating-group with-icon">

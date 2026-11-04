@@ -1,7 +1,9 @@
-import { Routes } from '@angular/router';
+import { authGuard } from './core/guards/auth.guard';
+import { ActivatedRouteSnapshot, Routes } from '@angular/router';
 import { AdminGuard } from './core/guards/admin.guard';
 
 export const routes: Routes = [
+  { path: 'cart', canActivate: [authGuard], loadComponent: () => import('./features/cart/cart.component').then(m => m.CartComponent) },
   {
     path: '',
     redirectTo: 'home',
@@ -15,17 +17,25 @@ export const routes: Routes = [
   },
 
   {
-    path: 'register',
-    data: { selectedTab: 1 },
+    path: 'categoria/:slug',
     loadComponent: () =>
-      import('./features/authorization/register/register.component').then(
-        (m) => m.AuthComponent,
-      ),
+      import('./features/catalog/pages/category/category.component').then(m => m.CategoryComponent),
   },
 
   {
-    path: 'login',
-    data: { selectedTab: 0 },
+    path: 'produto/:slug',
+    loadComponent: () =>
+      import('./features/catalog/pages/product-detail/product-detail.component').then(m => m.ProductDetailComponent),
+  },
+
+  {
+    // One route configuration preserves the auth panel and video between tabs.
+    matcher: (segments) => segments.length === 1 && ['login', 'register'].includes(segments[0].path)
+      ? { consumed: segments, posParams: { authPage: segments[0] } }
+      : null,
+    resolve: {
+      selectedTab: (route: ActivatedRouteSnapshot) => route.paramMap.get('authPage') === 'register' ? 1 : 0,
+    },
     loadComponent: () =>
       import('./features/authorization/register/register.component').then(
         (m) => m.AuthComponent,
@@ -34,9 +44,19 @@ export const routes: Routes = [
 
   {
     path: 'forgot-password',
+    data: { recoveryStep: 'email' },
     loadComponent: () =>
       import('./shared/forgot-password/forgot-password.component').then(
-        (m) => m.ForgotPasswordComponent,
+        ({ ForgotPasswordComponent }) => ForgotPasswordComponent,
+      ),
+  },
+
+  {
+    path: 'verify-code',
+    data: { recoveryStep: 'otp' },
+    loadComponent: () =>
+      import('./shared/forgot-password/forgot-password.component').then(
+        ({ ForgotPasswordComponent }) => ForgotPasswordComponent,
       ),
   },
 
@@ -101,6 +121,7 @@ export const routes: Routes = [
 
   {
     path: '**',
-    redirectTo: '404',
+    loadComponent: () =>
+      import('./features/not-found/not-found.component').then(m => m.NotFoundComponent),
   },
 ];

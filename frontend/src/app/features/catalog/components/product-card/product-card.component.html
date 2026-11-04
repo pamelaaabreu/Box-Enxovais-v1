@@ -1,0 +1,21 @@
+<article>
+  <a
+    class="product-link"
+    [routerLink]="['/produto', product().slug]"
+    [attr.aria-label]="'Ver ' + product().name"
+  >
+    <div class="media">
+      <app-product-media [image]="product().images[0] || null" [showCaption]="false" />
+    </div>
+    <div class="information">
+      <span class="category">{{ product().category.name }}</span>
+      <h2>{{ product().name }}</h2>
+      <app-product-price
+        [price]="product().price"
+      />
+      <span class="details"
+        >Conhecer produto <span aria-hidden="true">→</span></span
+      >
+    </div>
+  </a>
+</article>

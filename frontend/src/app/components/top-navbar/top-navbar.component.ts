@@ -1,3 +1,4 @@
+import { CartService } from '../../core/services/cart.service';
 import {
   Component,
   DestroyRef,
@@ -23,6 +24,8 @@ import { AuthService } from '../../core/services/auth.service';
 })
 export class TopNavbarComponent implements OnInit {
   @Input() isScrolled = false;
+  readonly cartService = inject(CartService);
+  get cartCount(): number { return this.cartService.totalItems(); }
 
   isLoggedIn = false;
   isMenuOpen = false;

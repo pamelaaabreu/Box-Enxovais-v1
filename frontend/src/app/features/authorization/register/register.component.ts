@@ -1,7 +1,19 @@
 import { HttpErrorResponse } from '@angular/common/http';
-import { Component, inject } from '@angular/core';
+import {
+  afterNextRender,
+  Component,
+  DestroyRef,
+  ElementRef,
+  inject,
+  signal,
+  viewChild,
+} from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { DOCUMENT } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { ErrorStateMatcher } from '@angular/material/core';
 import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatTabsModule } from '@angular/material/tabs';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
@@ -23,8 +35,6 @@ type PasswordRequirement =
   | 'number'
   | 'symbol';
 
-type ValidatableField = 'name' | 'email' | 'password' | 'confirmPassword';
-
 @Component({
   selector: 'app-auth',
   standalone: true,
@@ -32,6 +42,7 @@ type ValidatableField = 'name' | 'email' | 'password' | 'confirmPassword';
     ReactiveFormsModule,
     RouterLink,
     MatFormFieldModule,
+    MatIconModule,
     MatInputModule,
     MatTabsModule,
     ShowPasswordComponent,
@@ -42,17 +53,23 @@ type ValidatableField = 'name' | 'email' | 'password' | 'confirmPassword';
 export class AuthComponent {
   private readonly fb = inject(FormBuilder);
   private readonly router = inject(Router);
+  private readonly route = inject(ActivatedRoute);
   private readonly authService = inject(AuthService);
   private readonly customAlertService = inject(CustomAlertService);
-  private readonly route = inject(ActivatedRoute);
 
   isPasswordVisible = false;
   isConfirmPasswordVisible = false;
   isLoginPasswordVisible = false;
   isLoading = false;
+  readonly isInitialLoading = signal(true);
+  readonly videoEnabled = signal(false);
+  readonly videoFailed = signal(false);
+  private readonly welcomeVideo =
+    viewChild<ElementRef<HTMLVideoElement>>('welcomeVideo');
+
   selectedTab = 0;
 
-  readonly userForm = this.fb.nonNullable.group(
+  readonly registerForm = this.fb.nonNullable.group(
     {
       name: ['', [Validators.required, RegisterValidators.fullName()]],
       email: ['', [Validators.required, Validators.email]],
@@ -72,16 +89,42 @@ export class AuthComponent {
     },
   );
 
-  readonly registerForm = this.userForm;
-
   readonly loginForm = this.fb.nonNullable.group({
     email: ['', [Validators.required, Validators.email]],
     password: ['', Validators.required],
   });
 
   constructor() {
-    this.route.data.subscribe((data) => {
+    this.selectedTab = this.route.snapshot.data['selectedTab'] === 1 ? 1 : 0;
+    this.route.data.pipe(takeUntilDestroyed()).subscribe((data) => {
       this.selectedTab = data['selectedTab'] === 1 ? 1 : 0;
+    });
+    const document = inject(DOCUMENT);
+    const destroyRef = inject(DestroyRef);
+    let destroyed = false;
+    destroyRef.onDestroy(() => {
+      destroyed = true;
+    });
+    afterNextRender(() => {
+      const preference = document.defaultView?.matchMedia(
+        '(prefers-reduced-motion: reduce), (max-width: 700px)',
+      );
+      if (preference) {
+        const updateVideo = () => {
+          if (preference.matches) this.welcomeVideo()?.nativeElement.pause();
+          this.videoEnabled.set(!preference.matches);
+        };
+        updateVideo();
+        preference.addEventListener('change', updateVideo);
+        destroyRef.onDestroy(() =>
+          preference.removeEventListener('change', updateVideo),
+        );
+      }
+      // Reveal the existing layout once its initial render and fonts are ready.
+      const ready = () => {
+        if (!destroyed) this.isInitialLoading.set(false);
+      };
+      void document.fonts.ready.then(ready, ready);
     });
   }
 
@@ -90,13 +133,18 @@ export class AuthComponent {
   }
 
   onAuthTabChange(index: number): void {
+    if (this.isLoading || index === this.selectedTab) {
+      return;
+    }
+
     this.selectedTab = index;
+
     const destination = index === 1 ? '/register' : '/login';
     void this.router.navigate([destination]);
   }
 
   onSubmit(): void {
-    if (this.selectedTab === 1) {
+    if (this.isRegisterTab) {
       this.submitRegister();
       return;
     }
@@ -109,16 +157,16 @@ export class AuthComponent {
       return;
     }
 
-    this.userForm.markAllAsTouched();
-    this.userForm.updateValueAndValidity();
+    this.registerForm.markAllAsTouched();
+    this.registerForm.updateValueAndValidity();
 
-    if (this.userForm.invalid) {
+    if (this.registerForm.invalid) {
       this.showValidationAlert();
       return;
     }
 
     const { confirmPassword: _confirmPassword, ...formValue } =
-      this.userForm.getRawValue();
+      this.registerForm.getRawValue();
 
     const payload: RegisterPayload = formValue;
 
@@ -147,7 +195,7 @@ export class AuthComponent {
 
           if (errorMessage === 'email_duplicado') {
             this.customAlertService.showEmailDuplicate(
-              this.userForm.controls.email.value,
+              this.registerForm.controls.email.value,
             );
             return;
           }
@@ -163,28 +211,72 @@ export class AuthComponent {
     }
 
     this.loginForm.markAllAsTouched();
+    this.loginForm.updateValueAndValidity();
 
     if (this.loginForm.invalid) {
       return;
     }
 
     const credentials: LoginCredentials = this.loginForm.getRawValue();
+
     this.isLoading = true;
 
     this.authService
       .login(credentials)
-      .pipe(finalize(() => (this.isLoading = false)))
+      .pipe(
+        finalize(() => {
+          this.isLoading = false;
+        }),
+      )
       .subscribe({
-        next: (response) => {
-          const destination =
-            response.role === 'admin' ? '/admin/dashboard' : '/home';
-          void this.router.navigate([destination]);
+        next: () => {
+          void this.router.navigateByUrl(this.loginDestination());
         },
         error: (error: HttpErrorResponse) => {
-          const message = error.error?.error || 'E-mail ou senha inválidos!';
+          const message =
+            typeof error.error?.error === 'string' &&
+            error.error.error.trim().length > 0
+              ? error.error.error
+              : 'E-mail ou senha inválidos!';
+
           this.customAlertService.error('Falha no login', message);
         },
       });
+  }
+
+  private loginDestination(): string {
+    const destination = this.route.snapshot.queryParamMap.get('returnUrl');
+    if (!destination) return '/home';
+    try {
+      const decoded = decodeURIComponent(destination);
+      if (
+        !destination.startsWith('/') ||
+        decoded.startsWith('//') ||
+        /[\\\u0000-\u001f\u007f]/.test(decoded)
+      )
+        return '/home';
+      const tree = this.router.parseUrl(destination);
+      const primary = tree.root.children['primary'];
+      if (
+        Object.keys(tree.root.children).some(
+          (outlet) => outlet !== 'primary',
+        ) ||
+        !primary ||
+        Object.keys(primary.children).length > 0 ||
+        [
+          'login',
+          'register',
+          'forgot-password',
+          'verify-code',
+          'reset-password',
+        ].includes(primary.segments[0]?.path)
+      )
+        return '/home';
+      // Navigation still runs the destination's guards, including AdminGuard.
+      return this.router.serializeUrl(tree);
+    } catch {
+      return '/home';
+    }
   }
 
   showError(
@@ -205,18 +297,17 @@ export class AuthComponent {
     return control.invalid && control.touched;
   }
 
-  passwordsMismatch(): boolean {
-    const confirmPasswordControl = this.userForm.controls.confirmPassword;
-
-    return (
-      this.userForm.hasError('passwordsMismatch') &&
-      confirmPasswordControl.touched &&
-      confirmPasswordControl.value.length > 0
-    );
-  }
+  // Material checks this during change detection, after the group validator runs.
+  // A mismatch is visible immediately; required follows touched/submit behavior.
+  readonly confirmPasswordErrorMatcher: ErrorStateMatcher = {
+    isErrorState: (control, form) =>
+      !!control &&
+      ((control.invalid && (control.touched || !!form?.submitted)) ||
+        !!control.parent?.hasError('passwordsMismatch')),
+  };
 
   passwordRequirementMet(requirement: PasswordRequirement): boolean {
-    const password = this.userForm.controls.password.value;
+    const password = this.registerForm.controls.password.value;
 
     const requirements: Record<PasswordRequirement, boolean> = {
       length: password.length >= 8,
@@ -229,22 +320,8 @@ export class AuthComponent {
     return requirements[requirement];
   }
 
-  fieldIsValid(controlName: ValidatableField): boolean {
-    const control = this.userForm.controls[controlName];
-
-    if (!control.value || control.invalid) {
-      return false;
-    }
-
-    if (controlName === 'confirmPassword') {
-      return control.value === this.userForm.controls.password.value;
-    }
-
-    return true;
-  }
-
   private showValidationAlert(): void {
-    if (this.userForm.controls.name.invalid) {
+    if (this.registerForm.controls.name.invalid) {
       this.customAlertService.warning(
         'Nome inválido',
         'Informe seu nome e sobrenome.',
@@ -252,7 +329,7 @@ export class AuthComponent {
       return;
     }
 
-    if (this.userForm.controls.email.invalid) {
+    if (this.registerForm.controls.email.invalid) {
       this.customAlertService.warning(
         'E-mail inválido',
         'Informe um endereço de e-mail válido.',
@@ -260,7 +337,7 @@ export class AuthComponent {
       return;
     }
 
-    if (this.userForm.controls.password.hasError('required')) {
+    if (this.registerForm.controls.password.hasError('required')) {
       this.customAlertService.warning(
         'Senha obrigatória',
         'Informe uma senha para criar sua conta.',
@@ -269,8 +346,8 @@ export class AuthComponent {
     }
 
     if (
-      this.userForm.controls.password.hasError('weakPassword') ||
-      this.userForm.controls.password.hasError('minlength')
+      this.registerForm.controls.password.hasError('weakPassword') ||
+      this.registerForm.controls.password.hasError('minlength')
     ) {
       this.customAlertService.warning(
         'Senha inválida',
@@ -279,7 +356,7 @@ export class AuthComponent {
       return;
     }
 
-    if (this.userForm.controls.confirmPassword.hasError('required')) {
+    if (this.registerForm.controls.confirmPassword.hasError('required')) {
       this.customAlertService.warning(
         'Confirme sua senha',
         'Digite novamente a senha informada.',
@@ -287,7 +364,7 @@ export class AuthComponent {
       return;
     }
 
-    if (this.userForm.hasError('passwordsMismatch')) {
+    if (this.registerForm.hasError('passwordsMismatch')) {
       this.customAlertService.warning(
         'Senhas diferentes',
         'A confirmação precisa ser igual à senha informada.',
@@ -295,7 +372,7 @@ export class AuthComponent {
       return;
     }
 
-    if (this.userForm.controls.terms.hasError('required')) {
+    if (this.registerForm.controls.terms.hasError('required')) {
       this.customAlertService.warning(
         'Termos de Uso',
         'Você precisa aceitar os Termos de Uso para continuar.',

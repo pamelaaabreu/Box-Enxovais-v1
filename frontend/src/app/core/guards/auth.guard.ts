@@ -6,27 +6,27 @@ import { AuthService } from '../services/auth.service';
 import { AppJwtPayload } from '../interfaces/auth.interface';
 
 
-export const authGuard: CanActivateFn = () => {
+export const authGuard: CanActivateFn = (_route, state) => {
   const authService = inject(AuthService);
   const router = inject(Router);
 
   const token = authService.getToken();
 
   if (!token) {
-    return router.createUrlTree(['/login']);
+    return router.createUrlTree(['/login'], { queryParams: { returnUrl: state.url } });
   }
 
   try {
     const decodedToken = jwtDecode<AppJwtPayload>(token);
 
     if (isTokenExpired(decodedToken)) {
-      return router.createUrlTree(['/login']);
+      return router.createUrlTree(['/login'], { queryParams: { returnUrl: state.url } });
     }
 
     return true;
   } catch (error) {
     console.error('Erro ao decodificar o token:', error);
-    return router.createUrlTree(['/login']);
+    return router.createUrlTree(['/login'], { queryParams: { returnUrl: state.url } });
   }
 };
 

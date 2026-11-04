@@ -24,25 +24,27 @@ export class AdminGuard implements CanActivate, CanMatch {
     route: ActivatedRouteSnapshot,
     state: RouterStateSnapshot,
   ): boolean | UrlTree {
-    return this.checkAdmin();
+    return this.checkAdmin(state.url);
   }
 
   canMatch(route: Route, segments: UrlSegment[]): boolean | UrlTree {
-    return this.checkAdmin();
+    const navigation = this.router.getCurrentNavigation();
+    const destination = navigation ? this.router.serializeUrl(navigation.extractedUrl) : '/' + segments.map(segment => segment.toString()).join('/');
+    return this.checkAdmin(destination);
   }
 
-  private checkAdmin(): boolean | UrlTree {
+  private checkAdmin(returnUrl: string): boolean | UrlTree {
     const token = this.authService.getToken();
 
     if (!token) {
-      return this.router.createUrlTree(['/login']);
+      return this.router.createUrlTree(['/login'], { queryParams: { returnUrl } });
     }
 
     try {
       const decodedToken = jwtDecode<AppJwtPayload>(token);
 
       if (this.isTokenExpired(decodedToken)) {
-        return this.router.createUrlTree(['/login']);
+        return this.router.createUrlTree(['/login'], { queryParams: { returnUrl } });
       }
 
       const role = decodedToken.role?.trim().toLowerCase();
@@ -54,7 +56,7 @@ export class AdminGuard implements CanActivate, CanMatch {
       return this.router.createUrlTree(['/home']);
     } catch (error) {
       console.error('Erro ao decodificar o token:', error);
-      return this.router.createUrlTree(['/login']);
+      return this.router.createUrlTree(['/login'], { queryParams: { returnUrl } });
     }
   }
 

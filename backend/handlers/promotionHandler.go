@@ -3,79 +3,34 @@ package handlers
 import (
 	"backend/db"
 	"backend/models"
+	"backend/services"
 	"database/sql"
 	"encoding/json"
 	"log"
 	"net/http"
-	// "strconv"
-	"github.com/lib/pq"
 	"strings"
 )
 
 func GetPromotionalProducts(w http.ResponseWriter, r *http.Request) {
 	promoName := strings.TrimPrefix(r.URL.Path, "/api/promotions/")
-
-	query := `
-        SELECT
-            p.id, p.name, p.description, p.price, p.quantity, p.status, pp.promotional_price,
-            COALESCE(ARRAY_AGG(pi.image_path) FILTER (WHERE pi.image_path IS NOT NULL), '{}') AS image_paths
-        FROM products p
-        JOIN promotion_products pp ON p.id = pp.product_id
-        JOIN promotions promo ON pp.promotion_id = promo.id
-        LEFT JOIN product_images pi ON p.id = pi.product_id
-        WHERE promo.name = $1 AND promo.status = 'active'
-        GROUP BY p.id, p.name, p.description, p.price, p.quantity, p.status, pp.promotional_price
-    `
-
-	rows, err := db.DB.Query(query, promoName)
-	if err != nil {
-		log.Printf("Erro ao buscar produtos da promoção '%s': %v", promoName, err)
-		http.Error(w, "Erro ao buscar produtos promocionais", http.StatusInternalServerError)
-		return
+	fields := make(map[string]services.FilterField, len(productFilterFields)+1)
+	for key, field := range productFilterFields {
+		fields[key] = field
 	}
-	defer rows.Close()
-
-	var promotionalProducts []models.Product
-	for rows.Next() {
-		var p models.Product
-		var imagePaths pq.StringArray
-
-		err := rows.Scan(
-			&p.ID,
-			&p.Name,
-			&p.Description,
-			&p.Price,
-			&p.Quantity,
-			&p.Status,
-			&p.PromotionalPrice,
-			&imagePaths,
-		)
-
-		if err != nil {
-			log.Printf("Erro ao escanear linha: %v", err)
-			continue
-		}
-
-		// --- Correção aqui: substituir a barra invertida
-		correctedPaths := make([]string, len(imagePaths))
-		for i, path := range imagePaths {
-			correctedPaths[i] = strings.ReplaceAll(path, "\\", "/")
-		}
-
-		p.ImagePaths = correctedPaths
-		promotionalProducts = append(promotionalProducts, p)
-	}
-
-	if err = rows.Err(); err != nil {
-		log.Printf("Erro após iteração nas linhas: %v", err)
-		http.Error(w, "Erro ao processar dados", http.StatusInternalServerError)
-		return
-	}
-
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(promotionalProducts)
+	fields["promotional_price"] = services.FilterField{Column: "page.promotional_price", Kind: "decimal"}
+	// One row per product even when the same product belongs to multiple matching promotions.
+	query := "SELECT " + storeProductColumns + `,promotional.promotional_price` + storeProductSource + `
+ JOIN (
+  SELECT pp.product_id,MIN(pp.promotional_price) AS promotional_price
+  FROM promotion_products pp JOIN promotions promo ON promo.id=pp.promotion_id
+  WHERE promo.name=$1 AND promo.status='active'
+   AND promo.start_date<=NOW() AND promo.end_date>=NOW()
+   AND pp.promotional_price>=0
+  GROUP BY pp.product_id
+ ) promotional ON promotional.product_id=p.id
+ WHERE p.status='active' AND promotional.promotional_price<=p.price`
+	writeProductPage(w, r, query, []any{promoName}, fields)
 }
-
 
 func CreatePromotion(w http.ResponseWriter, r *http.Request) {
 	var req models.CreatePromotionRequest

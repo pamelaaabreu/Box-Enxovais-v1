@@ -7,8 +7,8 @@
 
 .category-grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 20px;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: clamp(12px, 2vw, 20px);
 }
 
 .category-card {
@@ -42,7 +42,7 @@
 
 .card-overlay h3 {
   color: white;
-  font-size: 24px;
+  font-size: clamp(12px, 1.8vw, 24px);
   font-weight: bold;
   text-transform: uppercase;
   letter-spacing: 1.2px;
@@ -58,6 +58,6 @@
 /* Responsividade para Celulares */
 @media (max-width: 768px) {
   .category-grid {
-    grid-template-columns: repeat(2, 1fr); /* 2 colunas em telas menores */
+    grid-template-columns: repeat(2, minmax(0, 1fr)); /* 2 colunas em telas menores */
   }
 }

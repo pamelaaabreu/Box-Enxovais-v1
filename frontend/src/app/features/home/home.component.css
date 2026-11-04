@@ -1,80 +1,24 @@
-.mini-navbar {
-  position: fixed;
-  left: 0;
-  width: 100%; 
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 10px 50px;
-  background-color: #102542;
-  gap: 20px;
-  z-index: 1000;
+:host {
+  --home-dark: #3f493c;
+  --home-olive: #667255;
+  --home-surface: #faf9f5;
+  --home-cream: #f3f2ed;
+  --home-border: #deded5;
+  --home-text: #292f28;
+  --home-muted: #706e67;
+  display: block;
+  min-height: 100dvh;
+  font-family: 'Montserrat', sans-serif;
+  background: #eeefe9;
+  color: var(--home-text);
+  line-height: 1.5;
 }
-
-.mini-navbar span {
-  font-size: 14px;
-  color: #ffffff;
-  letter-spacing: 0.9px;
-}
-
-.mini-navbar .atendimento {
-  margin-left: 20px;
-}
-
-.mini-navbar .social-media a {
-    display: inline-block;
-  margin-left: 10px;
-  text-decoration: none;
-  color: #E0E0E0;
-  transition: color 0.5s ease, transform 0.3s ease;
-}
-
-.mini-navbar .social-media a:hover {
-  color: #FFFFFF;
-   transform: scale(1.15); 
-}
-
-.carousel-inner {
-    margin: 0 auto;
-    padding: 0 10px;
-}
-
-#carouselExampleIndicators {
-  width: 100%;
-  overflow: hidden;
-}
-
-#carouselExampleIndicators img {
-  width: 100%;
-  max-height: 770px;
-  object-fit: cover;
-  object-position: center;
-}
-
-@media (max-width: 768px) {
-  #carouselExampleIndicators img {
-    max-height: 300px; 
-  }
-
-  .btn-comprar-grande {
-    font-size: 16px;
-    padding: 10px 24px;
-    bottom: 15%;
-    left: 8%;
-  }
-}
-
-.carousel .carousel-indicators button {
-  width: 10px;
-  height: 10px;
-  border-radius: 100%;
-}
-
-.carousel-item {
-  position: relative;
-}
-
-.carousel-indicators [data-bs-target]:focus {
-  outline: none;
-  box-shadow: none;
-}
+.home-content { margin: 0 auto; padding: 0 14px 40px; }
+#colecao { display: block; scroll-margin-top: 180px; }
+:host ::ng-deep .title-container { padding: 0 0 16px; margin: 40px 0 24px; border-color: var(--home-border); }
+:host ::ng-deep .featured-title { color: var(--home-dark); font-size: clamp(24px, 2.4vw, 32px); font-weight: 500; text-transform: none; letter-spacing: -.03em; }
+:host ::ng-deep .featured-title::after { background: var(--home-olive); height: 2px; }
+:host ::ng-deep :is(a, button):focus-visible { outline: 2px solid currentColor; outline-offset: 4px; }
+:host ::ng-deep svg[stroke] { stroke: currentColor; stroke-width: 1.6; flex-shrink: 0; }
+@media (max-width: 1000px) { #colecao { scroll-margin-top: 220px; } }
+@media (max-width: 700px) { .home-content { padding: 0 12px 24px; } }

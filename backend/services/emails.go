@@ -9,7 +9,7 @@ import (
 )
 
 // Função para enviar email com template HTML carregado de um arquivo
-func SendEmailWithTemplate(email, subject, message string) error {
+func SendEmailWithTemplate(email, subject, code string) error {
 	// Carregar o template HTML a partir de um arquivo
 	tmpl, err := template.ParseFiles("templates/email_template.html")
 	if err != nil {
@@ -19,8 +19,10 @@ func SendEmailWithTemplate(email, subject, message string) error {
 	// Dados para substituir no template
 	data := struct {
 		Message string
+		Code    string
 	}{
-		Message: message,
+		Message: code,
+		Code:    code,
 	}
 
 	// Executar o template com os dados
@@ -35,6 +37,7 @@ func SendEmailWithTemplate(email, subject, message string) error {
 	messageEmail.SetHeader("To", email)
 	messageEmail.SetHeader("Subject", subject)
 	messageEmail.SetBody("text/html", body.String())
+	messageEmail.Embed("../frontend/public/LOGO.png")
 
 	// Configurar o dialer
 	dialer := gomail.NewDialer(os.Getenv("EMAIL_SMTP"), 587, os.Getenv("EMAIL"), os.Getenv("EMAIL_KEY"))

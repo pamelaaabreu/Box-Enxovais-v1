@@ -1,150 +1,161 @@
-import { Component, OnInit } from '@angular/core';
-import {
-  FormBuilder,
-  FormGroup,
-  Validators,
-  ReactiveFormsModule,
-} from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
-import { CommonModule } from '@angular/common';
+import { HttpErrorResponse } from '@angular/common/http';
+import { Component, DestroyRef, OnInit, inject } from '@angular/core';
+import { AbstractControl, FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
+import { RouterLink } from '@angular/router';
+import { finalize } from 'rxjs';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+
 import { AuthService } from '../../core/services/auth.service';
-import { SweetAlertService } from '../../core/services/sweet-alert.service';
+import { RegisterValidators } from '../../core/validators/register.validators';
 import { ShowPasswordComponent } from '../css/show-password/show-password.component';
-import { CustomAlertService } from '../../core/services/custom-alert.service';
+
+type PasswordRequirement =
+  | 'length'
+  | 'uppercase'
+  | 'lowercase'
+  | 'number'
+  | 'symbol';
 
 @Component({
   selector: 'app-reset-password',
   standalone: true,
-  imports: [ReactiveFormsModule, CommonModule, ShowPasswordComponent],
+  imports: [
+    ReactiveFormsModule,
+    RouterLink,
+    MatFormFieldModule,
+    MatIconModule,
+    MatInputModule,
+    ShowPasswordComponent,
+  ],
   templateUrl: './reset-password.component.html',
-  styleUrls: ['./reset-password.component.css'],
+  styleUrls: [
+    '../../features/authorization/register/register.component.scss',
+    '../forgot-password/forgot-password.component.css',
+    './reset-password.component.css',
+  ],
 })
 export class ResetPasswordComponent implements OnInit {
-  isPasswordVisible = false;
-  resetForm: FormGroup;
-  private token: string | null = null;
+  private readonly fb = inject(FormBuilder);
+  private readonly authService = inject(AuthService);
+
+  private readonly destroyRef = inject(DestroyRef);
 
   isLoading = false;
-  showPassword = false;
+  isValidating = true;
+  isInvalid = false;
+  isSuccess = false;
+  isPasswordVisible = false;
+  isConfirmPasswordVisible = false;
+  submitError = '';
+  private resetToken: string | null = null;
 
-  constructor(
-    private fb: FormBuilder,
-    private route: ActivatedRoute,
-    private authService: AuthService,
-    private router: Router,
-    private CustomAlertService: CustomAlertService,
-  ) {
-    // private alertService: SweetAlertService
-    this.resetForm = this.fb.group({
+  readonly resetForm = this.fb.nonNullable.group(
+    {
       newPassword: [
         '',
         [
           Validators.required,
-          Validators.minLength(6),
-          Validators.pattern(/.*[?@#$%&].*/), // Validação de caractere especial
+          Validators.minLength(8),
+          (control: AbstractControl) => new TextEncoder().encode(control.value ?? '').length > 72 ? { maxlength: true } : null,
+          RegisterValidators.strongPassword(),
         ],
       ],
-      confirmPassword: ['', [Validators.required]],
-    });
-  }
+      confirmPassword: ['', Validators.required],
+    },
+    {
+      validators: RegisterValidators.passwordsMatch(
+        'newPassword',
+        'confirmPassword',
+      ),
+    },
+  );
 
   ngOnInit(): void {
-    const tokenFromUrl = this.route.snapshot.queryParamMap.get('token');
-
-    if (!tokenFromUrl) {
-      this.CustomAlertService.error(
-        'Token Inválido',
-        'Token não encontrado. Por favor, use o link enviado para o seu e-mail.',
-      );
+    this.resetToken = this.authService.getPasswordResetToken();
+    if (!this.resetToken) {
+      this.isValidating = false;
+      this.isInvalid = true;
       this.resetForm.disable();
       return;
     }
 
-    this.token = tokenFromUrl;
-    this.authService.validateResetToken(this.token).subscribe({
-      error: (err) => {
-        const errorMessage =
-          err.error?.message ||
-          'O link de redefinição de senha é inválido ou expirou.';
-        this.CustomAlertService.error('Erro de Validação', errorMessage);
-        this.resetForm.disable();
-      },
-    });
+    this.authService
+      .validateResetToken(this.resetToken)
+      .pipe(takeUntilDestroyed(this.destroyRef), finalize(() => (this.isValidating = false)))
+      .subscribe({
+        error: (error: HttpErrorResponse) => {
+          if (error.status === 401 || error.status === 410) this.invalidateFlow();
+          else this.submitError = 'Não foi possível confirmar a recuperação. Tente alterar a senha novamente.';
+        },
+      });
   }
 
   onSubmit(): void {
-    const newPasswordControl = this.resetForm.get('newPassword');
-    const confirmPasswordControl = this.resetForm.get('confirmPassword');
-
-    // Validação sequencial para exibir alertas específicos
-    if (
-      newPasswordControl?.errors?.['required'] ||
-      confirmPasswordControl?.errors?.['required']
-    ) {
-      this.CustomAlertService.error(
-        'Campos Obrigatórios',
-        'Por favor, preencha a nova senha e a confirmação.',
-      );
+    if (this.resetForm.invalid || !this.resetToken || this.isLoading || this.isValidating || this.isSuccess) {
+      this.resetForm.markAllAsTouched();
       return;
     }
 
-    if (newPasswordControl?.errors?.['minlength']) {
-      this.CustomAlertService.error(
-        'Senha Curta',
-        'A senha deve ter pelo menos 6 caracteres.',
-      );
-      return;
-    }
-
-    if (newPasswordControl?.errors?.['pattern']) {
-      this.CustomAlertService.error(
-        'Senha Inválida',
-        'A senha deve conter um símbolo especial (?@#$%&).',
-      );
-      return;
-    }
-
-    const { newPassword, confirmPassword } = this.resetForm.value;
-
-    if (newPassword !== confirmPassword) {
-      this.CustomAlertService.error(
-        'Senhas não conferem',
-        'Por favor, digite as senhas novamente.',
-      );
-      return;
-    }
-
-    if (!this.token) {
-      this.CustomAlertService.error(
-        'Erro de Token',
-        'Token não disponível. A sessão pode ter expirado.',
-      );
-      return;
-    }
-
-    // Se todas as validações passarem, envia para a API
     this.isLoading = true;
+    this.submitError = '';
 
-    this.authService.resetPassword('', this.token, newPassword).subscribe({
-      next: () => {
-        this.isLoading = false;
-        this.resetForm.disable();
+    this.authService
+      .resetPassword(
+        this.resetToken,
+        this.resetForm.controls.newPassword.value,
+      )
+      .pipe(takeUntilDestroyed(this.destroyRef), finalize(() => (this.isLoading = false)))
+      .subscribe({
+        next: () => {
+          this.isSuccess = true;
+          this.resetForm.disable();
+          this.authService.clearPasswordResetToken();
+          this.resetToken = null;
+        },
+        error: (error: HttpErrorResponse) => {
+          if (error.status === 401 || error.status === 410) {
+            this.invalidateFlow();
+            return;
+          }
 
-        this.CustomAlertService.success(
-          'Sucesso!',
-          'Senha alterada com sucesso! Será redirecionado para a página de login.',
-        );
-        setTimeout(() => {
-          this.router.navigate(['/login']);
-        }, 4000);
-      },
-      error: (err) => {
-        this.isLoading = false;
-        const errorMessage =
-          err.error?.message ||
-          'Não foi possível alterar a senha. O token pode ter expirado.';
-        this.CustomAlertService.error('Erro ao Salvar', errorMessage);
-      },
-    });
+          this.submitError = 'Não foi possível alterar a senha. Tente novamente.';
+        },
+      });
+  }
+
+  showError(field: 'newPassword' | 'confirmPassword'): boolean {
+    const control = this.resetForm.controls[field];
+    return control.invalid && control.touched;
+  }
+
+  passwordsMismatch(): boolean {
+    const confirmation = this.resetForm.controls.confirmPassword;
+    return (
+      this.resetForm.hasError('passwordsMismatch') &&
+      (confirmation.touched || confirmation.dirty)
+    );
+  }
+
+  passwordRequirementMet(requirement: PasswordRequirement): boolean {
+    const password = this.resetForm.controls.newPassword.value;
+    const checks: Record<PasswordRequirement, boolean> = {
+      length: password.length >= 8,
+      uppercase: /[A-Z]/.test(password),
+      lowercase: /[a-z]/.test(password),
+      number: /\d/.test(password),
+      symbol: /[?@#$%&]/.test(password),
+    };
+
+    return checks[requirement];
+  }
+
+  private invalidateFlow(): void {
+    this.isInvalid = true;
+    this.resetForm.disable();
+    this.authService.clearPasswordResetToken();
+    this.resetToken = null;
   }
 }

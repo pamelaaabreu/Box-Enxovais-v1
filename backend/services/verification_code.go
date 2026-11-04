@@ -2,46 +2,121 @@ package services
 
 import (
 	"crypto/rand"
-	"encoding/hex"
+	"crypto/sha256"
+	"crypto/subtle"
+	"errors"
+	"math/big"
+	"strings"
+	"sync"
 	"time"
 )
 
-// Mapa para armazenar os códigos de verificação e suas datas de expiração
-var VerificationCodes = make(map[string]VerificationData)
+// Recovery state is process-local. All transitions share one lock, including
+// exchanging a code, resending and committing a password update.
+var recoveryMu sync.Mutex
+var verificationCodes = make(map[string]verificationData)
+var pendingCodeEmails = make(map[string]bool)
+var ErrResetCodeCooldown = errors.New("aguarde antes de reenviar o código")
 
-// Estrutura para armazenar o código de verificação e sua data de expiração
-type VerificationData struct {
-	Code      string
+type VerificationCodeStatus uint8
+
+const (
+	VerificationCodeInvalid VerificationCodeStatus = iota
+	VerificationCodeExpired
+	VerificationCodeValid
+)
+
+type verificationData struct {
+	Hash      [32]byte
 	ExpiresAt time.Time
+	ResendAt  time.Time
+	Attempts  int
 }
 
-// Função para gerar um código de verificação aleatório
 func GenerateVerificationCode() (string, error) {
-	bytes := make([]byte, 4) // Código de 4 bytes (8 caracteres hexadecimais)
-	if _, err := rand.Read(bytes); err != nil {
-		return "", err
+	const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+	code := make([]byte, 8)
+	for index := range code {
+		position, err := rand.Int(rand.Reader, big.NewInt(int64(len(alphabet))))
+		if err != nil {
+			return "", err
+		}
+		code[index] = alphabet[position.Int64()]
 	}
-	return hex.EncodeToString(bytes), nil
+	return string(code), nil
 }
 
-// Função para armazenar o código de verificação e sua data de expiração
-func StoreVerificationCode(email, code string) {
-	VerificationCodes[email] = VerificationData{
-		Code:      code,
-		ExpiresAt: time.Now().Add(5 * time.Minute), // Código válido por 5 minutos
+// Reserve the email while SMTP runs without holding the global lock. Failed
+// delivery leaves the previous recovery intact; successful delivery replaces it.
+func SendPasswordResetCode(email string, send func(string) error) error {
+	email = normalizeVerificationEmail(email)
+	recoveryMu.Lock()
+	now := time.Now()
+	for key, data := range verificationCodes {
+		if now.After(data.ExpiresAt.Add(10 * time.Minute)) {
+			delete(verificationCodes, key)
+		}
 	}
+	for key, data := range passwordResetTokens {
+		if now.After(data.ExpiresAt.Add(10 * time.Minute)) {
+			delete(passwordResetTokens, key)
+		}
+	}
+	if pendingCodeEmails[email] || now.Before(verificationCodes[email].ResendAt) {
+		recoveryMu.Unlock()
+		return ErrResetCodeCooldown
+	}
+	pendingCodeEmails[email] = true
+	recoveryMu.Unlock()
+	defer func() { recoveryMu.Lock(); delete(pendingCodeEmails, email); recoveryMu.Unlock() }()
+	code, err := GenerateVerificationCode()
+	if err != nil {
+		return err
+	}
+	if err = send(code); err != nil {
+		return err
+	}
+	recoveryMu.Lock()
+	defer recoveryMu.Unlock()
+	verificationCodes[email] = verificationData{
+		Hash: sha256.Sum256([]byte(code)), ExpiresAt: time.Now().Add(5 * time.Minute),
+		ResendAt: time.Now().Add(30 * time.Second),
+	}
+	invalidateResetTokens(email)
+	return nil
 }
 
-// Função para validar o código de verificação
-func ValidateVerificationCode(email, code string) bool {
-	data, exists := VerificationCodes[email]
-	if !exists {
-		return false // Código não encontrado
+// A code can authorize exactly one reset token, even with concurrent requests.
+func ExchangeVerificationCode(email, code string) (string, VerificationCodeStatus, error) {
+	recoveryMu.Lock()
+	defer recoveryMu.Unlock()
+	email = normalizeVerificationEmail(email)
+	data, exists := verificationCodes[email]
+	if !exists || pendingCodeEmails[email] {
+		return "", VerificationCodeInvalid, nil
 	}
+	if !data.ExpiresAt.After(time.Now()) {
+		return "", VerificationCodeExpired, nil
+	}
+	if data.Attempts >= 5 {
+		return "", VerificationCodeInvalid, nil
+	}
+	hash := sha256.Sum256([]byte(strings.ToUpper(strings.TrimSpace(code))))
+	if subtle.ConstantTimeCompare(hash[:], data.Hash[:]) != 1 {
+		data.Attempts++
+		verificationCodes[email] = data
+		return "", VerificationCodeInvalid, nil
+	}
+	token, err := generatePasswordResetToken(email)
+	if err != nil {
+		return "", VerificationCodeInvalid, err
+	}
+	// Retain the resend deadline while preventing reuse of the verified code.
+	data.Attempts = 5
+	verificationCodes[email] = data
+	return token, VerificationCodeValid, nil
+}
 
-	// Verifica se o código é válido e se não expirou
-	if data.Code == code && data.ExpiresAt.After(time.Now()) {
-		return true
-	}
-	return false
+func normalizeVerificationEmail(email string) string {
+	return strings.ToLower(strings.TrimSpace(email))
 }

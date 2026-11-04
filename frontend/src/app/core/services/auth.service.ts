@@ -9,6 +9,16 @@ import {
   RegisterPayload,
 } from '../interfaces/auth.interface';
 
+interface ApiResponse<T = unknown> {
+  success: boolean;
+  message?: string;
+  data?: T;
+}
+
+interface ResetAuthorization {
+  resetToken: string;
+}
+
 @Injectable({
   providedIn: 'root',
 })
@@ -16,6 +26,8 @@ export class AuthService {
   private http = inject(HttpClient);
   private router = inject(Router);
   private platformId = inject(PLATFORM_ID);
+
+  private passwordResetToken: string | null = null;
 
   private baseUrl = 'http://localhost:8080';
 
@@ -64,20 +76,61 @@ export class AuthService {
     return this.http.post(`${this.baseUrl}/send-reset-token`, { email });
   }
 
-  resetPassword(
+  validateResetCode(
     email: string,
     code: string,
-    newPassword: string,
-  ): Observable<any> {
+  ): Observable<ApiResponse<ResetAuthorization>> {
+    return this.http.post<ApiResponse<ResetAuthorization>>(
+      `${this.baseUrl}/validate-reset-code`,
+      { email, code },
+    );
+  }
+
+  resetPassword(resetToken: string, newPassword: string): Observable<any> {
     return this.http.post(`${this.baseUrl}/reset-password`, {
-      email,
-      code,
+      resetToken,
       newPassword,
     });
   }
 
   validateResetToken(token: string): Observable<any> {
-    return this.http.get(`${this.baseUrl}/validate-reset-token/${token}`);
+    return this.http.post(`${this.baseUrl}/validate-reset-token`, {
+      resetToken: token,
+    });
+  }
+
+  // Kept only in this service instance, never in URLs or browser storage.
+  savePasswordResetToken(token: string): void {
+    this.passwordResetToken = token;
+  }
+
+  getPasswordResetToken(): string | null {
+    return this.passwordResetToken;
+  }
+
+  clearPasswordResetToken(): void {
+    this.passwordResetToken = null;
+    if (this.isBrowser()) sessionStorage.removeItem('passwordResetToken');
+  }
+
+  savePasswordResetEmail(email: string): void {
+    if (this.isBrowser()) {
+      sessionStorage.setItem('passwordResetEmail', email);
+    }
+  }
+
+  getPasswordResetEmail(): string | null {
+    if (!this.isBrowser()) {
+      return null;
+    }
+
+    return sessionStorage.getItem('passwordResetEmail');
+  }
+
+  clearPasswordResetEmail(): void {
+    if (this.isBrowser()) {
+      sessionStorage.removeItem('passwordResetEmail');
+    }
   }
 
   logout(): void {
