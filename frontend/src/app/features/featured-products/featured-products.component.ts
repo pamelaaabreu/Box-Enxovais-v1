@@ -1,3 +1,4 @@
+import { FavoriteButtonComponent } from '../../shared/favorite-button/favorite-button.component';
 import { ProductMediaComponent } from '../catalog/components/product-media/product-media.component';
 import { CartService } from '../../core/services/cart.service';
 import { RouterLink } from '@angular/router';
@@ -9,7 +10,7 @@ import { CommonModule, CurrencyPipe } from '@angular/common';
 @Component({
   selector: 'app-featured-products',
   standalone: true,
-  imports: [ProductMediaComponent, CommonModule, CurrencyPipe, RouterLink],
+  imports: [FavoriteButtonComponent, ProductMediaComponent, CommonModule, CurrencyPipe, RouterLink],
   templateUrl: './featured-products.component.html',
   styleUrl: './featured-products.component.css',
 })

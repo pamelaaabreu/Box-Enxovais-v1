@@ -61,3 +61,7 @@ app-product-price {
   font-size: 12px;
   margin-top: 4px;
 }
+
+article { position: relative; }
+.favorite-action { position: absolute; top: 12px; right: 12px; z-index: 2; }
+.unavailable { color: #883c34; font-size: 12px; }

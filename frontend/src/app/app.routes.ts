@@ -3,7 +3,20 @@ import { ActivatedRouteSnapshot, Routes } from '@angular/router';
 import { AdminGuard } from './core/guards/admin.guard';
 
 export const routes: Routes = [
-  { path: 'cart', canActivate: [authGuard], loadComponent: () => import('./features/cart/cart.component').then(m => m.CartComponent) },
+  {
+    path: 'favorites',
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import('./features/favorites/favorites.component').then(
+        (m) => m.FavoritesComponent,
+      ),
+  },
+  {
+    path: 'cart',
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import('./features/cart/cart.component').then((m) => m.CartComponent),
+  },
   {
     path: '',
     redirectTo: 'home',
@@ -19,22 +32,28 @@ export const routes: Routes = [
   {
     path: 'categoria/:slug',
     loadComponent: () =>
-      import('./features/catalog/pages/category/category.component').then(m => m.CategoryComponent),
+      import('./features/catalog/pages/category/category.component').then(
+        (m) => m.CategoryComponent,
+      ),
   },
 
   {
     path: 'produto/:slug',
     loadComponent: () =>
-      import('./features/catalog/pages/product-detail/product-detail.component').then(m => m.ProductDetailComponent),
+      import('./features/catalog/pages/product-detail/product-detail.component').then(
+        (m) => m.ProductDetailComponent,
+      ),
   },
 
   {
     // One route configuration preserves the auth panel and video between tabs.
-    matcher: (segments) => segments.length === 1 && ['login', 'register'].includes(segments[0].path)
-      ? { consumed: segments, posParams: { authPage: segments[0] } }
-      : null,
+    matcher: (segments) =>
+      segments.length === 1 && ['login', 'register'].includes(segments[0].path)
+        ? { consumed: segments, posParams: { authPage: segments[0] } }
+        : null,
     resolve: {
-      selectedTab: (route: ActivatedRouteSnapshot) => route.paramMap.get('authPage') === 'register' ? 1 : 0,
+      selectedTab: (route: ActivatedRouteSnapshot) =>
+        route.paramMap.get('authPage') === 'register' ? 1 : 0,
     },
     loadComponent: () =>
       import('./features/authorization/register/register.component').then(
@@ -122,6 +141,8 @@ export const routes: Routes = [
   {
     path: '**',
     loadComponent: () =>
-      import('./features/not-found/not-found.component').then(m => m.NotFoundComponent),
+      import('./features/not-found/not-found.component').then(
+        (m) => m.NotFoundComponent,
+      ),
   },
 ];

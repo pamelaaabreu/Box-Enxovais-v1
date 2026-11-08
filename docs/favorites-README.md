@@ -1,6 +1,6 @@
 # Favoritos — Box Enxovais
 
-Status: **escopo e plano de implementação**. Este documento não significa que a funcionalidade já esteja implementada. A entrega de documentação não cria tabelas, endpoints ou telas.
+Status: **implementado**. API, estado compartilhado, corações e página `/favorites` entregues. A migration `000005` foi aplicada no banco local, com versão 5 e `dirty=false`.
 
 ## Objetivo
 
@@ -21,7 +21,7 @@ Ver [paginação](pagination.md) e [carrinho](cart-implementation.md).
 
 ## Banco de dados
 
-Criar a próxima migration disponível: atualmente, a sequência termina em `000003`. Confirmar a numeração antes de criar `000004_favorites.up.sql` e `.down.sql`.
+Migration criada: `000005_favorites.up.sql` e `000005_favorites.down.sql`. A sequência anterior terminava em `000004_products_quantity_nonnegative`.
 
 Estrutura proposta:
 
@@ -100,7 +100,7 @@ Para remover, usar `DELETE ... WHERE user_id = $1 AND product_id = $2`. Nunca re
 - 409: produto inativo/arquivado ao tentar adicionar um novo favorito.
 - 500: falha interna, sem exposição de detalhes SQL.
 
-Reutilizar `services.Error`, com mensagem legível para o frontend.
+Reutilizar `response.Error`, com mensagem legível para o frontend.
 
 ## Produtos indisponíveis
 
@@ -164,25 +164,26 @@ Após remoção, atualizar a lista e os corações; recarregar a página para pr
 
 Adicionar acesso a “Favoritos” no menu da conta, preservando o restante do header. Badge adicional não é obrigatório nesta versão.
 
-## Arquivos previstos
+## Arquivos e pontos de integração
 
-Os nomes abaixo são propostas; conferir o estado do projeto antes de criar arquivos.
+Arquivos principais da implementação:
 
 Backend:
 
-- `backend/migrations/000004_favorites.up.sql` e `.down.sql`.
+- `backend/migrations/000005_favorites.up.sql` e `.down.sql`.
 - `backend/src/repositories/favorites_repository.go`.
 - `backend/src/handlers/favoritesHandler.go`.
+- `backend/src/services/favorites_service.go`.
 - `backend/src/routes/favorites.go`.
 - Registrar rotas em `backend/src/main.go`, sem substituir CORS ou rotas existentes.
 - Reutilizar `models.Product`; criar DTO adicional somente se necessário para a resposta da operação.
-- Testes unitários e integração nas pastas correspondentes.
+- `backend/src/routes/favorites_test.go`: autorização e integração PostgreSQL isolada.
 
 Frontend:
 
 - `frontend/src/app/core/services/favorites.service.ts` e testes.
 - `frontend/src/app/features/favorites/` para página standalone e testes.
-- Tipos de resposta em `core/interfaces`, se necessários.
+- `frontend/src/app/shared/favorite-button/`: botão compartilhado e teste de acessibilidade.
 - Nova rota em `frontend/src/app/app.routes.ts`.
 - Conectar corações de destaques, promoções, catálogo e detalhe, reutilizando ou extraindo um botão compartilhado se houver repetição.
 - Link no menu da conta em `components/top-navbar`.
@@ -234,3 +235,15 @@ Executar `go test ./...`, `go build ./...`, testes Angular sem watch em ChromeHe
 ## Fora do escopo
 
 Checkout, reserva de estoque, notificações de preço/disponibilidade, listas públicas, compartilhamento, favoritos anônimos e redesign das páginas.
+
+## Entrega e verificações realizadas em 2026-11-08
+
+- `go test ./...`: passou; integrações continuam opt-in.
+- `CART_TEST_LOCAL=1` com `go test ./src/routes -run '^TestFavorites(Authorization|Postgres)$' -count=1 -v`: passou. Somente um schema temporário foi criado/modificado/removido durante a integração.
+- `go build ./...`: passou.
+- ChromeHeadless: **34 testes passaram**, cobrindo FavoritesService, FavoriteButton, página de favoritos, detalhe, categoria, carrinho e ofertas.
+- `npm.cmd run build`: passou com avisos de orçamento do bundle/estilo, CommonJS do SweetAlert2 e seletores CSS do Bootstrap. Não foram alterados limites ou dependências.
+- Após os testes, a migration `000005_favorites.up.sql` foi aplicada separadamente no banco local, em transação, atualizando `schema_migrations` de 4 para 5. A tabela estava ausente e a versão anterior foi verificada como limpa antes da aplicação.
+- Validação manual com uma conta real e inspeção visual em diferentes dispositivos não foram executadas. Os fluxos de sessão, acessibilidade do botão e indisponibilidade foram verificados automaticamente.
+
+Reinicie a API para carregar as novas rotas e acesse **Favoritos** no menu da conta. A rota é `/favorites`.

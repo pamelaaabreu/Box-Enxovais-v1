@@ -12,7 +12,7 @@ export class CatalogService {
   private slug(value: string): string {
     return value.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
   }
-  private adapt(product: Product): CatalogProduct {
+  adapt(product: Product): CatalogProduct {
     const name = product.category_name ?? '';
     const category = CATEGORIES.find(c => c.slug === this.slug(name)) ?? {id: product.product_type_id ?? 0, name: name || 'Produtos', slug: this.slug(name)};
     return {...product, id: product.id!, slug: `${this.slug(product.name)}-${product.id}`, description: product.description ?? '', category,

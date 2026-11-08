@@ -1,3 +1,4 @@
+import { FavoriteButtonComponent } from '../../shared/favorite-button/favorite-button.component';
 import { ProductMediaComponent } from '../catalog/components/product-media/product-media.component';
 import { CartService } from '../../core/services/cart.service';
 import { Component, OnInit, Input, inject } from '@angular/core';
@@ -9,7 +10,7 @@ import { RouterLink } from '@angular/router';
 @Component({
   selector: 'app-promo-grid',
   standalone: true,
-  imports: [ProductMediaComponent, CurrencyPipe, RouterLink, DecimalPipe, CommonModule],
+  imports: [FavoriteButtonComponent, ProductMediaComponent, CurrencyPipe, RouterLink, DecimalPipe, CommonModule],
   templateUrl: './promo-grid.component.html',
   styleUrl: './promo-grid.component.css',
 })

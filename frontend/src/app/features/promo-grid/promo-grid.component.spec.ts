@@ -35,6 +35,8 @@ describe('Winter offers cart interaction', () => {
     fixture.componentRef.setInput('promoName', 'Ofertas de Inverno');
     http.expectOne('http://localhost:8080/cart').flush({ data: snapshot(0) });
     fixture.detectChanges();
+    http.expectOne(r => r.url === 'http://localhost:8080/favorites').flush({items:[],pagination:{offset:0,limit:100,total:0,hasMore:false}});
+    fixture.detectChanges();
   });
   afterEach(() => http.verify());
 

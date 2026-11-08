@@ -64,6 +64,8 @@ describe('Product stock experience',()=>{
  function render(){
   const fixture=TestBed.createComponent(ProductDetailComponent);
   http.expectOne('http://localhost:8080/cart').flush({data:{items:[],totalItems:0,total:0}});
+  fixture.detectChanges();
+  http.expectOne(r => r.url === 'http://localhost:8080/favorites').flush({items:[],pagination:{offset:0,limit:100,total:0,hasMore:false}});
   fixture.detectChanges();return fixture;
  }
  [0,1,5,6,40].forEach(stock=>it(`shows availability for ${stock} units`,()=>{

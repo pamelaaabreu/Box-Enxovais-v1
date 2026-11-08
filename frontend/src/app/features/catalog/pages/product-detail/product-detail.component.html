@@ -18,6 +18,7 @@
         <section class="product-information" aria-labelledby="product-title">
           <span class="eyebrow">{{ product.category.name }}</span>
           <h1 id="product-title">{{ product.name }}</h1>
+          <app-favorite-button [productId]="product.id" [productName]="product.name" />
           <app-product-price
             [emphasized]="true"
             [price]="product.price"

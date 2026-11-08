@@ -93,6 +93,10 @@ func (repo ProductRepository) List(ctx context.Context, page pagination.PageQuer
 	return pagination.ReadPage(ctx, repo.DB, "SELECT "+storeProductColumns+",0 AS promotional_price"+storeProductSource+" WHERE p.status='active'", nil, page, "page.id", scanStoreProduct)
 }
 
+func (repo ProductRepository) ListAdmin(ctx context.Context, page pagination.PageQuery) (pagination.Page[models.Product], error) {
+	return pagination.ReadPage(ctx, repo.DB, "SELECT "+storeProductColumns+",0 AS promotional_price"+storeProductSource, nil, page, "page.id", scanStoreProduct)
+}
+
 func (repo ProductRepository) ListPromotional(ctx context.Context, name string, page pagination.PageQuery) (pagination.Page[models.Product], error) {
 	// One row per product even when the same product belongs to multiple matching promotions.
 	query := "SELECT " + storeProductColumns + `,promotional.promotional_price` + storeProductSource + `

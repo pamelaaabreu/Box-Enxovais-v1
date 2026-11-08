@@ -73,7 +73,7 @@
 
           <ul class="submenu" [class.show]="isProductMenuOpen">
             <li>
-              <a routerLink="/admin/products" routerLinkActive="active">
+              <a routerLink="/admin/products" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
                 Listagem
               </a>
             </li>

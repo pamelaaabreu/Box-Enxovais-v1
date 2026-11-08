@@ -45,6 +45,7 @@
       *ngFor="let product of promotionalProducts"
       [attr.aria-label]="'Comprar ' + product.name + ' em promoção'"
     >
+      <app-favorite-button class="favorite-action" [productId]="product.id!" [productName]="product.name" />
       <!-- Badge -->
       @if (hasDiscount(product)) {
       <div class="badge">

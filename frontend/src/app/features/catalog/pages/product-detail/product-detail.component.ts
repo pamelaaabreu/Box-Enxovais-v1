@@ -1,3 +1,4 @@
+import { FavoriteButtonComponent } from '../../../../shared/favorite-button/favorite-button.component';
 import { CATEGORIES } from '../../data/categories';
 import { CartService } from '../../../../core/services/cart.service';
 import { NotFoundComponent } from '../../../not-found/not-found.component';
@@ -18,7 +19,7 @@ import { QuantitySelectorComponent } from '../../components/quantity-selector/qu
 @Component({
   selector: 'app-product-detail',
   standalone: true,
-  imports: [NotFoundComponent, RouterLink, KeyValuePipe, CatalogLayoutComponent, BreadcrumbsComponent, ProductGalleryComponent, ProductPriceComponent, QuantitySelectorComponent],
+  imports: [FavoriteButtonComponent, NotFoundComponent, RouterLink, KeyValuePipe, CatalogLayoutComponent, BreadcrumbsComponent, ProductGalleryComponent, ProductPriceComponent, QuantitySelectorComponent],
   templateUrl: './product-detail.component.html',
   styleUrl: './product-detail.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

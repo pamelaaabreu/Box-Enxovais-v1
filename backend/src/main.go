@@ -80,6 +80,9 @@ func run() error {
 		Store: repositories.PromotionRepository{DB: database},
 	}}
 
+	favorites := handlers.FavoritesHandler{Service: services.FavoritesService{
+		Store: repositories.FavoritesRepository{DB: database},
+	}}
 	cart := handlers.CartHandler{Store: repositories.CartRepository{DB: database}}
 	var newsletterClient *sendgrid.Client
 	if cfg.SendGridAPIKey != "" {
@@ -96,6 +99,7 @@ func run() error {
 
 	routes.InitRoutesAuth(mux, auth, users)
 	routes.InitRoutesCart(mux, cart)
+	routes.InitRoutesFavorites(mux, favorites)
 	routes.InitRoutesProducts(mux, products, images)
 	routes.InitRoutesNewsletter(mux, newsletter)
 	routes.InitRoutesPromotions(mux, promotions, products)
