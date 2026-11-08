@@ -16,6 +16,7 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
+	"path/filepath"
 	"syscall"
 
 	"github.com/sendgrid/sendgrid-go"
@@ -43,6 +44,15 @@ func main() {
 }
 
 func run() error {
+	// Keep .env, uploads and templates relative to backend when started from src.
+	if _, err := os.Stat("go.mod"); errors.Is(err, os.ErrNotExist) {
+		if info, err := os.Stat(filepath.Join("..", "go.mod")); err == nil && !info.IsDir() {
+			if err := os.Chdir(".."); err != nil {
+				return errors.New("não foi possível acessar a raiz do backend")
+			}
+		}
+	}
+
 	cfg, err := config.Load()
 	if err != nil {
 		return err
