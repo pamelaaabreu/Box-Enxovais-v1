@@ -10,9 +10,9 @@ Preservar a identidade visual e os componentes existentes. Favoritar não adicio
 
 ## Base existente a reutilizar
 
-- Middleware JWT em `backend/middleware` e registro de rotas com `http.ServeMux`, como em `backend/routes/cart.go`.
-- Conexão PostgreSQL de `backend/db`, repositories e helpers de resposta existentes.
-- Serviço `backend/services/pagination.go` para paginação e filtros permitidos.
+- Middleware JWT em `backend/src/middleware` e registro de rotas com `http.ServeMux`, como em `backend/src/routes/cart.go`.
+- Conexão PostgreSQL de `backend/src/db`, repositories e helpers de resposta existentes.
+- Serviço `backend/src/pagination/pagination.go` para paginação e filtros permitidos.
 - `AuthService.userChanged`, interceptor de autenticação e `authGuard` no Angular.
 - Signals e controle de requisições do `CartService` como referência para sincronização e troca de sessão.
 - Layout do catálogo, cards, ícones de coração e componente de imagem com placeholder já existentes.
@@ -171,10 +171,10 @@ Os nomes abaixo são propostas; conferir o estado do projeto antes de criar arqu
 Backend:
 
 - `backend/migrations/000004_favorites.up.sql` e `.down.sql`.
-- `backend/repositories/favorites_repository.go`.
-- `backend/handlers/favoritesHandler.go`.
-- `backend/routes/favorites.go`.
-- Registrar rotas em `backend/main.go`, sem substituir CORS ou rotas existentes.
+- `backend/src/repositories/favorites_repository.go`.
+- `backend/src/handlers/favoritesHandler.go`.
+- `backend/src/routes/favorites.go`.
+- Registrar rotas em `backend/src/main.go`, sem substituir CORS ou rotas existentes.
 - Reutilizar `models.Product`; criar DTO adicional somente se necessário para a resposta da operação.
 - Testes unitários e integração nas pastas correspondentes.
 

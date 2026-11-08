@@ -40,17 +40,23 @@ Box-Enxovais-v1/
 │       ├── features/           # páginas e funcionalidades de negócio
 │       └── shared/             # modelos, validações, alertas e UI reutilizável
 ├── backend/
-│   ├── db/                     # conexão PostgreSQL e operações simples
-│   ├── handlers/               # controladores HTTP e regras de aplicação
-│   ├── middleware/             # método HTTP, JWT e autorização de admin
-│   ├── migrations/             # evolução versionada do schema
-│   ├── models/                 # contratos JSON e modelos de domínio
-│   ├── repositories/           # acesso a dados de usuários
-│   ├── routes/                 # rotas públicas e administrativas
-│   ├── services/               # respostas, e-mail e códigos de verificação
-│   ├── templates/              # template HTML de e-mail
-│   ├── uploads/                # imagens de produtos em disco local
-│   └── main.go                 # composição e inicialização da API
+│   ├── src/
+│   │   ├── config/               # configuração da aplicação
+│   │   ├── db/                   # conexão PostgreSQL
+│   │   ├── handlers/             # controladores HTTP
+│   │   ├── middleware/           # autenticação e autorização
+│   │   ├── models/               # contratos e modelos
+│   │   ├── pagination/           # paginação e filtros
+│   │   ├── repositories/         # acesso a dados
+│   │   ├── response/             # respostas HTTP
+│   │   ├── routes/               # rotas da API
+│   │   ├── services/             # regras da aplicação e emails
+│   │   ├── templates/            # templates e imagens de email
+│   │   └── main.go               # inicialização da API
+│   ├── migrations/               # evolução versionada do schema
+│   ├── uploads/                  # imagens de produtos em disco local
+│   ├── go.mod                    # módulo Go
+│   └── go.sum
 └── README.md
 ```
 
@@ -90,7 +96,7 @@ Não há store global: o estado fica nos componentes, em serviços singleton e n
 
 ## Backend
 
-`main.go` carrega `.env`, inicializa o banco, registra as rotas, expõe uploads e inicia `net/http` na porta `8080`.
+`src/main.go` carrega `.env`, inicializa o banco, registra as rotas, expõe uploads e inicia `net/http` na porta `8080`.
 
 ```mermaid
 sequenceDiagram
@@ -159,6 +165,11 @@ Consulte `backend/migrations/README.md` antes de aplicar migrações, especialme
 Crie `backend/.env` sem versioná-lo:
 
 ```dotenv
+DB_HOST=...
+DB_PORT=5432
+DB_USER=...
+DB_PASSWORD=...
+DB_NAME=...
 JWT_SECRET=uma-chave-longa-e-aleatoria
 SENDGRID_API_KEY=...
 EMAIL=...
@@ -172,7 +183,7 @@ As migrações também esperam `DATABASE_URL`:
 $env:DATABASE_URL = "postgres://usuario:senha@localhost:5432/bd_box?sslmode=disable"
 ```
 
-> **Atenção:** `backend/db/conn.go` ainda não lê `DATABASE_URL`; conexão e credenciais estão definidas no código. Remova os segredos do repositório e troque as credenciais antes de publicar o sistema.
+`backend/src/db/conn.go` usa os campos obrigatórios `DB_HOST`, `DB_PORT`, `DB_USER`, `DB_PASSWORD` e `DB_NAME` do `.env`.
 
 ### Criar o banco
 
@@ -192,7 +203,7 @@ Os caminhos de uploads e templates são relativos, portanto inicie a API em `bac
 ```powershell
 cd backend
 go mod download
-go run .
+go run ./src
 ```
 
 Em outro terminal:
@@ -209,7 +220,7 @@ Acesse `http://localhost:4200`.
 
 ```powershell
 cd backend
-go test ./...
+go test ./src/...
 
 cd ../frontend
 npm test

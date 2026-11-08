@@ -242,9 +242,9 @@ export class AuthComponent {
         },
         error: (error: HttpErrorResponse) => {
           const message =
-            typeof error.error?.error === 'string' &&
-            error.error.error.trim().length > 0
-              ? error.error.error
+            typeof error.error?.message === 'string' &&
+            error.error.message.trim().length > 0
+              ? error.error.message
               : 'E-mail ou senha inválidos!';
 
           this.customAlertService.error('Falha no login', message);
@@ -329,7 +329,7 @@ export class AuthComponent {
   }
 
   private getErrorMessage(error: HttpErrorResponse): string {
-    const apiError = error.error?.error;
+    const apiError = error.error?.message;
 
     if (apiError === 'email_duplicado') {
       return 'email_duplicado';

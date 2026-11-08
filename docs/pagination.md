@@ -55,17 +55,17 @@ Os métodos existentes que retornam arrays mantêm compatibilidade, carregando s
 ## Arquivos desta implementação
 
 Novos:
-- backend/services/pagination.go
-- backend/services/pagination_test.go
-- backend/routes/pagination_test.go
+- backend/src/pagination/pagination.go
+- backend/src/pagination/pagination_test.go
+- backend/src/routes/pagination_test.go
 - frontend/src/app/core/services/pagination.service.ts
 - frontend/src/app/core/services/pagination.service.spec.ts
 - docs/pagination.md
 
 Alterados:
-- backend/handlers/productHandler.go
-- backend/handlers/promotionHandler.go
-- backend/routes/cart_test.go (reutiliza o schema isolado para a integração das listagens)
+- backend/src/handlers/productHandler.go
+- backend/src/handlers/promotionHandler.go
+- backend/src/routes/cart_test.go (reutiliza o schema isolado para a integração das listagens)
 - frontend/src/app/core/services/product.service.ts
 - frontend/src/app/core/services/promo.service.ts
 - frontend/src/app/features/featured-products/featured-products.component.ts

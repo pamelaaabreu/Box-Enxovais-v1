@@ -38,7 +38,7 @@ As categorias da navegação são associadas ao nome de product_types. O banco l
 
 ### Verificação confirmada em 06/10/2026 (America/Sao_Paulo)
 
-Foram lidos este documento, os READMEs da raiz, frontend e migrations e o procedimento em `backend/routes/cart_test.go`. Nenhum `AGENTS.md` foi encontrado no repositório.
+Foram lidos este documento, os READMEs da raiz, frontend e migrations e o procedimento em `backend/src/routes/cart_test.go`. Nenhum `AGENTS.md` foi encontrado no repositório.
 
 | Verificação | Comando executado | Resultado confirmado |
 | --- | --- | --- |
@@ -76,11 +76,11 @@ Pendências: validar manualmente login → produto → adicionar → badge → c
 
 ## Arquivos criados
 
-- backend/models/cart.go
-- backend/repositories/cart_repository.go
-- backend/handlers/cartHandler.go
-- backend/routes/cart.go
-- backend/routes/cart_test.go
+- backend/src/models/cart.go
+- backend/src/repositories/cart_repository.go
+- backend/src/handlers/cartHandler.go
+- backend/src/routes/cart.go
+- backend/src/routes/cart_test.go
 - backend/migrations/000003_cart.up.sql
 - backend/migrations/000003_cart.down.sql
 - frontend/src/app/core/interfaces/cart.interface.ts
@@ -90,10 +90,10 @@ Pendências: validar manualmente login → produto → adicionar → badge → c
 
 ## Arquivos alterados nesta etapa
 
-- backend/main.go
-- backend/models/product.go
-- backend/handlers/productHandler.go
-- backend/routes/products.go
+- backend/src/main.go
+- backend/src/models/product.go
+- backend/src/handlers/productHandler.go
+- backend/src/routes/products.go
 - frontend/src/app/shared/models.ts
 - frontend/src/app/core/services/product.service.ts
 - frontend/src/app/app.routes.ts

@@ -100,7 +100,7 @@ describe('Authentication presentation', () => {
     expect(button.getBoundingClientRect().height).toBe(before.height);
     expect(button.getBoundingClientRect().width).toBe(before.width);
     expect(component.isInitialLoading()).toBeFalse();
-    pending.error({error: {error: 'Falha de teste'}});
+    pending.error({error: {success: false, message: 'Falha de teste'}});
     fixture.detectChanges();
     expect(button.disabled).toBeFalse();
     expect(button.querySelector('.auth-spin')).toBeNull();
@@ -141,7 +141,7 @@ describe('Registration validation', () => {
   request.error({status:500});expect(alerts.error).toHaveBeenCalled();expect(c.isLoading).toBeFalse();fixture.destroy();
  });
  it('shows duplicate email inline and clears it when the email changes',()=>{
-  const {fixture,c}=setup();auth.register.and.returnValue(throwError(()=>({status:409,error:{error:'email_duplicado'}})));
+  const {fixture,c}=setup();auth.register.and.returnValue(throwError(()=>({status:409,error:{success:false,message:'email_duplicado'}})));
   c.submitRegister();fixture.detectChanges();expect(c.registerForm.controls.email.hasError('emailDuplicate')).toBeTrue();
   expect(fixture.nativeElement.textContent).toContain('Este e-mail já está cadastrado.');
   expect(alerts.showEmailDuplicate).not.toHaveBeenCalled();expect(alerts.error).not.toHaveBeenCalled();
