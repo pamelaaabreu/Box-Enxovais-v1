@@ -19,7 +19,7 @@ import (
 
 const (
 	tokenDuration = 2 * time.Hour
-	jwtIssuer    = "box-enxovais-api"
+	jwtIssuer     = "box-enxovais-api"
 )
 
 func LoginUser(w http.ResponseWriter, r *http.Request) {

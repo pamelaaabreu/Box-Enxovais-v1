@@ -1,4 +1,6 @@
-import { Injectable, PLATFORM_ID, inject } from '@angular/core';
+import { Injectable, PLATFORM_ID, inject, OnDestroy } from '@angular/core';
+import { jwtDecode } from 'jwt-decode';
+import { CustomAlertService } from './custom-alert.service';
 import { isPlatformBrowser } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
@@ -22,10 +24,13 @@ interface ResetAuthorization {
 @Injectable({
   providedIn: 'root',
 })
-export class AuthService {
+export class AuthService implements OnDestroy {
   private http = inject(HttpClient);
   private router = inject(Router);
   private platformId = inject(PLATFORM_ID);
+  private readonly alerts = inject(CustomAlertService);
+  private expiryTimer: ReturnType<typeof setTimeout> | null = null;
+  private sessionExpiryHandled = false;
 
   private passwordResetToken: string | null = null;
 
@@ -36,15 +41,19 @@ export class AuthService {
   public userChanged = new Subject<void>();
 
   loadUser(): void {
-    if (!this.isBrowser()) {
+    if (!this.isBrowser()) return;
+
+    const token = sessionStorage.getItem('authToken');
+    if (!token) {
+      this.clearExpiryTimer();
+      this.isLogged = false;
+      this.userName = null;
       return;
     }
 
-    const token = sessionStorage.getItem('authToken');
-    const name = sessionStorage.getItem('userName');
-
-    this.isLogged = !!token;
-    this.userName = name || null;
+    this.isLogged = true;
+    this.userName = sessionStorage.getItem('userName');
+    this.scheduleTokenExpiry(token);
   }
 
   login(credentials: LoginCredentials): Observable<LoginResponse> {
@@ -59,7 +68,10 @@ export class AuthService {
           return;
         }
 
+        this.clearExpiryTimer();
+        this.sessionExpiryHandled = false;
         this.saveAuthData(response);
+        this.scheduleTokenExpiry(response.token);
 
         this.isLogged = true;
         this.userName = response.name || null;
@@ -134,23 +146,111 @@ export class AuthService {
   }
 
   logout(): void {
-    if (this.isBrowser()) {
-      this.clearAuthData();
-    }
-
+    this.clearExpiryTimer();
+    if (this.isBrowser()) this.clearAuthData();
     this.isLogged = false;
     this.userName = null;
     this.userChanged.next();
-
-    this.router.navigate(['/login']);
+    void this.router.navigate(['/login']);
   }
 
   isLoggedIn(): boolean {
-    if (!this.isBrowser()) {
+    const token = this.getToken();
+    if (!token) return false;
+    if (!this.hasValidExpiry(token)) {
+      this.expireSession(token);
       return false;
     }
+    return true;
+  }
 
-    return !!sessionStorage.getItem('authToken');
+  /** Called only when an authenticated request's token is rejected. */
+  handleUnauthorized(tokenUsed: string): void {
+    if (this.getToken() !== tokenUsed) return; // Ignore a late 401 from a previous session.
+    this.expireSession(tokenUsed);
+  }
+
+  /** JWT contents are hints for the UI, never an authorization decision. */
+  private hasValidExpiry(token: string): boolean {
+    try {
+      const { exp } = jwtDecode<{ exp?: number }>(token);
+      return (
+        typeof exp === 'number' &&
+        Number.isFinite(exp) &&
+        exp * 1000 > Date.now()
+      );
+    } catch {
+      return false;
+    }
+  }
+
+  private scheduleTokenExpiry(token: string): void {
+    this.clearExpiryTimer();
+    if (!this.isBrowser()) return;
+    try {
+      const { exp } = jwtDecode<{ exp?: number }>(token);
+      if (typeof exp !== 'number' || !Number.isFinite(exp)) {
+        this.expireSession(token);
+        return;
+      }
+      const remaining = exp * 1000 - Date.now();
+      if (remaining <= 0) {
+        this.expireSession(token);
+        return;
+      }
+      // Browsers clamp long timers: reschedule until the actual expiration.
+      this.expiryTimer = setTimeout(
+        () => this.scheduleTokenExpiry(token),
+        Math.min(remaining, 2_147_483_647),
+      );
+    } catch {
+      this.expireSession(token);
+    }
+  }
+
+  private expireSession(token: string): void {
+    if (
+      !this.isBrowser() ||
+      this.sessionExpiryHandled ||
+      this.getToken() !== token
+    )
+      return;
+    this.sessionExpiryHandled = true;
+    this.clearExpiryTimer();
+    const currentUrl = this.router.url;
+    const isAuthPage =
+      /^\/(login|register|forgot-password|verify-code|reset-password)(?:[/?#]|$)/.test(
+        currentUrl,
+      );
+    // Only preserve an internal destination; route guards still enforce permissions.
+    const returnUrl =
+      !isAuthPage && currentUrl.startsWith('/') && !currentUrl.startsWith('//')
+        ? currentUrl
+        : null;
+
+    this.clearAuthData();
+    this.isLogged = false;
+    this.userName = null;
+    this.userChanged.next();
+    void this.router.navigate(['/login'], {
+      queryParams: returnUrl ? { returnUrl } : {},
+    });
+    this.alerts.info(
+      'Sua sessão expirou',
+      'Por segurança, entre novamente para continuar.',
+      {
+        duration: 8000,
+      },
+    );
+  }
+
+  private clearExpiryTimer(): void {
+    if (this.expiryTimer !== null) clearTimeout(this.expiryTimer);
+    this.expiryTimer = null;
+  }
+
+  ngOnDestroy(): void {
+    this.clearExpiryTimer();
   }
 
   getUserName(): string | null {
