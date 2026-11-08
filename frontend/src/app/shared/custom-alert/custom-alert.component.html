@@ -2,6 +2,8 @@
   class="alert-toast"
   [attr.role]="type === 'error' ? 'alert' : 'status'"
   aria-atomic="true"
+  [attr.aria-live]="type === 'error' ? 'assertive' : 'polite'"
+  [class.alert-recovery-success]="recoverySuccess"
   [class]="'alert-' + type"
   [class.toast-exit]="!visible"
 >

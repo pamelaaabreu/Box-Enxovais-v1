@@ -3,10 +3,12 @@ package handlers
 import (
 	"backend/db"
 	"encoding/json"
+	"io"
 	"log"
 	"net/http"
 	"net/mail"
 	"strings"
+	"unicode/utf16"
 
 	"github.com/lib/pq"
 	"golang.org/x/crypto/bcrypt"
@@ -30,6 +32,11 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 	err := decoder.Decode(&user)
 	if err != nil {
 		log.Printf("ERRO AO DECODIFICAR JSON DO CADASTRO: %v", err)
+		writeJSONError(w, http.StatusBadRequest, "Corpo da requisição inválido")
+		return
+	}
+
+	if decoder.Decode(&struct{}{}) != io.EOF {
 		writeJSONError(w, http.StatusBadRequest, "Corpo da requisição inválido")
 		return
 	}
@@ -100,6 +107,10 @@ func validateCreateUser(user createUserRequest) string {
 		return "Senha é obrigatória"
 	}
 
+	if len(user.Password) > 72 {
+		return "A senha deve ter no máximo 72 bytes"
+	}
+
 	if !isStrongPassword(user.Password) {
 		return "A senha deve ter pelo menos 8 caracteres, incluindo letra maiúscula, minúscula, número e símbolo especial"
 	}
@@ -156,7 +167,7 @@ func isValidFullName(name string) bool {
 }
 
 func isStrongPassword(password string) bool {
-	if len(password) < minPasswordLength {
+	if len(utf16.Encode([]rune(password))) < minPasswordLength {
 		return false
 	}
 

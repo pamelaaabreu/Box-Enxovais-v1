@@ -62,7 +62,8 @@ func SendPasswordResetCode(email string, send func(string) error) error {
 			delete(passwordResetTokens, key)
 		}
 	}
-	if pendingCodeEmails[email] || now.Before(verificationCodes[email].ResendAt) {
+	data, exists := verificationCodes[email]
+	if pendingCodeEmails[email] || (exists && now.Before(data.ResendAt)) {
 		recoveryMu.Unlock()
 		return ErrResetCodeCooldown
 	}

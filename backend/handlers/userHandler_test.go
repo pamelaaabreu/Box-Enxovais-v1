@@ -1,6 +1,13 @@
 package handlers
 
-import "testing"
+import (
+	"encoding/json"
+	"errors"
+	"github.com/lib/pq"
+	"net/http/httptest"
+	"strings"
+	"testing"
+)
 
 func TestIsStrongPassword(t *testing.T) {
 	tests := []struct {
@@ -55,5 +62,67 @@ func TestValidateCreateUser(t *testing.T) {
 				t.Errorf("validateCreateUser() = %q; want %q", got, tt.want)
 			}
 		})
+	}
+}
+
+func TestCreateUserRejectsInvalidHTTP(t *testing.T) {
+	valid := createUserRequest{Name: "Maria Silva", Email: "maria@example.com", Password: "Senha1@x", Terms: true}
+	cases := []struct {
+		name   string
+		mutate func(*createUserRequest)
+	}{
+		{"missing name", func(u *createUserRequest) { u.Name = "" }},
+		{"single name", func(u *createUserRequest) { u.Name = "Maria" }},
+		{"missing email", func(u *createUserRequest) { u.Email = "" }},
+		{"invalid email", func(u *createUserRequest) { u.Email = "invalid" }},
+		{"missing password", func(u *createUserRequest) { u.Password = "" }},
+		{"weak password", func(u *createUserRequest) { u.Password = "password" }},
+		{"too many bytes", func(u *createUserRequest) { u.Password = "Senha1@" + strings.Repeat("é", 34) }},
+		{"short multibyte password", func(u *createUserRequest) { u.Password = "Aa1@é" }},
+		{"terms refused", func(u *createUserRequest) { u.Terms = false }},
+	}
+	for _, c := range cases {
+		t.Run(c.name, func(t *testing.T) {
+			u := valid
+			c.mutate(&u)
+			body, _ := json.Marshal(u)
+			w := httptest.NewRecorder()
+			CreateUser(w, httptest.NewRequest("POST", "/register", strings.NewReader(string(body))))
+			if w.Code != 400 {
+				t.Fatalf("status=%d", w.Code)
+			}
+			if strings.Contains(w.Body.String(), u.Password) && u.Password != "" {
+				t.Fatal("password disclosed")
+			}
+		})
+	}
+	for _, body := range []string{`{"password":123}`, `{} {}`, `{"confirmPassword":"secret"}`} {
+		w := httptest.NewRecorder()
+		CreateUser(w, httptest.NewRequest("POST", "/register", strings.NewReader(body)))
+		if w.Code != 400 {
+			t.Fatalf("malformed request status=%d", w.Code)
+		}
+	}
+}
+
+func TestCreateUserNormalizationAndDatabaseErrors(t *testing.T) {
+	u := createUserRequest{Name: "  Maria Silva  ", Email: " MARIA@EXAMPLE.COM ", Password: "Senha1@x", Terms: true}
+	normalizeCreateUserData(&u)
+	if u.Name != "Maria Silva" || u.Email != "maria@example.com" || validateCreateUser(u) != "" {
+		t.Fatal("normalization or valid input rejected")
+	}
+	for _, c := range []struct {
+		err     error
+		status  int
+		message string
+	}{
+		{&pq.Error{Code: "23505", Constraint: "users_email_key"}, 409, "email_duplicado"},
+		{errors.New("private database detail"), 500, "Erro interno ao tentar criar usuário"},
+	} {
+		w := httptest.NewRecorder()
+		handleCreateUserDatabaseError(w, c.err)
+		if w.Code != c.status || !strings.Contains(w.Body.String(), c.message) || strings.Contains(w.Body.String(), "private database detail") {
+			t.Fatal("unexpected error response")
+		}
 	}
 }

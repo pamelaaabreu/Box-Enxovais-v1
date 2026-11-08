@@ -10,7 +10,7 @@ import {
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { DOCUMENT } from '@angular/common';
-import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { AbstractControl, FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ErrorStateMatcher } from '@angular/material/core';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
@@ -78,6 +78,7 @@ export class AuthComponent {
         [
           Validators.required,
           Validators.minLength(8),
+          (control: AbstractControl) => new TextEncoder().encode(control.value ?? "").length > 72 ? { maxlength: true } : null,
           RegisterValidators.strongPassword(),
         ],
       ],
@@ -161,7 +162,6 @@ export class AuthComponent {
     this.registerForm.updateValueAndValidity();
 
     if (this.registerForm.invalid) {
-      this.showValidationAlert();
       return;
     }
 
@@ -194,12 +194,20 @@ export class AuthComponent {
           const errorMessage = this.getErrorMessage(error);
 
           if (errorMessage === 'email_duplicado') {
-            this.customAlertService.showEmailDuplicate(
-              this.registerForm.controls.email.value,
-            );
+            this.registerForm.controls.email.setErrors({ emailDuplicate: true });
             return;
           }
 
+          if (error.status === 400) {
+            const field = errorMessage.startsWith('Nome') || errorMessage === 'Informe seu nome e sobrenome' ? 'name'
+              : errorMessage.startsWith('Email') ? 'email'
+              : errorMessage.startsWith('Senha') || errorMessage.startsWith('A senha') ? 'password'
+              : errorMessage === 'É necessário aceitar os termos de uso' ? 'terms' : null;
+            if (field) {
+              this.registerForm.controls[field].setErrors({ server: true });
+              return;
+            }
+          }
           this.customAlertService.error('Erro no cadastro', errorMessage);
         },
       });
@@ -318,72 +326,6 @@ export class AuthComponent {
     };
 
     return requirements[requirement];
-  }
-
-  private showValidationAlert(): void {
-    if (this.registerForm.controls.name.invalid) {
-      this.customAlertService.warning(
-        'Nome inválido',
-        'Informe seu nome e sobrenome.',
-      );
-      return;
-    }
-
-    if (this.registerForm.controls.email.invalid) {
-      this.customAlertService.warning(
-        'E-mail inválido',
-        'Informe um endereço de e-mail válido.',
-      );
-      return;
-    }
-
-    if (this.registerForm.controls.password.hasError('required')) {
-      this.customAlertService.warning(
-        'Senha obrigatória',
-        'Informe uma senha para criar sua conta.',
-      );
-      return;
-    }
-
-    if (
-      this.registerForm.controls.password.hasError('weakPassword') ||
-      this.registerForm.controls.password.hasError('minlength')
-    ) {
-      this.customAlertService.warning(
-        'Senha inválida',
-        'Use ao menos 8 caracteres, incluindo letra maiúscula, letra minúscula, número e símbolo (?@#$%&).',
-      );
-      return;
-    }
-
-    if (this.registerForm.controls.confirmPassword.hasError('required')) {
-      this.customAlertService.warning(
-        'Confirme sua senha',
-        'Digite novamente a senha informada.',
-      );
-      return;
-    }
-
-    if (this.registerForm.hasError('passwordsMismatch')) {
-      this.customAlertService.warning(
-        'Senhas diferentes',
-        'A confirmação precisa ser igual à senha informada.',
-      );
-      return;
-    }
-
-    if (this.registerForm.controls.terms.hasError('required')) {
-      this.customAlertService.warning(
-        'Termos de Uso',
-        'Você precisa aceitar os Termos de Uso para continuar.',
-      );
-      return;
-    }
-
-    this.customAlertService.warning(
-      'Revise seus dados',
-      'Preencha corretamente os campos destacados.',
-    );
   }
 
   private getErrorMessage(error: HttpErrorResponse): string {

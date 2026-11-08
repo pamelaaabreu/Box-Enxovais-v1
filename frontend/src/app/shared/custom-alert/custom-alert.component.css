@@ -86,3 +86,15 @@
 @media (prefers-reduced-motion: reduce) {
   .alert-toast, .alert-toast.toast-exit, .alert-toast .spinning, .alert-toast .progress-bar { animation: none; }
 }
+
+/* Opt-in appearance for the completed password reset only. */
+.alert-toast.alert-recovery-success {
+  box-sizing: border-box;
+  border: 1px solid #d8d1c4;
+  border-radius: 18px;
+  --toast-soft: #eef0e7;
+}
+.alert-recovery-success .alert-title,
+.alert-recovery-success .alert-message { color: #3d4836; }
+.alert-recovery-success .alert-progress { background: #e5e9df; }
+.alert-recovery-success .progress-bar { opacity: 1; }

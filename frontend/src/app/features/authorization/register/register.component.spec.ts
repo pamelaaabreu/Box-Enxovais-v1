@@ -3,7 +3,7 @@ import { routes } from '../../../app.routes';
 import { TestBed } from '@angular/core/testing';
 import { provideRouter, ActivatedRoute } from '@angular/router';
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
-import { of, Subject } from 'rxjs';
+import { of, Subject, throwError } from 'rxjs';
 import { AuthComponent } from './register.component';
 import { AuthService } from '../../../core/services/auth.service';
 import { CustomAlertService } from '../../../core/services/custom-alert.service';
@@ -106,4 +106,45 @@ describe('Authentication presentation', () => {
     expect(button.querySelector('.auth-spin')).toBeNull();
     fixture.destroy();
   });
+});
+
+
+describe('Registration validation', () => {
+ let auth: jasmine.SpyObj<AuthService>;
+ let alerts: jasmine.SpyObj<CustomAlertService>;
+ beforeEach(() => {
+  auth=jasmine.createSpyObj('AuthService',['register']);
+  alerts=jasmine.createSpyObj('CustomAlertService',['warning','error','success','loading','hideLoading','showEmailDuplicate']);
+  TestBed.configureTestingModule({imports:[AuthComponent],providers:[provideRouter([]),provideNoopAnimations(),
+   {provide:ActivatedRoute,useValue:{data:of({selectedTab:1}),snapshot:{data:{selectedTab:1}}}},
+   {provide:AuthService,useValue:auth},{provide:CustomAlertService,useValue:alerts}]});
+ });
+ function setup() {
+  const fixture=TestBed.createComponent(AuthComponent); const c=fixture.componentInstance;
+  c.isInitialLoading.set(false);
+  c.registerForm.setValue({name:'Maria Silva',email:'maria@example.com',password:'Senha1@x',confirmPassword:'Senha1@x',terms:true});
+  fixture.detectChanges(); return {fixture,c};
+ }
+ for(const [field,value] of [['name','Maria'],['email','invalid'],['password','weak'],['confirmPassword','different'],['terms',false],['password','Senha1@'+'é'.repeat(34)]] as const) {
+  it(`blocks invalid ${field} without redundant toast`,()=>{
+   const {fixture,c}=setup();c.registerForm.get(field)!.setValue(value);fixture.detectChanges();
+   expect(fixture.nativeElement.querySelector('.submit-button').disabled).toBeTrue();
+   c.submitRegister();expect(auth.register).not.toHaveBeenCalled();expect(alerts.warning).not.toHaveBeenCalled();
+   expect(c.registerForm.touched).toBeTrue();fixture.destroy();
+  });
+ }
+ it('enables valid registration and blocks duplicate requests while pending',()=>{
+  const {fixture,c}=setup();const request=new Subject<any>();auth.register.and.returnValue(request);
+  expect(fixture.nativeElement.querySelector('.submit-button').disabled).toBeFalse();
+  c.submitRegister();c.submitRegister();fixture.detectChanges();
+  expect(auth.register).toHaveBeenCalledTimes(1);expect(fixture.nativeElement.querySelector('.submit-button').disabled).toBeTrue();
+  request.error({status:500});expect(alerts.error).toHaveBeenCalled();expect(c.isLoading).toBeFalse();fixture.destroy();
+ });
+ it('shows duplicate email inline and clears it when the email changes',()=>{
+  const {fixture,c}=setup();auth.register.and.returnValue(throwError(()=>({status:409,error:{error:'email_duplicado'}})));
+  c.submitRegister();fixture.detectChanges();expect(c.registerForm.controls.email.hasError('emailDuplicate')).toBeTrue();
+  expect(fixture.nativeElement.textContent).toContain('Este e-mail já está cadastrado.');
+  expect(alerts.showEmailDuplicate).not.toHaveBeenCalled();expect(alerts.error).not.toHaveBeenCalled();
+  c.registerForm.controls.email.setValue('other@example.com');expect(c.registerForm.valid).toBeTrue();fixture.destroy();
+ });
 });

@@ -1,6 +1,6 @@
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, UrlTree } from '@angular/router';
 import { HttpErrorResponse, provideHttpClient } from '@angular/common/http';
 import { Subject, of, throwError } from 'rxjs';
 import { ForgotPasswordComponent } from './forgot-password.component';
@@ -13,7 +13,9 @@ describe('ForgotPasswordComponent recovery', () => {
   let router: jasmine.SpyObj<Router>;
   beforeEach(() => {
     auth = jasmine.createSpyObj('AuthService', ['validateResetCode', 'requestPasswordReset', 'savePasswordResetToken', 'clearPasswordResetEmail', 'clearPasswordResetToken', 'savePasswordResetEmail']);
-    router = jasmine.createSpyObj('Router', ['navigate']);
+    router = jasmine.createSpyObj('Router', ['navigate', 'createUrlTree', 'serializeUrl'], {events: of()});
+    router.createUrlTree.and.returnValue(new UrlTree());
+    router.serializeUrl.and.returnValue('/login');
     TestBed.configureTestingModule({providers: [
       {provide: AuthService, useValue: auth},
       {provide: Router, useValue: router},
@@ -28,6 +30,144 @@ describe('ForgotPasswordComponent recovery', () => {
   function paste(code: string) {
     component.onOtpPaste({preventDefault: () => {}, clipboardData: {getData: () => code}} as unknown as ClipboardEvent);
   }
+  function initialSend() {
+    const response = new Subject<any>();
+    auth.requestPasswordReset.and.returnValue(response);
+    const fixture = TestBed.createComponent(ForgotPasswordComponent);
+    fixture.componentInstance.forgotForm.controls.email.setValue('user@example.com');
+    fixture.detectChanges();
+    const button: HTMLButtonElement = fixture.nativeElement.querySelector('.submit-button');
+    button.click();
+    fixture.detectChanges();
+    return { fixture, response, button };
+  }
+  it('does not show the send overlay or request a code for invalid email', () => {
+    const fixture = TestBed.createComponent(ForgotPasswordComponent);
+    fixture.detectChanges();
+    fixture.nativeElement.querySelector('.submit-button').click();
+    fixture.detectChanges();
+    expect(auth.requestPasswordReset).not.toHaveBeenCalled();
+    expect(fixture.nativeElement.querySelector('.recovery-send-overlay.is-active')).toBeNull();
+    expect(fixture.componentInstance.forgotForm.controls.email.touched).toBeTrue();
+    fixture.destroy();
+  });
+  it('shows an accessible viewport overlay immediately and prevents duplicate sends', () => {
+    const {fixture, button} = initialSend();
+    const overlay: HTMLElement = fixture.nativeElement.querySelector('.recovery-send-overlay');
+    const content: HTMLElement = fixture.nativeElement.querySelector('.auth-card');
+    expect(overlay.classList.contains('is-active')).toBeTrue();
+    expect(overlay.getAttribute('role')).toBe('status');
+    expect(overlay.getAttribute('aria-hidden')).toBe('false');
+    expect(overlay.textContent).toContain('Enviando seu código...');
+    expect(content.getAttribute('aria-busy')).toBe('true');
+    expect(content.hasAttribute('inert')).toBeTrue();
+    expect(overlay.closest('.auth-card')).toBeNull();
+    expect(getComputedStyle(overlay).position).toBe('fixed');
+    const bounds = overlay.getBoundingClientRect();
+    expect(bounds.top).toBe(0);
+    expect(bounds.left).toBe(0);
+    expect(Math.abs(bounds.width - document.documentElement.clientWidth)).toBeLessThan(1);
+    expect(Math.abs(bounds.height - document.documentElement.clientHeight)).toBeLessThan(1);
+    expect(button.disabled).toBeTrue();
+    button.click();
+    fixture.componentInstance.onSubmit();
+    expect(auth.requestPasswordReset).toHaveBeenCalledOnceWith('user@example.com');
+    fixture.destroy();
+  });
+  it('hides the overlay when navigating to OTP and preserves the success notification', () => {
+    const {fixture, response} = initialSend();
+    response.next({success: true});
+    response.complete();
+    fixture.detectChanges();
+    expect(router.navigate).toHaveBeenCalledWith(['/verify-code']);
+    expect(auth.savePasswordResetEmail).toHaveBeenCalledWith('user@example.com');
+    expect(TestBed.inject(CustomAlertService).success).toHaveBeenCalled();
+    expect(fixture.componentInstance.step).toBe('otp');
+    expect(fixture.nativeElement.querySelector('.recovery-send-overlay.is-active')).toBeNull();
+    fixture.detectChanges();
+    expect(fixture.componentInstance.isLoading).toBeFalse();
+    expect(fixture.nativeElement.querySelector('.auth-card').hasAttribute('inert')).toBeFalse();
+    fixture.destroy();
+  });
+  it('clears the overlay on error, preserves email and permits retry', () => {
+    const {fixture, response, button} = initialSend();
+    response.error(new HttpErrorResponse({status: 500}));
+    fixture.detectChanges();
+    expect(fixture.componentInstance.isLoading).toBeFalse();
+    expect(fixture.componentInstance.forgotForm.controls.email.value).toBe('user@example.com');
+    expect(fixture.nativeElement.querySelector('.recovery-send-overlay').getAttribute('aria-hidden')).toBe('true');
+    expect(fixture.nativeElement.querySelector('.auth-card').getAttribute('aria-busy')).toBe('false');
+    expect(fixture.nativeElement.querySelector('.auth-card').hasAttribute('inert')).toBeFalse();
+    expect(TestBed.inject(CustomAlertService).error).toHaveBeenCalled();
+    expect(router.navigate).not.toHaveBeenCalled();
+    auth.requestPasswordReset.and.returnValue(new Subject<any>());
+    button.click();
+    expect(auth.requestPasswordReset).toHaveBeenCalledTimes(2);
+    fixture.destroy();
+  });
+  it('clears sending state when destroyed during a request', () => {
+    const {fixture} = initialSend();
+    const page = fixture.componentInstance;
+    fixture.destroy();
+    expect(page.isLoading).toBeFalse();
+  });
+  it('shows the full-screen overlay for OTP verification but not for resend', () => {
+    const fixture = TestBed.createComponent(ForgotPasswordComponent);
+    const page = fixture.componentInstance;
+    page.step = 'otp';
+    page.isLoading = true;
+    fixture.detectChanges();
+    const overlay: HTMLElement = fixture.nativeElement.querySelector('.recovery-send-overlay');
+    expect(overlay.classList.contains('is-active')).toBeTrue();
+    expect(overlay.textContent).toContain('Validando seu código...');
+    expect(fixture.nativeElement.querySelector('.auth-card').hasAttribute('inert')).toBeTrue();
+    page.isResending = true;
+    fixture.detectChanges();
+    expect(fixture.nativeElement.querySelector('.recovery-send-overlay.is-active')).toBeNull();
+    expect(overlay.getAttribute('aria-hidden')).toBe('true');
+    expect(fixture.nativeElement.querySelector('.auth-card').hasAttribute('inert')).toBeFalse();
+    fixture.destroy();
+  });
+  [1440, 1024, 768, 390, 375, 320].forEach(width => {
+    it(`aligns all eight OTP fields with the button at ${width}px without overflow`, async () => {
+      const fixture = TestBed.createComponent(ForgotPasswordComponent);
+      fixture.componentInstance.step = 'otp';
+      fixture.componentInstance.forgotForm.controls.email.setValue('user@example.com');
+      fixture.detectChanges();
+      const frame = document.createElement('iframe');
+      frame.style.cssText = `width:${width}px;height:1200px;border:0;display:block;`;
+      document.body.appendChild(frame);
+      try {
+        const doc = frame.contentDocument!;
+        document.querySelectorAll('style, link[rel="stylesheet"]').forEach(style => {
+          doc.head.appendChild(style.cloneNode(true));
+        });
+        doc.body.style.margin = '0';
+        doc.body.appendChild(fixture.nativeElement);
+        await doc.fonts.ready;
+        await new Promise<void>(resolve => requestAnimationFrame(() => resolve()));
+        const fields = Array.from(doc.querySelectorAll<HTMLInputElement>('.otp-input'));
+        const button = doc.querySelector('.otp-submit')!.getBoundingClientRect();
+        const boxes = fields.map(field => field.getBoundingClientRect());
+        expect(frame.contentWindow!.innerWidth).toBe(width);
+        expect(fields.length).toBe(8);
+        expect(Math.abs(boxes[0].left - button.left)).toBeLessThan(1);
+        expect(Math.abs(boxes[7].right - button.right)).toBeLessThan(1);
+        const gap = boxes[1].left - boxes[0].right;
+        boxes.forEach((box, index) => {
+          expect(box.width).toBeGreaterThanOrEqual(26);
+          expect(Math.abs(box.width - boxes[0].width)).toBeLessThan(1);
+          expect(box.top).toBe(boxes[0].top);
+          expect(box.height).toBe(width <= 700 ? 44 : 54);
+          if (index) expect(Math.abs(box.left - boxes[index - 1].right - gap)).toBeLessThan(1);
+        });
+        expect(doc.documentElement.scrollWidth).toBeLessThanOrEqual(doc.documentElement.clientWidth);
+      } finally {
+        fixture.destroy();
+        frame.remove();
+      }
+    });
+  });
   it('submits from the actual eight-input form and navigates after verification', () => {
     const response = new Subject<any>();
     auth.validateResetCode.and.returnValue(response);

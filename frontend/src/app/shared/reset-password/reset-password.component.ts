@@ -4,10 +4,11 @@ import { AbstractControl, FormBuilder, ReactiveFormsModule, Validators } from '@
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
-import { RouterLink } from '@angular/router';
-import { finalize } from 'rxjs';
+import { NavigationStart, Router, RouterLink } from '@angular/router';
+import { filter, finalize, take, takeUntil } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
+import { CustomAlertService } from '../../core/services/custom-alert.service';
 import { AuthService } from '../../core/services/auth.service';
 import { RegisterValidators } from '../../core/validators/register.validators';
 import { ShowPasswordComponent } from '../css/show-password/show-password.component';
@@ -33,13 +34,15 @@ type PasswordRequirement =
   templateUrl: './reset-password.component.html',
   styleUrls: [
     '../../features/authorization/register/register.component.scss',
-    '../forgot-password/forgot-password.component.css',
+    '../forgot-password/forgot-password.component.scss',
     './reset-password.component.css',
   ],
 })
 export class ResetPasswordComponent implements OnInit {
   private readonly fb = inject(FormBuilder);
   private readonly authService = inject(AuthService);
+  private readonly router = inject(Router);
+  private readonly alerts = inject(CustomAlertService);
 
   private readonly destroyRef = inject(DestroyRef);
 
@@ -114,6 +117,8 @@ export class ResetPasswordComponent implements OnInit {
           this.resetForm.disable();
           this.authService.clearPasswordResetToken();
           this.resetToken = null;
+          this.isLoading = false;
+          this.showSuccessToast();
         },
         error: (error: HttpErrorResponse) => {
           if (error.status === 401 || error.status === 410) {
@@ -124,6 +129,27 @@ export class ResetPasswordComponent implements OnInit {
           this.submitError = 'Não foi possível alterar a senha. Tente novamente.';
         },
       });
+  }
+
+  private showSuccessToast(): void {
+    const toast = this.alerts.success(
+      'Senha alterada com sucesso!',
+      'Redirecionando para o login...',
+      { duration: 3000, showProgress: true, showClose: false },
+    );
+    toast.setInput('recoverySuccess', true);
+    toast.instance.elapsed
+      .pipe(
+        take(1),
+        takeUntil(this.router.events.pipe(filter(event => event instanceof NavigationStart))),
+        takeUntilDestroyed(this.destroyRef),
+        finalize(() => {
+          if (!toast.hostView.destroyed) toast.instance.onClose();
+        }),
+      )
+      .subscribe(() => void this.router.navigate(['/login']));
+    // Starts the toast lifetime and its progress together after subscribing.
+    toast.changeDetectorRef.detectChanges();
   }
 
   showError(field: 'newPassword' | 'confirmPassword'): boolean {

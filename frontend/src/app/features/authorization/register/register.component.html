@@ -140,7 +140,11 @@
                       {{
                         registerForm.controls.email.hasError("required")
                           ? "Informe seu e-mail."
-                          : "Digite um e-mail válido."
+                          : registerForm.controls.email.hasError(
+                                "emailDuplicate"
+                              )
+                            ? "Este e-mail já está cadastrado."
+                            : "Digite um e-mail válido."
                       }}
                     </mat-error>
                   }
@@ -270,7 +274,7 @@
               <button
                 class="submit-button"
                 type="submit"
-                [disabled]="isLoading"
+                [disabled]="registerForm.invalid || isLoading"
                 [attr.aria-busy]="isLoading"
               >
                 {{ isLoading ? "Criando conta..." : "Criar conta" }}
@@ -344,7 +348,6 @@
 
               <p class="forgot-password">
                 <a class="auth-secondary-action" routerLink="/forgot-password">
-                  <mat-icon aria-hidden="true">key</mat-icon>
                   Esqueceu a senha?
                 </a>
               </p>
@@ -352,13 +355,11 @@
               <button
                 class="submit-button"
                 type="submit"
-                [disabled]="isLoading"
+                [disabled]="loginForm.invalid || isLoading"
                 [attr.aria-busy]="isLoading"
               >
                 @if (isLoading) {
                   <span class="auth-spin" aria-hidden="true"></span>
-                } @else {
-                  <mat-icon aria-hidden="true">login</mat-icon>
                 }
                 <span aria-live="polite">{{
                   isLoading ? "Entrando..." : "Entrar"

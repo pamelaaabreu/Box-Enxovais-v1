@@ -1,4 +1,5 @@
 import { HttpErrorResponse } from '@angular/common/http';
+
 import {
   Component,
   DestroyRef,
@@ -9,11 +10,15 @@ import {
   ViewChildren,
   inject,
 } from '@angular/core';
+
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
+
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+
 import { finalize } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
@@ -25,6 +30,7 @@ type RecoveryStep = 'email' | 'otp';
 @Component({
   selector: 'app-forgot-password',
   standalone: true,
+
   imports: [
     ReactiveFormsModule,
     RouterLink,
@@ -32,10 +38,12 @@ type RecoveryStep = 'email' | 'otp';
     MatIconModule,
     MatInputModule,
   ],
+
   templateUrl: './forgot-password.component.html',
+
   styleUrls: [
     '../../features/authorization/register/register.component.scss',
-    './forgot-password.component.css',
+    './forgot-password.component.scss',
   ],
 })
 export class ForgotPasswordComponent implements OnInit, OnDestroy {
@@ -44,35 +52,22 @@ export class ForgotPasswordComponent implements OnInit, OnDestroy {
   private readonly customAlert = inject(CustomAlertService);
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
-
   private readonly destroyRef = inject(DestroyRef);
+
   isResending = false;
 
   step: RecoveryStep = 'email';
+
   isLoading = false;
   resendSeconds = 0;
   otpError = '';
+
   readonly otpLength = 8;
 
   @ViewChildren('otpInput')
   private otpInputs!: QueryList<ElementRef<HTMLInputElement>>;
 
   private resendTimer?: ReturnType<typeof setInterval>;
-
-  ngOnInit(): void {
-    if (this.route.snapshot.data['recoveryStep'] !== 'otp') {
-      return;
-    }
-
-    const email = this.authService.getPasswordResetEmail();
-    if (!email) {
-      this.router.navigate(['/forgot-password']);
-      return;
-    }
-
-    this.forgotForm.controls.email.setValue(email);
-    this.prepareOtpStep();
-  }
 
   readonly otpForm = this.fb.nonNullable.array(
     Array.from({ length: this.otpLength }, () =>
@@ -85,14 +80,34 @@ export class ForgotPasswordComponent implements OnInit, OnDestroy {
 
   readonly forgotForm = this.fb.nonNullable.group({
     email: ['', [Validators.required, Validators.email]],
+
     code: [
       { value: '', disabled: true },
       [Validators.required, Validators.pattern(/^[a-z0-9]{8}$/i)],
     ],
   });
 
+  ngOnInit(): void {
+    if (this.route.snapshot.data['recoveryStep'] !== 'otp') {
+      return;
+    }
+
+    const email = this.authService.getPasswordResetEmail();
+
+    if (!email) {
+      this.router.navigate(['/forgot-password']);
+      return;
+    }
+
+    this.forgotForm.controls.email.setValue(email);
+    this.prepareOtpStep();
+  }
+
   onSubmit(): void {
-    if (this.isLoading) return;
+    if (this.isLoading) {
+      return;
+    }
+
     if (this.step === 'email') {
       this.sendCode();
       return;
@@ -102,7 +117,7 @@ export class ForgotPasswordComponent implements OnInit, OnDestroy {
   }
 
   resendCode(): void {
-    if (this.resendSeconds > 0) {
+    if (this.resendSeconds > 0 || this.isLoading) {
       return;
     }
 
@@ -110,25 +125,34 @@ export class ForgotPasswordComponent implements OnInit, OnDestroy {
   }
 
   backToEmail(): void {
-    if (this.isLoading) return;
+    if (this.isLoading) {
+      return;
+    }
+
     this.clearResendTimer();
+
     this.authService.clearPasswordResetEmail();
+
     this.step = 'email';
     this.otpError = '';
+
     this.otpForm.reset();
     this.forgotForm.controls.code.reset();
     this.forgotForm.controls.code.disable();
+
     this.router.navigate(['/forgot-password']);
   }
 
   onOtpInput(index: number, event: Event): void {
     const input = event.target as HTMLInputElement;
+
     const character = input.value
       .replace(/[^a-z0-9]/gi, '')
       .slice(-1)
       .toUpperCase();
 
     input.value = character;
+
     this.otpForm.at(index).setValue(character);
     this.otpError = '';
 
@@ -150,7 +174,11 @@ export class ForgotPasswordComponent implements OnInit, OnDestroy {
 
   onOtpPaste(event: ClipboardEvent): void {
     event.preventDefault();
-    if (this.isLoading) return;
+
+    if (this.isLoading) {
+      return;
+    }
+
     const characters =
       event.clipboardData
         ?.getData('text')
@@ -167,11 +195,13 @@ export class ForgotPasswordComponent implements OnInit, OnDestroy {
     }
 
     this.otpError = '';
+
     this.focusOtp(Math.min(characters.length, this.otpLength - 1));
   }
 
   get maskedEmail(): string {
     const email = this.forgotForm.controls.email.value;
+
     const [localPart, domain] = email.split('@');
 
     if (!localPart || !domain) {
@@ -179,6 +209,7 @@ export class ForgotPasswordComponent implements OnInit, OnDestroy {
     }
 
     const visible = localPart.slice(0, Math.min(2, localPart.length));
+
     return `${visible}***@${domain}`;
   }
 
@@ -188,6 +219,7 @@ export class ForgotPasswordComponent implements OnInit, OnDestroy {
 
   showError(field: 'email' | 'code'): boolean {
     const control = this.forgotForm.controls[field];
+
     return control.invalid && control.touched;
   }
 
@@ -200,6 +232,7 @@ export class ForgotPasswordComponent implements OnInit, OnDestroy {
     }
 
     this.authService.clearPasswordResetToken();
+
     this.requestCode(false);
   }
 
@@ -211,6 +244,7 @@ export class ForgotPasswordComponent implements OnInit, OnDestroy {
     }
 
     const code = this.otpForm.getRawValue().join('');
+
     this.isLoading = true;
     this.otpError = '';
 
@@ -218,11 +252,16 @@ export class ForgotPasswordComponent implements OnInit, OnDestroy {
       .validateResetCode(this.forgotForm.controls.email.value, code)
       .pipe(
         takeUntilDestroyed(this.destroyRef),
-        finalize(() => { this.isLoading = false; this.isResending = false; }),
+
+        finalize(() => {
+          this.isLoading = false;
+          this.isResending = false;
+        }),
       )
       .subscribe({
         next: (response) => {
           const resetToken = response.data?.resetToken;
+
           if (!resetToken) {
             this.otpError = 'Não foi possível autorizar a redefinição.';
             return;
@@ -230,16 +269,19 @@ export class ForgotPasswordComponent implements OnInit, OnDestroy {
 
           this.authService.savePasswordResetToken(resetToken);
           this.authService.clearPasswordResetEmail();
+
           this.router.navigate(['/reset-password']);
         },
+
         error: (error: HttpErrorResponse) => {
-          this.otpError = error.status === 410
-            ? 'Este código expirou. Solicite um novo código.'
-            : error.status === 400
-              ? 'Código inválido. Confira ou solicite um novo código.'
-              : error.status === 0
-                ? 'Sem conexão. Verifique sua internet e tente novamente.'
-                : 'Não foi possível validar o código. Tente novamente.';
+          this.otpError =
+            error.status === 410
+              ? 'Este código expirou. Solicite um novo código.'
+              : error.status === 400
+                ? 'Código inválido. Confira ou solicite um novo código.'
+                : error.status === 0
+                  ? 'Sem conexão. Verifique sua internet e tente novamente.'
+                  : 'Não foi possível validar o código. Tente novamente.';
         },
       });
   }
@@ -251,37 +293,52 @@ export class ForgotPasswordComponent implements OnInit, OnDestroy {
 
     this.isLoading = true;
     this.isResending = isResend;
+
     const email = this.forgotForm.controls.email.value.trim().toLowerCase();
+
     this.forgotForm.controls.email.setValue(email);
 
     this.authService
-      .requestPasswordReset(this.forgotForm.controls.email.value)
+      .requestPasswordReset(email)
       .pipe(
         takeUntilDestroyed(this.destroyRef),
-        finalize(() => { this.isLoading = false; this.isResending = false; }),
+
+        finalize(() => {
+          this.isLoading = false;
+          this.isResending = false;
+        }),
       )
       .subscribe({
         next: () => {
           this.prepareOtpStep();
+
           if (!isResend) {
-            this.authService.savePasswordResetEmail(
-              this.forgotForm.controls.email.value,
-            );
+            this.authService.savePasswordResetEmail(email);
+
             this.router.navigate(['/verify-code']);
           }
+
           this.customAlert.success(
             isResend ? 'Código reenviado' : 'Código enviado',
+
             isResend
               ? 'Um novo código foi enviado para o seu e-mail.'
               : 'Código de verificação enviado para o seu e-mail.',
           );
         },
+
         error: (error: HttpErrorResponse) => {
-          if (error.status === 429 && isResend) this.startResendCountdown();
+          if (error.status === 429 && isResend) {
+            this.startResendCountdown();
+          }
+
           this.step = isResend ? 'otp' : 'email';
+
           this.otpError = isResend ? 'Não foi possível reenviar o código.' : '';
+
           this.customAlert.error(
             'Não foi possível enviar o código',
+
             error.status === 0
               ? 'Sem conexão. Verifique sua internet e tente novamente.'
               : error.status === 429
@@ -297,10 +354,14 @@ export class ForgotPasswordComponent implements OnInit, OnDestroy {
   private prepareOtpStep(): void {
     this.forgotForm.controls.code.enable();
     this.forgotForm.controls.code.reset();
+
     this.otpForm.reset();
     this.otpError = '';
+
     this.step = 'otp';
+
     this.startResendCountdown();
+
     setTimeout(() => this.focusOtp(0));
   }
 
@@ -310,7 +371,9 @@ export class ForgotPasswordComponent implements OnInit, OnDestroy {
 
   private startResendCountdown(): void {
     this.clearResendTimer();
+
     this.resendSeconds = 30;
+
     this.resendTimer = setInterval(() => {
       this.resendSeconds -= 1;
 

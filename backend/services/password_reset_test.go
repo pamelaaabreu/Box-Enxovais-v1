@@ -19,6 +19,9 @@ func issue(t *testing.T, email string) string {
 }
 func TestRecoveryLifecycle(t *testing.T) {
 	email := "lifecycle@example.com"
+	recoveryMu.Lock()
+	delete(verificationCodes, email)
+	recoveryMu.Unlock()
 	code := issue(t, email)
 	if len(code) != 8 {
 		t.Fatal("code length")
@@ -51,6 +54,71 @@ func TestRecoveryLifecycle(t *testing.T) {
 	}
 	if _, status := CheckPasswordResetToken(token); status != PasswordResetTokenInvalid {
 		t.Fatal("token reused")
+	}
+}
+
+func TestMissingRecoveryEntries(t *testing.T) {
+	if _, status, err := ExchangeVerificationCode("missing-recovery@example.com", "AB12CD34"); err != nil || status != VerificationCodeInvalid {
+		t.Fatal("missing code must be rejected")
+	}
+	const token = "missing-reset-token"
+	if _, status := CheckPasswordResetToken(token); status != PasswordResetTokenInvalid {
+		t.Fatal("missing token must be rejected")
+	}
+	status, err := CompletePasswordReset(token, func(string) error {
+		t.Fatal("missing token must not update a password")
+		return nil
+	})
+	if err != nil || status != PasswordResetTokenInvalid {
+		t.Fatal("missing token redemption must be rejected")
+	}
+}
+
+func TestConcurrentCodeDelivery(t *testing.T) {
+	const email = "concurrent-delivery@example.com"
+	started := make(chan struct{})
+	release := make(chan struct{})
+	finished := make(chan error, 1)
+	var once sync.Once
+	unblock := func() { once.Do(func() { close(release) }) }
+	t.Cleanup(unblock)
+	go func() {
+		finished <- SendPasswordResetCode(email, func(string) error {
+			close(started)
+			<-release
+			return nil
+		})
+	}()
+	<-started
+	var wg sync.WaitGroup
+	var unexpected atomic.Int32
+	for i := 0; i < 20; i++ {
+		wg.Add(1)
+		go func() {
+			defer wg.Done()
+			err := SendPasswordResetCode(email, func(string) error {
+				unexpected.Add(1)
+				return nil
+			})
+			if !errors.Is(err, ErrResetCodeCooldown) {
+				unexpected.Add(1)
+			}
+		}()
+	}
+	wg.Wait()
+	unblock()
+	if err := <-finished; err != nil {
+		t.Fatal(err)
+	}
+	if unexpected.Load() != 0 {
+		t.Fatal("concurrent requests must not send while delivery is pending")
+	}
+	recoveryMu.Lock()
+	pending := pendingCodeEmails[email]
+	_, exists := verificationCodes[email]
+	recoveryMu.Unlock()
+	if pending || !exists {
+		t.Fatal("successful delivery must release the reservation and store the code")
 	}
 }
 func TestExpiryResendAndAttempts(t *testing.T) {
